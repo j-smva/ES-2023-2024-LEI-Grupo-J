@@ -7,8 +7,8 @@ import java.util.List;
 
 public class CSVReader {
     public static void main(String[] args) {
-        String csvFile = "C:/Users/Asus/Documents/GitHub/ES-2023-2024-LEI-Grupo-J/csv files/HorarioDeExemplo.csv"; // Specify your CSV file path here
-        
+        //String csvFile = "C:/Users/Asus/Documents/GitHub/ES-2023-2024-LEI-Grupo-J/csv files/HorarioDeExemplo.csv"; // Specify your CSV file path here
+        String csvFile = "C:/Users/Utilizador/Documents/GitHub/ES-2023-2024-LEI-Grupo-J/csv files/HorarioDeExemplo.csv";
         try {
             List<String[]> dataList = readCSV(csvFile);
             
