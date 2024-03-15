@@ -10,77 +10,54 @@ import java.util.List;
 
 public class CSVReader {
 	public static void main(String[] args) {
-		String csvFile = "C:/Users/Asus/Documents/GitHub/ES-2023-2024-LEI-Grupo-J/csv files/CaracterizaçãoDasSalas.csv";
-		//String csvFile = "C:/Users/Asus/Documents/GitHub/ES-2023-2024-LEI-Grupo-J/csv files/HorarioDeExemplo.csv"; // Specify your CSV file path here
-		//String csvFile = "C:/Users/Utilizador/Documents/GitHub/ES-2023-2024-LEI-Grupo-J/csv files/HorarioDeExemplo.csv";
-		//String csvFile = "C:/Users/Utilizador/Desktop/Docs/uni/3ºano/ES/ES-2023-2024-LEI-Grupo-J/csv files/HorarioDeExemplo.csv";
-		int c = 0;
-		/*
-		try {
-			List<Entrada> dataList = readCSVHorario(csvFile);
-
-			for (Entrada row : dataList) {
-				c++;
-				System.out.println(row.toString());
-			}
-			System.out.println(c);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		*/
-		try {
-			List<Sala> dataList = readCSVSala(csvFile);
-
-			for (Sala row : dataList) {
-				c++;
-				System.out.println(row.toString());
-			}
-			System.out.println(c);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 	}
 
-
-	public static List<Entrada> readCSVHorario(String csvFile) throws IOException {
+	public static List<Entrada> readCSVHorario(String fileContent){
 		List<Entrada> listaEntradas = new ArrayList<>();
-		try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
-			String line;
-			line = br.readLine();
-			while ((line = br.readLine()) != null) {
-
-				String[] data = line.split(";", -1); // Split the line by semicolon
-				replaceEmptyValuesHorario(data); // replace emptyStrings
-				LocalTime horaInicio = LocalTime.parse(data[6],parser);
-				LocalTime horaFim = LocalTime.parse(data[7],parser);
-				data[8] = data[8].replace("/","-");
-				LocalDate dataAula = LocalDate.parse(data[8], formatter);
-				Entrada e = new Entrada(data[0],data[1],data[2],data[3],Integer.parseInt(data[4]),
-						data[5],horaInicio,horaFim,dataAula,data[9],data[10]);
-
-				if(e.entradaCheck())
-					listaEntradas.add(e);
-			} 
+		String[] entries = fileContent.split("\r?\n"); // Split the line by semicolon
+		for(int i = 1; i != entries.length; i++) {
+			String[] data = entries[i].split(";",-1);
+			replaceEmptyValuesHorario(data); // replace emptyStrings
+			LocalTime horaInicio = LocalTime.parse(data[6],parser);
+			LocalTime horaFim = LocalTime.parse(data[7],parser);
+			LocalDate dataAula = LocalDate.parse(data[8].replace("/", "-"), formatter);
+			Entrada e = new Entrada(data[0],data[1],data[2],data[3],Integer.parseInt(data[4]),data[5],horaInicio,horaFim,dataAula,data[9],data[10]);
+			if(e.entradaCheck())
+				listaEntradas.add(e);
 		}
-
 		return listaEntradas;
 	}
 	
-	public static List<Sala> readCSVSala(String csvFile)throws IOException {
+	public static void entradasHorarioPrinter(List<Entrada> entradas) {
+		int c = 0;
+		for(Entrada row : entradas) {
+			c++;
+			System.out.println(row.toString());
+		}
+		System.out.println(c);
+	}
+	
+	public static void entradasSalaPrinter(List<Sala> salas) {
+		int c = 0;
+		for(Sala row : salas) {
+			c++;
+			System.out.println(row.toString());
+		}
+		System.out.println(c);
+	}
+	
+	
+	public static List<Sala> readCSVSala(String fileContent){
 		List<Sala> listaSalas = new ArrayList<>();
-		try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
-			String line;
-			line = br.readLine();
-			while ((line = br.readLine()) != null) {
-				String[] data = line.split(";", -1);
-				replaceEmptyValuesSala(data);
-				Sala s = new Sala(data);
-				listaSalas.add(s);
-			}
+		String[] entries = fileContent.split("\r?\n"); // Split the line by semicolon
+		for(int i = 1; i != entries.length; i++) {
+			String[] data = entries[i].split(";",-1);
+			replaceEmptyValuesSala(data);
+			Sala s = new Sala(data);
+			listaSalas.add(s);
 		}
 		return listaSalas;
 	}
-
 
 	static DateTimeFormatter parser = DateTimeFormatter.ofPattern("H:mm:ss");
 	static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
