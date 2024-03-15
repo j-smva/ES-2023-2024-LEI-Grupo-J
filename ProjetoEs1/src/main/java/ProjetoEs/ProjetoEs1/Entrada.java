@@ -45,6 +45,11 @@ public class Entrada {
 				+ inscritos + ", diaSemana=" + diaSemana + ", horaInicio=" + horaInicio + ", horaFim=" + horaFim
 				+ ", dataAula=" + dataAula + ", tipoPedido=" + tipoPedido + ", salaAtribuida=" + salaAtribuida + "]";
 	}
+	
+	public String toCSVString() {
+		return curso + ";" + uc + ";" + turno + ";" + turma + ";" + inscritos + ";" + diaSemana + ";" + horaInicio
+				+ ";" + horaFim + ";" + dataAula + ";" + tipoPedido + ";" + salaAtribuida;
+	}
 
 	public String getCurso() {
 		return curso;

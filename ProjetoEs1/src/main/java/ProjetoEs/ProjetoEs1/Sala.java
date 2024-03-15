@@ -5,7 +5,7 @@ import java.util.List;
 
 public class Sala {
 
-	private static final String[] caract = {"Anfiteatro aulas", "Apoio técnico eventos", "Arq 1", "Arq 2", "Arq 3", "Arq 4", "Arq 5", "Arq 6", "Arq 9", "BYOD (Bring Your Own Device)", "Focus Group", "Horário sala visível portal público", "Laboratório de Arquitectura de Computadores I", "Laboratório de Arquitectura de Computadores II", "Laboratório de Bases de Engenharia", "Laboratório de Electrónica", "Laboratório de Informática", "Laboratório de Jornalismo", "Laboratório de Redes de Computadores I", "Laboratório de Redes de Computadores II", "Laboratório de Telecomunicações", "Sala Aulas Mestrado", "Sala Aulas Mestrado Plus", "Sala NEE", "Sala Provas", "Sala Reunião", "Sala de Arquitectura", "Sala de Aulas normal", "Videoconferência", "Átrio"};
+	private static final String[] CARACT = {"Anfiteatro aulas", "Apoio técnico eventos", "Arq 1", "Arq 2", "Arq 3", "Arq 4", "Arq 5", "Arq 6", "Arq 9", "BYOD (Bring Your Own Device)", "Focus Group", "Horário sala visível portal público", "Laboratório de Arquitectura de Computadores I", "Laboratório de Arquitectura de Computadores II", "Laboratório de Bases de Engenharia", "Laboratório de Electrónica", "Laboratório de Informática", "Laboratório de Jornalismo", "Laboratório de Redes de Computadores I", "Laboratório de Redes de Computadores II", "Laboratório de Telecomunicações", "Sala Aulas Mestrado", "Sala Aulas Mestrado Plus", "Sala NEE", "Sala Provas", "Sala Reunião", "Sala de Arquitectura", "Sala de Aulas normal", "Videoconferência", "Átrio"};
 	
 	private String edificio;
 	private String nome;
@@ -19,6 +19,7 @@ public class Sala {
 	// caracteristicas da sala
 	private List<String> crtc;
 	
+	
 	public Sala(String[] lst) {
 		
 		this.edificio = lst[0]; this.nome = lst[1];
@@ -28,13 +29,13 @@ public class Sala {
 		this.crtc = new LinkedList<String>();
         for(int i = 0; i < lst.length - 5; i++) {
             if(lst[4 + i].equals("X"))
-            	this.crtc.add(caract[i]);
+            	this.crtc.add(CARACT[i]);
         }
 	}
 
 	public static void main(String[] args) {
 		try {
-			System.out.print(caract.length);
+			System.out.print(CARACT.length);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
