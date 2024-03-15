@@ -1,7 +1,6 @@
 package ProjetoEs.ProjetoEs1;
 import java.time.*;
 
-
 public class Entrada {
 	private String curso;
 	private String uc;
@@ -14,7 +13,7 @@ public class Entrada {
 	private LocalDate dataAula;
 	private String tipoPedido;
 	private String salaAtribuida;
-
+	private final  LocalDate debugData = LocalDate.of(1111, 11, 11);
 
 
 	public Entrada(String curso, String uc, String turno, String turma, int inscritos, String diaSemana, LocalTime horaInicio, LocalTime horaFim,
@@ -32,26 +31,13 @@ public class Entrada {
 		this.salaAtribuida = salaAtribuida;
 	}
 	
-	public Entrada(String curso, String uc, String turno, String turma, int inscritos, String diaSemana, LocalTime horaInicio, LocalTime horaFim,
-			LocalDate dataAula, String tipoPedido) {
-		this.curso = curso;
-		this.uc = uc;
-		this.turno = turno;
-		this.turma = turma;
-		this.inscritos = inscritos;
-		this.diaSemana = diaSemana;
-		this.horaInicio = horaInicio;
-		this.horaFim = horaFim;
-		this.dataAula = dataAula;
-		this.tipoPedido = tipoPedido;
-		this.salaAtribuida = "Sala Não Atribuída";
-	}
 	
 	public Boolean entradaCheck() {
-		return (this.getTurma() != "Não há turma Atribuída" && !(this.getDataAula().equals("11/11/1111")) &&
-				this.getTipoPedido() != "Não há características pedidas" &&
-				this.getSalaAtribuida() != "Não há sala atribuída");
+		return (!(this.getTurma().equals("Não há turma Atribuída") && this.getDataAula().equals(debugData) &&
+				this.getTipoPedido().equals("Não há características pedidas") &&
+				this.getSalaAtribuida().equals("Não há sala atribuída")));
 	}
+	
 
 	@Override
 	public String toString() {
