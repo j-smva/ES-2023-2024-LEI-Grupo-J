@@ -10,14 +10,28 @@ import java.util.List;
 
 public class CSVReader {
 	public static void main(String[] args) {
+		String csvFile = "C:/Users/Asus/Documents/GitHub/ES-2023-2024-LEI-Grupo-J/csv files/CaracterizaçãoDasSalas.csv";
 		//String csvFile = "C:/Users/Asus/Documents/GitHub/ES-2023-2024-LEI-Grupo-J/csv files/HorarioDeExemplo.csv"; // Specify your CSV file path here
-		String csvFile = "C:/Users/Utilizador/Documents/GitHub/ES-2023-2024-LEI-Grupo-J/csv files/HorarioDeExemplo.csv";
+		//String csvFile = "C:/Users/Utilizador/Documents/GitHub/ES-2023-2024-LEI-Grupo-J/csv files/HorarioDeExemplo.csv";
 		//String csvFile = "C:/Users/Utilizador/Desktop/Docs/uni/3ºano/ES/ES-2023-2024-LEI-Grupo-J/csv files/HorarioDeExemplo.csv";
 		int c = 0;
+		/*
 		try {
 			List<Entrada> dataList = readCSVHorario(csvFile);
 
 			for (Entrada row : dataList) {
+				c++;
+				System.out.println(row.toString());
+			}
+			System.out.println(c);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		*/
+		try {
+			List<Sala> dataList = readCSVSala(csvFile);
+
+			for (Sala row : dataList) {
 				c++;
 				System.out.println(row.toString());
 			}
@@ -51,6 +65,21 @@ public class CSVReader {
 
 		return listaEntradas;
 	}
+	
+	public static List<Sala> readCSVSala(String csvFile)throws IOException {
+		List<Sala> listaSalas = new ArrayList<>();
+		try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
+			String line;
+			line = br.readLine();
+			while ((line = br.readLine()) != null) {
+				String[] data = line.split(";", -1);
+				replaceEmptyValuesSala(data);
+				Sala s = new Sala(data);
+				listaSalas.add(s);
+			}
+		}
+		return listaSalas;
+	}
 
 
 	static DateTimeFormatter parser = DateTimeFormatter.ofPattern("H:mm:ss");
@@ -74,7 +103,15 @@ public class CSVReader {
 
 		}
 	}
-
+	public static void replaceEmptyValuesSala(String[] data) {
+		for(int i=0; i < data.length; i++) {
+			if(data[i] != null && data[i].isEmpty()) {
+				data[i]=" ";
+				
+			}
+		}
+		
+	}
 
 
 }

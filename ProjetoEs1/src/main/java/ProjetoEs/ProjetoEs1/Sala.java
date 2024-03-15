@@ -5,7 +5,7 @@ import java.util.List;
 
 public class Sala {
 
-	private final String[] caract = {"Anfiteatro aulas", "Apoio técnico eventos", "Arq 1", "Arq 2", "Arq 3", "Arq 4", "Arq 5", "Arq 6", "Arq 9", "BYOD (Bring Your Own Device)", "Focus Group", "Horário sala visível portal público", "Laboratório de Arquitectura de Computadores I", "Laboratório de Arquitectura de Computadores II", "Laboratório de Bases de Engenharia", "Laboratório de Electrónica", "Laboratório de Informática", "Laboratório de Jornalismo", "Laboratório de Redes de Computadores I", "Laboratório de Redes de Computadores II", "Laboratório de Telecomunicações", "Sala Aulas Mestrado", "Sala Aulas Mestrado Plus", "Sala NEE", "Sala Provas", "Sala Reunião", "Sala de Arquitectura", "Sala de Aulas normal", "Videoconferência", "Átrio"};
+	private static final String[] caract = {"Anfiteatro aulas", "Apoio técnico eventos", "Arq 1", "Arq 2", "Arq 3", "Arq 4", "Arq 5", "Arq 6", "Arq 9", "BYOD (Bring Your Own Device)", "Focus Group", "Horário sala visível portal público", "Laboratório de Arquitectura de Computadores I", "Laboratório de Arquitectura de Computadores II", "Laboratório de Bases de Engenharia", "Laboratório de Electrónica", "Laboratório de Informática", "Laboratório de Jornalismo", "Laboratório de Redes de Computadores I", "Laboratório de Redes de Computadores II", "Laboratório de Telecomunicações", "Sala Aulas Mestrado", "Sala Aulas Mestrado Plus", "Sala NEE", "Sala Provas", "Sala Reunião", "Sala de Arquitectura", "Sala de Aulas normal", "Videoconferência", "Átrio"};
 	
 	private String edificio;
 	private String nome;
@@ -19,25 +19,32 @@ public class Sala {
 	// caracteristicas da sala
 	private List<String> crtc;
 	
-	public Sala(String line) {
-		String[] lst = line.split(";");
+	public Sala(String[] lst) {
 		
 		this.edificio = lst[0]; this.nome = lst[1];
 		
 		this.cNormal = Integer.valueOf(lst[2]); this.cExame = Integer.valueOf(lst[3]);
 		
 		this.crtc = new LinkedList<String>();
-        for(int i = 0; i < lst.length - 4; i++) {
+        for(int i = 0; i < lst.length - 5; i++) {
             if(lst[4 + i].equals("X"))
             	this.crtc.add(caract[i]);
         }
 	}
 
 	public static void main(String[] args) {
+		try {
+			System.out.print(caract.length);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		/*
 		String a = "Edif�cio II (ISCTE-IUL);C0.08;1;0;1;;;;;;;;;;;;X;;;;;;;;;;;;;;;;;;";
 		String[] lst = a.split(";");
 		Sala s = new Sala(a);
 		System.out.print(s.toString());
+		*/
 	}
 	
 	@Override
