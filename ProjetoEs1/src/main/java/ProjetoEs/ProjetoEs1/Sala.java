@@ -1,6 +1,6 @@
 package ProjetoEs.ProjetoEs1;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Sala {
@@ -26,7 +26,7 @@ public class Sala {
 		
 		this.cNormal = Integer.valueOf(lst[2]); this.cExame = Integer.valueOf(lst[3]);
 		
-		this.crtc = new LinkedList<String>();
+		this.crtc = new ArrayList<String>();
         for(int i = 0; i < lst.length - 5; i++) {
             if(lst[4 + i].equals("X"))
             	this.crtc.add(CARACT[i]);
