@@ -9,8 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CSVReader {
-	public static void main(String[] args) {
-	}
 
 	public static List<Entrada> readCSVHorario(String fileContent){
 		List<Entrada> listaEntradas = new ArrayList<>();

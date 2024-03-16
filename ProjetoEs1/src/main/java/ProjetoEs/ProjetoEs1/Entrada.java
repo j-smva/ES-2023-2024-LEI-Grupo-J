@@ -1,6 +1,8 @@
 package ProjetoEs.ProjetoEs1;
 import java.time.*;
 
+import org.json.simple.JSONObject;
+
 public class Entrada {
 	private String curso;
 	private String uc;
@@ -50,6 +52,22 @@ public class Entrada {
 		return curso + ";" + uc + ";" + turno + ";" + turma + ";" + inscritos + ";" + diaSemana + ";" + horaInicio
 				+ ";" + horaFim + ";" + dataAula + ";" + tipoPedido + ";" + salaAtribuida;
 	}
+	public String toHTMLString() {
+			return "Curso:\"" + curso + "\"," + "Unidade Curricular:\"" + uc + "\"," + "Turno:\"" + turno + "\"," + "Turma:\"" + turma + "\"," + "Inscritos no Turno:\"" + inscritos + "\"," + "Dia da Semana:\"" + diaSemana + "\"," + "Hora início da aula:\"" + horaInicio + "\"," + "Hora fim da aula:\"" + horaFim + "\"," + "Data da aula:\"" + dataAula + "\"," + "Características da sala pedida para a aula:\"" + tipoPedido + "\"," + "Sala atribuída à aula:\"" + salaAtribuida+ "\",";
+	}
+	
+public JSONObject toJSON() {
+        
+        JSONObject entrada = new JSONObject();
+        
+        String[] datat = SaveFile.DATATYPE.split(";");
+        String[] datav = this.toCSVString().split(";");
+        
+        for(int i = 0; i != datat.length; i++)
+            entrada.put(datat[i], datav[i]);
+        
+        return entrada;
+    }
 
 	public String getCurso() {
 		return curso;
