@@ -3,6 +3,7 @@ import java.awt.Desktop;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.time.LocalDate;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -38,30 +39,25 @@ public class HTMLbuilder {
         	List<String> awd = rowsToJson();	
         for(int i=0; i!=awd.size();i++) {
         	html.append("				{id:"+i+","+awd.get(i));
-        	html.append("\r\n");
+        	html.append("},\r\n");
         }
         html.append("];\r\n");
         html.append("var table = new Tabulator(\"#example-table\", {\r\n"
+        		+ "				height:800,\r\n"
         		+ "				data:tabledata,\r\n"
-        		+ "				layout:\"fitDatafill\",\r\n"
-        		+ "				pagination:\"local\",\r\n"
-        		+ "				paginationSize:10,\r\n"
-        		+ "				paginationSizeSelector:[5, 10, 20, 40],\r\n"
-        		+ "				movableColumns:true,\r\n"
-        		+ "				paginationCounter:\"rows\",\r\n"
-        		+ "				initialSort:[{column:\"building\",dir:\"asc\"},],\r\n"
+        		+ "				layout:\"fitColumns\",\r\n"
         		+ "				columns:[\r\n"
         		+ "					{title:\"Curso\", field:\"Curso\", headerFilter:\"input\"},\r\n"
-        		+ "					{title:\"Unidade Curricular\", field:\"Unidade Curricular\", headerFilter:\"input\"},\r\n"
+        		+ "					{title:\"Unidade Curricular\", field:\"Unidade_Curricular\", headerFilter:\"input\"},\r\n"
         		+ "					{title:\"Turno\", field:\"Turno\", headerFilter:\"input\"},\r\n"
         		+ "					{title:\"Turma\", field:\"Turma\", headerFilter:\"input\"},\r\n"
-        		+ "					{title:\"Inscritos no Turno\", field:\"Inscritos no Turno\", headerFilter:\"input\"},\r\n"
-        		+ "					{title:\"Dia da Semana\", field:\"Dia da Semana\", headerFilter:\"input\"},\r\n"
-        		+ "					{title:\"Hora início da aula\", field:\"Hora início da aula\", headerFilter:\"input\"},\r\n"
-        		+ "					{title:\"Hora fim da aula\", field:\"Hora fim da aula\", headerFilter:\"input\"},\r\n"
-        		+ "					{title:\"Data da aula\", field:\"Data da aula\", headerFilter:\"input\"},\r\n"
-        		+ "					{title:\"Características da sala pedida para a aula\", field:\"Características da sala pedida para a aula\", headerFilter:\"input\"},\r\n"
-        		+ "					{title:\"Sala atribuída à aula\", field:\"Sala atribuída à aula\", headerFilter:\"input\"},\r\n"
+        		+ "					{title:\"Inscritos no Turno\", field:\"Inscritos_no_Turno\", headerFilter:\"input\"},\r\n"
+        		+ "					{title:\"Dia da Semana\", field:\"Dia_da_Semana\", headerFilter:\"input\"},\r\n"
+        		+ "					{title:\"Hora início da aula\", field:\"Hora_início_da_aula\", headerFilter:\"input\"},\r\n"
+        		+ "					{title:\"Hora fim da aula\", field:\"Hora_fim_da_aula\", headerFilter:\"input\"},\r\n"
+        		+ "					{title:\"Data da aula\", field:\"Data_da_aula\", headerFilter:\"input\"},\r\n"
+        		+ "					{title:\"Características da sala pedida para a aula\", field:\"Características_da_sala_pedida_para_a_aula\", headerFilter:\"input\"},\r\n"
+        		+ "					{title:\"Sala atribuída à aula\", field:\"Sala_atribuída_à_aula\", headerFilter:\"input\"},\r\n"
         		+ "				],\r\n"
         		+ "			});\r\n");
         html.append("</script>\n");
@@ -77,7 +73,7 @@ public class HTMLbuilder {
 			String content = ValidateFile.getFileContentRemote("https://raw.githubusercontent.com/j-smva/ES-2023-2024-LEI-Grupo-J/main/csv%20files/HorarioDeExemplo.csv");
 			List<Entrada> adw = CSVReader.readCSVHorario(content);
 			for (Entrada a : adw){
-				out.add(a.toHTMLString());
+					out.add(a.toHTMLString());
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

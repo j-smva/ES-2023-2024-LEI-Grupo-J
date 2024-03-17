@@ -53,7 +53,10 @@ public class Entrada {
 				+ ";" + horaFim + ";" + dataAula + ";" + tipoPedido + ";" + salaAtribuida;
 	}
 	public String toHTMLString() {
-			return "Curso:\"" + curso + "\"," + "Unidade Curricular:\"" + uc + "\"," + "Turno:\"" + turno + "\"," + "Turma:\"" + turma + "\"," + "Inscritos no Turno:\"" + inscritos + "\"," + "Dia da Semana:\"" + diaSemana + "\"," + "Hora início da aula:\"" + horaInicio + "\"," + "Hora fim da aula:\"" + horaFim + "\"," + "Data da aula:\"" + dataAula + "\"," + "Características da sala pedida para a aula:\"" + tipoPedido + "\"," + "Sala atribuída à aula:\"" + salaAtribuida+ "\",";
+		 if(this.getDataAula().equals(debugData)) {
+			 return "Curso:\"" + curso + "\"," + "Unidade_Curricular:\"" + uc + "\"," + "Turno:\"" + turno + "\"," + "Turma:\"" + turma + "\"," + "Inscritos_no_Turno:\"" + inscritos + "\"," + "Dia_da_Semana:\"" + diaSemana + "\"," + "Hora_início_da_aula:\"" + horaInicio + "\"," + "Hora_fim_da_aula:\"" + horaFim + "\"," + "Data_da_aula:\"" + "-" + "\"," + "Características_da_sala_pedida_para_a_aula:\"" + tipoPedido + "\"," + "Sala_atribuída_à_aula:\"" + salaAtribuida+ "\",";
+		 }
+		return "Curso:\"" + curso + "\"," + "Unidade_Curricular:\"" + uc + "\"," + "Turno:\"" + turno + "\"," + "Turma:\"" + turma + "\"," + "Inscritos_no_Turno:\"" + inscritos + "\"," + "Dia_da_Semana:\"" + diaSemana + "\"," + "Hora_início_da_aula:\"" + horaInicio + "\"," + "Hora_fim_da_aula:\"" + horaFim + "\"," + "Data_da_aula:\"" + dataAula + "\"," + "Características_da_sala_pedida_para_a_aula:\"" + tipoPedido + "\"," + "Sala_atribuída_à_aula:\"" + salaAtribuida+ "\",";
 	}
 	
 public JSONObject toJSON() {
