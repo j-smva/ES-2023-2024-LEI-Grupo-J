@@ -14,6 +14,10 @@ import javax.swing.JTextField;
 
 public class MyFrame extends JFrame implements ActionListener {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2585976276779987429L;
 	JButton FileButton;
 	JTextField textField;
     JButton ConfirmButton;
@@ -51,7 +55,7 @@ public class MyFrame extends JFrame implements ActionListener {
 				} catch (IOException e1) {
 					e1.printStackTrace();
 				}
-				CSVReader.entradasHorarioPrinter(CSVReader.readCSVHorario(content));
+				HTMLbuilder.htmlHandler(content);
 			}
 		}else if (e.getSource() == ConfirmButton) {
 			String userInput = textField.getText();
@@ -63,7 +67,7 @@ public class MyFrame extends JFrame implements ActionListener {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
-				CSVReader.entradasHorarioPrinter(CSVReader.readCSVHorario(content));
+				HTMLbuilder.htmlHandler(content);
 		}else {
 			JOptionPane.showMessageDialog(this, "Please enter a valid link", "Warning", JOptionPane.WARNING_MESSAGE);
 		}

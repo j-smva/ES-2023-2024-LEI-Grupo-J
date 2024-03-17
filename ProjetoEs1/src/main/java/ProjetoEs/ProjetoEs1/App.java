@@ -1,20 +1,6 @@
 package ProjetoEs.ProjetoEs1;
 
-import java.awt.Desktop;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.Scanner;
-
-import javax.swing.JButton;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 
 /**
  * Hello world!
@@ -29,7 +15,7 @@ public class App {
 		new MyFrame();
 	}
 
-	public static void backup(String[] args) throws IOException {
+	/*public static void backup(String[] args) throws IOException {
 		Scanner sc = new Scanner(System.in);
 
 		boolean done = false;
@@ -43,11 +29,11 @@ public class App {
 				String fileUrl = sc.nextLine();
 				if (fileUrl.startsWith("https://")) {
 					String content = ValidateFile.getFileContentRemote(fileUrl);
-					CSVReader.entradasHorarioPrinter(CSVReader.readCSVHorario(content));
+					HTMLbuilder.htmlHandler(content);
 					done = true;
 				} else {
 					String content = ValidateFile.getFileContentLocal(fileUrl);
-					CSVReader.entradasHorarioPrinter(CSVReader.readCSVHorario(content));
+					HTMLbuilder.htmlHandler(content);
 					done = true;
 				}
 			} else if (option.equals("2")) {
@@ -55,11 +41,11 @@ public class App {
 				String fileUrl = sc.nextLine();
 				if (fileUrl.startsWith("https://")) {
 					String content = ValidateFile.getFileContentRemote(fileUrl);
-					CSVReader.entradasSalaPrinter(CSVReader.readCSVSala(content));
+					HTMLbuilder.htmlHandler(content);
 					done = true;
 				} else {
 					String content = ValidateFile.getFileContentLocal(fileUrl);
-					CSVReader.entradasSalaPrinter(CSVReader.readCSVSala(content));
+					HTMLbuilder.htmlHandler(content);
 					done = true;
 				}
 			} else {
@@ -69,5 +55,5 @@ public class App {
 		}
 
 		sc.close();
-	}
+	} */
 }
