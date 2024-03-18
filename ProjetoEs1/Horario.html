@@ -1,0 +1,79 @@
+<html>
+<head>
+<link href="https://unpkg.com/tabulator-tables@4.8.4/dist/css/tabulator.min.css" rel="stylesheet">
+<script type="text/javascript" src="https://unpkg.com/tabulator-tables@4.8.4/dist/js/tabulator.min.js"></script>
+<link rel="stylesheet" href="..\ProjetoEs1\src\main\java\ProjetoEs\ProjetoEs1\Horario.css">
+</head>
+<body>
+<div id="example-table"></div>
+<script src="Horario.js"></script>
+<h2>Active Columns</h2>
+<div class="switch-container">
+<p>Curso</p>
+<label class="switch" id="Curso">
+  <input type="checkbox" onclick="table.toggleColumn('Curso')" checked>
+  <span class="slider round"></span>
+</label>
+</div><div class="switch-container">
+<p>Unidade_Curricular</p>
+<label class="switch" id="Unidade_Curricular">
+  <input type="checkbox" onclick="table.toggleColumn('Unidade_Curricular')" checked>
+  <span class="slider round"></span>
+</label>
+</div><div class="switch-container">
+<p>Turno</p>
+<label class="switch" id="Turno">
+  <input type="checkbox" onclick="table.toggleColumn('Turno')" checked>
+  <span class="slider round"></span>
+</label>
+</div><div class="switch-container">
+<p>Turma</p>
+<label class="switch" id="Turma">
+  <input type="checkbox" onclick="table.toggleColumn('Turma')" checked>
+  <span class="slider round"></span>
+</label>
+</div><div class="switch-container">
+<p>Inscritos_no_Turno</p>
+<label class="switch" id="Inscritos_no_Turno">
+  <input type="checkbox" onclick="table.toggleColumn('Inscritos_no_Turno')" checked>
+  <span class="slider round"></span>
+</label>
+</div><div class="switch-container">
+<p>Dia_da_Semana</p>
+<label class="switch" id="Dia_da_Semana">
+  <input type="checkbox" onclick="table.toggleColumn('Dia_da_Semana')" checked>
+  <span class="slider round"></span>
+</label>
+</div><div class="switch-container">
+<p>Hora_início_da_aula</p>
+<label class="switch" id="Hora_início_da_aula">
+  <input type="checkbox" onclick="table.toggleColumn('Hora_início_da_aula')" checked>
+  <span class="slider round"></span>
+</label>
+</div><div class="switch-container">
+<p>Hora_fim_da_aula</p>
+<label class="switch" id="Hora_fim_da_aula">
+  <input type="checkbox" onclick="table.toggleColumn('Hora_fim_da_aula')" checked>
+  <span class="slider round"></span>
+</label>
+</div><div class="switch-container">
+<p>Data_da_aula</p>
+<label class="switch" id="Data_da_aula">
+  <input type="checkbox" onclick="table.toggleColumn('Data_da_aula')" checked>
+  <span class="slider round"></span>
+</label>
+</div><div class="switch-container">
+<p>Características_da_sala_pedida_para_a_aula</p>
+<label class="switch" id="Características_da_sala_pedida_para_a_aula">
+  <input type="checkbox" onclick="table.toggleColumn('Características_da_sala_pedida_para_a_aula')" checked>
+  <span class="slider round"></span>
+</label>
+</div><div class="switch-container">
+<p>Sala_atribuída_à_aula</p>
+<label class="switch" id="Sala_atribuída_à_aula">
+  <input type="checkbox" onclick="table.toggleColumn('Sala_atribuída_à_aula')" checked>
+  <span class="slider round"></span>
+</label>
+</div>
+</body>
+</html>
