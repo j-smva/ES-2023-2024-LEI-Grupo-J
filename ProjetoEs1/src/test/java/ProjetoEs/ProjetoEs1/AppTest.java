@@ -21,7 +21,10 @@ public class AppTest extends TestCase {
      * @return the suite of tests being tested
      */
     public static Test suite() {
-        return new TestSuite( FileTest.class );
+    	TestSuite fileTests = new TestSuite( FileTest.class );
+    	fileTests.addTestSuite( CSVReading.class );
+    	fileTests.addTestSuite( FileCreator.class );
+        return fileTests;
     }
 
     /**

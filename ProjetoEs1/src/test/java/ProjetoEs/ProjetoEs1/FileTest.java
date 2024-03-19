@@ -3,10 +3,7 @@ package ProjetoEs.ProjetoEs1;
 import java.io.IOException;
 
 import org.junit.Test;
-
-import junit.framework.Assert;
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 
 
@@ -20,7 +17,7 @@ public class FileTest extends TestCase {
 	public final static String FILEPATH = "C:\\Users\\Utilizador\\Desktop\\Docs\\uni\\3ºano\\ES\\ES-2023-2024-LEI-Grupo-J\\csv files\\";
 	
 	
-	public Boolean checkFileValidationLocal(String filePath) {
+	private Boolean checkFileValidationLocal(String filePath) {
 		System.out.println("File Path: " + filePath);
 		
 		Boolean r;
@@ -34,7 +31,7 @@ public class FileTest extends TestCase {
 		return r;
 	}
 	
-	public Boolean checkFileValidationGit(String url) {		
+	private Boolean checkFileValidationGit(String url) {		
 		System.out.println("Url: " + url);
 		
 		Boolean r;
@@ -48,25 +45,25 @@ public class FileTest extends TestCase {
 	}
 	
 	@Test
-	public void test1() {
+	public void testGitValidationHorario() {
 		Boolean r = checkFileValidationGit(GITPATH + HORARIO);
 		assertTrue(r);
 	}
 	
 	@Test
-	public void test2() {
+	public void testGitValidationSalas() {
 		Boolean r = checkFileValidationGit(GITPATH + SALAS);
 		assertTrue(r);
 	}
 	
 	@Test
-	public void test3() {
+	public void testLocalValidation() {
 		Boolean r = checkFileValidationLocal(FILEPATH + HORARIO);
 		assertTrue(r);
 	}
 	
 	@Test
-	public void test4() {
+	public void testNoFileValidation() {
 		Boolean r = checkFileValidationLocal("Vazio");
 		assertFalse("Não foi dado nenhum ficheiro.", !r);
 	}
