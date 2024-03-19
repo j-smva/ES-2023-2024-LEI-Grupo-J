@@ -28,14 +28,34 @@ public class HTMLbuilder {
 		List<String> rowsData = rowsToJs(rows);
 		List<String> titlesTable = titleSetter(rows.get(0));
 		js.append("var tabledata = [\r\n");
-		for(int i=0; i!= rowsData.size();i++) {
+		//rowsData.size()
+		for(int i=0; i!= 10;i++) {
 			js.append("				{id:"+i+","+rowsData.get(i));
 			js.append("},\r\n");
 		}
 		js.append("];\r\n");
 		js.append("var table = new Tabulator(\"#example-table\", {\n" + "\tdata:tabledata,\n" + "\tlayout:\"fitColumns\",\n" + 
 				"\tpagination:\"local\",\n" + "\tpaginationSize:10,\n" + "\tpaginationSizeSelector:[10, 25, 50, 100, true],\n" + 
-				"\tpaginationCounter:\"rows\",\n" + "\tcolumns:[\r\n");
+				"\tpaginationCounter:\"rows\",\n" 
+				+"    rowContextMenu: [\r\n"
+				+ "        {\r\n"
+				+ "            label:\"Hide Column\",\r\n"
+				+ "            action:function(e, column){\r\n"
+				+ "                column.hide();\r\n"
+				+ "            }\r\n"
+				+ "        },\r\n"
+				+ "        {\r\n"
+				+ "            separator:true,\r\n"
+				+ "        },\r\n"
+				+ "        {\r\n"
+				+ "            disabled:true,\r\n"
+				+ "            label:\"Move Column\",\r\n"
+				+ "            action:function(e, column){\r\n"
+				+ "                column.move(\"col\");\r\n"
+				+ "            }\r\n"
+				+ "        }\r\n"
+				+ "    ],	"
+				+ "\tcolumns:[\r\n");
 		for(int i=0; i!=titlesTable.size();i++) {
 			js.append(titlesTable.get(i));
 		}
