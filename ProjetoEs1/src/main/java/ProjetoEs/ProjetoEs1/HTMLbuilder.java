@@ -26,8 +26,8 @@ public class HTMLbuilder {
         StringBuilder html = new StringBuilder();
         List<Entrada> rows = CSVReader.readCSVHorario(content);
         List<String> rowshtml = rowsToHTML(rows);
-        List<String> titleshtml = titleSetter(rows.getFirst());
-        List<String> buttons = buttonSetter(rows.getFirst());
+        List<String> titleshtml = titleSetter(rows.get(0));
+        List<String> buttons = buttonSetter(rows.get(0));
         // Generate HTML code for the table
         html.append("<html>\n");
         html.append("<head>\n");
