@@ -17,13 +17,15 @@ public class Entrada {
 	private LocalDate dataAula;
 	private String tipoPedido;
 	private String salaAtribuida;
+	private int semanaAno;
+	private int semanaSemestre;
 	private final  LocalDate debugData = LocalDate.of(1111, 11, 11);
 	private static final String[] titles = {"Curso","Unidade_Curricular","Turno","Turma","Inscritos_no_Turno","Dia_da_Semana","Hora_início_da_aula","Hora_fim_da_aula",
-			"Data_da_aula","Características_da_sala_pedida_para_a_aula","Sala_atribuída_à_aula"};
+			"Data_da_aula","Características_da_sala_pedida_para_a_aula","Sala_atribuída_à_aula", "Semana_do_Ano", "Semana_do_Semestre"};
 
-	private final static LocalDate PSEMESTRE = LocalDate.of(2022, 9, 11);
-	private final static LocalDate SSEMESTRE = LocalDate.of(2023, 2, 5);
-
+    private final static LocalDate PSEMESTRE = LocalDate.of(2022, 9, 11);
+    private final static LocalDate SSEMESTRE = LocalDate.of(2023, 2, 5);
+	
 	public Entrada(String curso, String uc, String turno, String turma, int inscritos, String diaSemana, LocalTime horaInicio, LocalTime horaFim,
 			LocalDate dataAula, String tipoPedido, String salaAtribuida) {
 		this.curso = curso;
@@ -37,9 +39,9 @@ public class Entrada {
 		this.dataAula = dataAula;
 		this.tipoPedido = tipoPedido;
 		this.salaAtribuida = salaAtribuida;
-		//this.semanaAno = calculateSemanaAno();
-
-	}
+		this.semanaAno = getWeekOfYear();
+		this.semanaSemestre = getWeekOfSemestre();
+		}
 
 
 	public Boolean entradaCheck() {
@@ -193,6 +195,16 @@ public class Entrada {
 			return SSEMESTRE.getMonthValue() - this.getWeekOfYear();
 		else
 			return PSEMESTRE.getMonthValue() - this.getWeekOfYear();
+	}
+
+
+	public int getSemanaAno() {
+		return semanaAno;
+	}
+
+
+	public int getSemanaSemestre() {
+		return semanaSemestre;
 	}
 
 }

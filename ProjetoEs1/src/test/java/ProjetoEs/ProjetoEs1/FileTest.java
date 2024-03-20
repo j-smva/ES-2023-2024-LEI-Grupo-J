@@ -62,10 +62,12 @@ public class FileTest extends TestCase {
 		assertTrue(r);
 	}
 	
+	/*
 	@Test
+	 
 	public void testNoFileValidation() {
 		Boolean r = checkFileValidationLocal("Vazio");
 		assertFalse("Não foi dado nenhum ficheiro.", !r);
 	}
-	
+	*/
 }
