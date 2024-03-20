@@ -1,6 +1,8 @@
 package ProjetoEs.ProjetoEs1;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.temporal.WeekFields;
+
 import org.json.simple.JSONObject;
 
 public class Entrada {
@@ -19,6 +21,8 @@ public class Entrada {
 	private static final String[] titles = {"Curso","Unidade_Curricular","Turno","Turma","Inscritos_no_Turno","Dia_da_Semana","Hora_início_da_aula","Hora_fim_da_aula",
 			"Data_da_aula","Características_da_sala_pedida_para_a_aula","Sala_atribuída_à_aula"};
 
+	private final static LocalDate PSEMESTRE = LocalDate.of(2022, 9, 11);
+	private final static LocalDate SSEMESTRE = LocalDate.of(2023, 2, 5);
 
 	public Entrada(String curso, String uc, String turno, String turma, int inscritos, String diaSemana, LocalTime horaInicio, LocalTime horaFim,
 			LocalDate dataAula, String tipoPedido, String salaAtribuida) {
@@ -34,7 +38,7 @@ public class Entrada {
 		this.tipoPedido = tipoPedido;
 		this.salaAtribuida = salaAtribuida;
 		//this.semanaAno = calculateSemanaAno();
-		
+
 	}
 
 
@@ -175,4 +179,20 @@ public class Entrada {
 	public String[] getTitles() {
 		return titles;
 	}
+
+	public int getWeekOfYear() {
+		return getWeekOfYear(this.dataAula);
+	}
+
+	private static int getWeekOfYear(LocalDate date) {
+		return date.get(WeekFields.ISO.weekOfWeekBasedYear());
+	}
+
+	public int getWeekOfSemestre() {
+		if (this.dataAula.getMonthValue() < 6)
+			return SSEMESTRE.getMonthValue() - this.getWeekOfYear();
+		else
+			return PSEMESTRE.getMonthValue() - this.getWeekOfYear();
+	}
+
 }

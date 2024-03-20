@@ -14,9 +14,6 @@ import javax.swing.JTextField;
 
 public class MyFrame extends JFrame implements ActionListener {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 2585976276779987429L;
 	JButton FileButton;
 	JTextField textField;
