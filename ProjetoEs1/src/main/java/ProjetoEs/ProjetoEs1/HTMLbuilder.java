@@ -29,11 +29,55 @@ public class HTMLbuilder {
 		List<String> titlesTable = titleSetter(rows.get(0));
 		js.append("var tabledata = [\r\n");
 		//rowsData.size()
-		for(int i=0; i!= 10;i++) {
+		for(int i=0; i!=rowsData.size();i++) {
 			js.append("				{id:"+i+","+rowsData.get(i));
 			js.append("},\r\n");
 		}
 		js.append("];\r\n");
+		js.append("var headerMenu = function(){\r\n"
+				+ "    var menu = [];\r\n"
+				+ "    var columns = this.getColumns();\r\n"
+				+ "\r\n"
+				+ "    for(let column of columns){\r\n"
+				+ "\r\n"
+				+ "        //create checkbox element using font awesome icons\r\n"
+				+ "        let icon = document.createElement(\"i\");\r\n"
+				+ "        icon.classList.add(\"fas\");\r\n"
+				+ "        icon.classList.add(column.isVisible() ? \"fa-check-square\" : \"fa-square\");\r\n"
+				+ "\r\n"
+				+ "        //build label\r\n"
+				+ "        let label = document.createElement(\"span\");\r\n"
+				+ "        let title = document.createElement(\"span\");\r\n"
+				+ "\r\n"
+				+ "        title.textContent = \" \" + column.getDefinition().title;\r\n"
+				+ "\r\n"
+				+ "        label.appendChild(icon);\r\n"
+				+ "        label.appendChild(title);\r\n"
+				+ "\r\n"
+				+ "        //create menu item\r\n"
+				+ "        menu.push({\r\n"
+				+ "            label:label,\r\n"
+				+ "            action:function(e){\r\n"
+				+ "                //prevent menu closing\r\n"
+				+ "                e.stopPropagation();\r\n"
+				+ "\r\n"
+				+ "                //toggle current column visibility\r\n"
+				+ "                column.toggle();\r\n"
+				+ "\r\n"
+				+ "                //change menu item icon\r\n"
+				+ "                if(column.isVisible()){\r\n"
+				+ "                    icon.classList.remove(\"fa-square\");\r\n"
+				+ "                    icon.classList.add(\"fa-check-square\");\r\n"
+				+ "                }else{\r\n"
+				+ "                    icon.classList.remove(\"fa-check-square\");\r\n"
+				+ "                    icon.classList.add(\"fa-square\");\r\n"
+				+ "                }\r\n"
+				+ "            }\r\n"
+				+ "        });\r\n"
+				+ "    }\r\n"
+				+ "\r\n"
+				+ "   return menu;\r\n"
+				+ "};");
 		js.append("var table = new Tabulator(\"#example-table\", {\n" + "\tdata:tabledata,\n" + "\tlayout:\"fitColumns\",\n" + 
 				"\tpagination:\"local\",\n" + "\tpaginationSize:10,\n" + "\tpaginationSizeSelector:[10, 25, 50, 100, true],\n" + 
 				"\tpaginationCounter:\"rows\",\n" 
@@ -61,7 +105,6 @@ public class HTMLbuilder {
 		}
 		js.append("                ],\r\n"
 				+ "            });\r\n");
-
 		return js.toString();
 	}
 
@@ -78,7 +121,7 @@ public class HTMLbuilder {
 		String [] titles = row.getTitles();
 		List<String> output = new ArrayList<>();
 		for(int i = 0; i != titles.length; i++) {
-			output.add("					{title:\""+ titles[i]+ "\", field:\""+ titles[i] +"\", headerFilter:\"input\"},\r\n");
+			output.add("					{title:\""+ titles[i]+ "\", field:\""+ titles[i] +"\", headerFilter:\"input\", headerMenu:headerMenu},\r\n");
 		}
 
 		return output;
