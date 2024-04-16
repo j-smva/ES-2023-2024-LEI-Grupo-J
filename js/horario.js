@@ -1,6 +1,9 @@
 import {TabulatorFull as Tabulator} from 'tabulator-tables';
 import { giveSemanaAno, giveSemanaSemestre } from './calcSemanas';
 
+
+//https://raw.githubusercontent.com/j-smva/ES-2023-2024-LEI-Grupo-J/main/CSVs/HorarioDeExemplo.csv
+
 var table = new Tabulator("#example-table", {
     pagination: "local",
     paginationSize: 10,
