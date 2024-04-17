@@ -15,5 +15,13 @@
   "dependencies": {
     "tabulator-tables": "^6.2.0",
     "typedoc": "^0.25.13"
-  }
+  },
+  "description": "Software Engineering - LEI @ ISCTE 2023/2024.\r  Project by:\r   - Joana Afonso, nº104817, GitHub name: Joana Afonso/j-smva;\r   - Filipe Delmotte, nº104937 , GitHub name: flipflopster;\r   - Guilherme Lopes, nº104691, GitHub name: Camarão/Shr11mp;\r   - Miguel Miranda, nº104601, GitHub name: Miguel-iscteiul;\r   - Tomás Pereira, nº104824, GitHub name: FeroWar/Trcvp;\r   - Vicente Laia, nº103961, GitHub name: Vicente/vicentelaia.",
+  "main": "index.js",
+  "directories": {
+    "test": "jest"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
 }
