@@ -1,4 +1,5 @@
 import {TabulatorFull as Tabulator} from 'tabulator-tables';
+
 import { giveSemanaAno, giveSemanaSemestre } from './calcSemanas';
 
 var table = new Tabulator("#example-table", {
@@ -233,3 +234,9 @@ function formatString(input) {
 }
 
 };
+
+module.exports ={
+    dataParse,
+    generateFilterExpression,
+    formatString,
+}
