@@ -74,7 +74,4 @@ function giveSemanaAno(date){
     return week;
 }
 
- 
-export { giveSemanaAno, giveSemanaSemestre };
-
 module.exports = {currentWeekNumber, giveSemanaAno, giveSemanaSemestre, turnToDate};

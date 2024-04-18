@@ -1,15 +1,58 @@
-const currentWeekNumber = require('./calcSemana.js');
+import { describe, test, it, expect } from "vitest";
+import { currentWeekNumber, giveSemanaAno, giveSemanaSemestre, turnToDate } from "../js/calcSemanas";
 
-const giveSemanaAno = require('./calcSemana.js');
+describe('currentWeekNumber', () => {
+    it('Should return week number 1', () => {
+        const resulta = currentWeekNumber(new Date("01-01-2024"));
 
-const giveSemanaSemestre = require('./calcSemana.js');
+        expect(resulta).toBe(1);
+    })
 
-const turnToDate = require('./calcSemana.js');
+    it('Should return week number 2', () => {
+        const resultb = currentWeekNumber(new Date("01-08-2024"));
 
+        expect(resultb).toBe(2);
+    })
 
-test("Current Week Number is Correct.", () => {
-    let week = new Date("01-01-2024");
-    print(currentWeekNumber(week));
+    it('Should not return week number 1', () => {
+        const resultc = currentWeekNumber(new Date("11-19-2024"));
 
-    expect(currentWeekNumber(week)).toBe(1);
+        expect(resultc).not.toBe(1);
+    })
+})
+
+describe('giveSemanaAno', () => {
+    it('Should return week number 1', () => {
+        const resulta = giveSemanaAno(new Date("01-01-2024"));
+
+        expect(resulta).toBe(1);
+    })
+
+})
+
+describe('turnToDate', () => {
+    it('Should return equal weeks', () => {
+        const weekstr = "01/01/2024";
+
+        expect(giveSemanaAno(weekstr)).toBe(1);
+    })
+
+})
+
+describe('giveSemanaAno', () => {
+    it('Should return week number 1', () => {
+        const weekstr = "01/01/2024";
+
+        expect(giveSemanaAno(weekstr)).toBe(1);
+    })
+
+})
+
+describe('giveSemanaSemestre', () => {
+    it('Should return week number 1', () => {
+        const resulta = giveSemanaSemestre(new Date("09-14-2024"));
+
+        expect(resulta).toBe(1);
+    })
+
 })

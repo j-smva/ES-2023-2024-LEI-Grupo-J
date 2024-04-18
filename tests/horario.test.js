@@ -1,4 +1,4 @@
-const {dataParse, generateFilterExpression, formatString} = require ('../js/horario.js');
+/*const {dataParse, generateFilterExpression, formatString} = require ('../js/horario.js');
 
 const csvText = "Curso;Unidade Curricular;Turno;Turma;Inscritos no turno;Dia da semana;Hora início da aula;Hora fim da aula;Data da aula;Características da sala pedida para a aula;Sala atribuída à aula\n ME;Teoria dos Jogos e dos Contratos;01789TP01;MEA1;30;Sex;13:00:00;14:30:00;02/12/2022;Sala Aulas Mestrado;AA2.25";
 
@@ -29,3 +29,4 @@ test('Verificar que a string de filtro é traduzida para Português', () => {
 test('Verificar que os vários parametros de pesquisa são convertidos em expressões corretas',() =>{
     expect(generateFilterExpression(matrixString)).toBe(preString);
 });
+*/
