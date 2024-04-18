@@ -1,20 +1,6 @@
 import { describe, test, it, expect } from "vitest";
-import {TabulatorFull as Tabulator} from 'tabulator-tables';
 import { dataParse, } from "../js/horario";
 
-
-const matrixString = `[
-    {field:"Curso", type:"=", value:ME},
-    {field:"Turma", type:"=", value:MEA1}
-],
-[
-    {field:"Curso", type:">", value:ME}
-]`;
-
-
-const preString = '((data["Curso"] == "ME" && data["Turma"] == "MEA1") || (data["Curso"] > "ME"))';
-
-const postString = 'Curso é "ME" e Turma é "MEA1" ou Curso é "ME"'
 
 describe('dateParse', () => {
     it('Should divide CSV correctly.', () => {
@@ -25,14 +11,28 @@ describe('dateParse', () => {
     })
 })
 
-test('Verificar que a informação do CSV é dividida corretamente', () => {
-    expect(dataParse(csvText)).toBe(expectedOutput);
-});
+describe('dateParse', () => {
+    it('Verificar que a string de filtro é traduzida para Português', () => {
+        const preString = '((data["Curso"] == "ME" && data["Turma"] == "MEA1") || (data["Curso"] > "ME"))';
 
-test('Verificar que a string de filtro é traduzida para Português', () => {
-    expect(formatString(preString)).toBe(postString);
-});
+        const postString = 'Curso é "ME" e Turma é "MEA1" ou Curso é "ME"'
 
-test('Verificar que os vários parametros de pesquisa são convertidos em expressões corretas',() =>{
-    expect(generateFilterExpression(matrixString)).toBe(preString);
-});
+        expect(formatString(preString)).toBe(postString);
+    });
+})
+
+describe('dateParse', () => {
+    it('Verificar que os vários parametros de pesquisa são convertidos em expressões corretas',() => {
+        const matrixString = `[
+            {field:"Curso", type:"=", value:ME},
+            {field:"Turma", type:"=", value:MEA1}
+        ],
+        [
+            {field:"Curso", type:">", value:ME}
+        ]`;
+
+        const preString = '((data["Curso"] == "ME" && data["Turma"] == "MEA1") || (data["Curso"] > "ME"))';
+
+        expect(generateFilterExpression(matrixString)).toBe(preString);
+    });
+})
