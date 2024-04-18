@@ -10,18 +10,22 @@
     "test": "jest"
   },
   "devDependencies": {
+    "@babel/core": "^7.24.4",
+    "@babel/preset-env": "^7.24.4",
+    "@babel/preset-typescript": "^7.24.1",
+    "babel-jest": "^29.7.0",
+    "jest": "^29.7.0",
     "typescript": "^5.2.2",
     "vite": "^5.2.0"
   },
   "dependencies": {
-    "jest": "^29.7.0",
     "tabulator-tables": "^6.2.0",
     "typedoc": "^0.25.13"
   },
   "description": "Software Engineering - LEI @ ISCTE 2023/2024.\r  Project by:\r   - Joana Afonso, nº104817, GitHub name: Joana Afonso/j-smva;\r   - Filipe Delmotte, nº104937 , GitHub name: flipflopster;\r   - Guilherme Lopes, nº104691, GitHub name: Camarão/Shr11mp;\r   - Miguel Miranda, nº104601, GitHub name: Miguel-iscteiul;\r   - Tomás Pereira, nº104824, GitHub name: FeroWar/Trcvp;\r   - Vicente Laia, nº103961, GitHub name: Vicente/vicentelaia.",
   "main": "index.js",
   "directories": {
-    "test": "jest"
+    "test": "jest --coverage"
   },
   "keywords": [],
   "author": "",
