@@ -235,8 +235,4 @@ function formatString(input) {
 
 };
 
-module.exports ={
-    dataParse,
-    generateFilterExpression,
-    formatString,
-}
+module.exports ={dataParse, generateFilterExpression, createTable, formatString, customFilter, generateFilterExpression, gitHubCSV}

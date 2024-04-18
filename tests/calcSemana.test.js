@@ -1,4 +1,4 @@
-import { describe, test, it, expect } from "vitest";
+import { describe, it, expect } from "vitest";
 import { currentWeekNumber, giveSemanaAno, giveSemanaSemestre, turnToDate } from "../js/calcSemanas";
 
 describe('currentWeekNumber', () => {
