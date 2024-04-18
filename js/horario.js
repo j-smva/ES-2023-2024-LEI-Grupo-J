@@ -1,6 +1,6 @@
 import {TabulatorFull as Tabulator} from 'tabulator-tables';
-import { giveSemanaAno, giveSemanaSemestre } from './calcSemanas';
-
+import { generateFilterExpression, customFilter, formatString } from './filters';
+import {dataParseHorario, dataParseSalas} from './utils';
 
 //https://raw.githubusercontent.com/j-smva/ES-2023-2024-LEI-Grupo-J/main/CSVs/HorarioDeExemplo.csv
 
@@ -16,7 +16,10 @@ var tablefinal = null;
 document.addEventListener('DOMContentLoaded', function () {
     const githubButton = document.getElementById('githubButton');
     const localButton = document.getElementById('localButton');
-    githubButton.addEventListener('click', gitHubCSV);
+    const githubButtonSalas = document.getElementById('githubButtonSalas');
+    const localButtonSalas = document.getElementById('localButtonSalas');
+    githubButtonSalas.addEventListener('click',gitHubCSVSalas);
+    githubButton.addEventListener('click', gitHubCSVHorario);
     localButton.addEventListener('change', function(event) {
         // Get the selected file(s)
         const file = event.target.files[0];
@@ -33,9 +36,41 @@ document.addEventListener('DOMContentLoaded', function () {
                     // event.target.result contains the contents of the file
                     const fileContent = event.target.result;
                     // Here you can process the CSV contents as needed
-                    var tabledata = dataParse(fileContent);
+                    var tabledata = dataParseHorario(fileContent);
                     //console.log(tabledata);
-                    createTable(tabledata);
+                    createTableHorario(tabledata);
+                };
+
+                // Read the contents of the selected file as text
+                reader.readAsText(file);
+            } else {
+                // Selected file is not a CSV file, display an error message
+                console.error('Please select a CSV file.');
+            }
+        } else {
+            // No file selected, display an error message
+            console.error('No file selected.');
+        }
+    });
+    localButtonSalas.addEventListener('change', function(event) {
+        // Get the selected file(s)
+        const file = event.target.files[0];
+
+        // Check if a file was selected
+        if (file) {
+            // Check if the selected file is a CSV file
+            if (file.type === 'text/csv') {
+                // Create a FileReader object
+                const reader = new FileReader();
+
+                // Set up event listener for when file reading is finished
+                reader.onload = function(event) {
+                    // event.target.result contains the contents of the file
+                    const fileContent = event.target.result;
+                    // Here you can process the CSV contents as needed
+                    var tabledata = dataParseSalas(fileContent);
+                    //console.log(tabledata);
+                    createTableSalas(tabledata);
                 };
 
                 // Read the contents of the selected file as text
@@ -52,98 +87,41 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 
-function gitHubCSV() {
+function gitHubCSVHorario() {
     const githubLink = document.getElementById('githubLink').value;
 
     fetch(githubLink)
         .then(response => response.text())
         .then(csvData => {
-            var tabledata = dataParse(csvData);
+            var tabledata = dataParseHorario(csvData);
             //console.log(tabledata);
-            createTable(tabledata);
+            createTableHorario(tabledata);
         })
         .catch(error => {
             console.error('Error fetching CSV data:', error);
         });
-}
+};
 
+function gitHubCSVSalas(){
+    const githubLink = document.getElementById('githubLinkSalas').value;
+    fetch(githubLink)
+        .then(response => response.text())
+        .then(csvDataSalas => {
+            var tabledata = dataParseSalas(csvDataSalas);
+            //console.log(tabledata);
+            createTableSalas(tabledata);
 
-function dataParse(csvData){ //experimentar switch case mais tarde
-    const lines = csvData.split('\n');
-    const headers = lines[0].split(';');
-    headers.push("Semana do Ano", "Semana do Semestre");
-    const jsonArray = [];
-    for(let i = 1; i < lines.length; i++){
-        const values = lines[i].split(';');
-        const jsonObj = {};
-        for(let j = 0; j < headers.length - 2; j++){
-            if(headers[j].includes("Data")){
-                jsonObj[headers[j]] = values[j];
-                const semanaAno = giveSemanaAno(values[j]);
-                const semanaSemestre = giveSemanaSemestre(values[j]);
-                jsonObj[headers[headers.length - 2]] = semanaAno;
-                jsonObj[headers[headers.length - 1]] = semanaSemestre;
-            } else if(headers[j].includes("atribuída")){
-                values[j] = values[j].replace(/\r/g, '');
-                headers[j] = headers[j].replace(/\r/g, '');
-                jsonObj[headers[j]] = values[j];
-            } else {
-                jsonObj[headers[j]] = values[j];
-            }
-        }
-        jsonArray.push(jsonObj);
-    }
-    return JSON.stringify(jsonArray);
-
-}
+        })
+        .catch(error => {
+            console.error('Error fetching CSV data:', error);
+        });
+};
 
 
 
-function createTable(tabledata){
-    var headerMenu = function(){
-        var menu = [];
-        var columns = this.getColumns();
-    
-        for(let column of columns){
-    
-            //create checkbox element using font awesome icons
-            let icon = document.createElement("i");
-            icon.classList.add("fas");
-            icon.classList.add(column.isVisible() ? "fa-check-square" : "fa-square");
-    
-            //build label
-            let label = document.createElement("span");
-            let title = document.createElement("span");
-    
-            title.textContent = " " + column.getDefinition().title;
-    
-            label.appendChild(icon);
-            label.appendChild(title);
-    
-            //create menu item
-            menu.push({
-                label:label,
-                action:function(e){
-                    //prevent menu closing
-                    e.stopPropagation();
-    
-                    //toggle current column visibility
-                    column.toggle();
-    
-                    //change menu item icon
-                    if(column.isVisible()){
-                        icon.classList.remove("fa-square");
-                        icon.classList.add("fa-check-square");
-                    }else{
-                        icon.classList.remove("fa-check-square");
-                        icon.classList.add("fa-square");
-                    }
-                }
-            });
-        }
-    
-       return menu;
-    }
+
+function createTableHorario(tabledata){
+
 
     var tablefinal = new Tabulator("#example-table", {
         layout: "fitColumns",
@@ -180,6 +158,7 @@ function createTable(tabledata){
         const cur_filter = document.getElementById('cur_filter');
 
         ResetFilter.addEventListener('click', function(){
+            cur_filter.innerText = "";
             tablefinal.clearHeaderFilter();
             tablefinal.clearFilter();
             counter = 0;
@@ -193,46 +172,136 @@ function createTable(tabledata){
             counter++;
             tablefinal.clearHeaderFilter();
             tablefinal.clearFilter();
+            cur_filter.innerText =formatString(generateFilterExpression(filterMatrix));
             tablefinal.setFilter(customFilter,generateFilterExpression(filterMatrix));
         })
     }); 
 
-function generateFilterExpression(dataArray) {
-    let expression = "(";
-    for (let i = 0; i < dataArray.length; i++) {
-        let subArray = dataArray[i];
-        expression += "(";
-        for (let j = 0; j < subArray.length; j++) {
-            let filterObject = subArray[j];
-            expression += `data["${filterObject.field}"] ${filterObject.type} "${filterObject.value}"`;
-            if (j < subArray.length - 1) {
-                expression += " && ";
+};
+
+function createTableSalas(tabledata){
+    var tablefinal = new Tabulator("#example-table", {
+        layout: "fitData",
+        data:tabledata,
+        pagination: "local",
+        paginationSize: 10,
+        paginationSizeSelector: [5, 10, 20, 40],
+        movableColumns: false,
+        //autoColumns:true,
+        paginationCounter: "rows",
+        footerElement:"<button id='ORtoggle'>OR Filter Toggle</button><button id='ResetFilter'>Reset Filters</button>",
+        columns:[
+            {title:"Edifício", field:"Edifício", headerFilter:"input", headerMenu:headerMenu},
+            {title:"Nome sala", field:"Nome sala", headerFilter:"input", headerMenu:headerMenu},
+            {title:"Capacidade Normal", field:"Capacidade Normal", headerFilter:"input", headerMenu:headerMenu},
+            {title:"Capacidade Exame", field:"Capacidade Exame", headerFilter:"input", headerMenu:headerMenu},
+            {title:"Nº características", field:"Nº características", headerFilter:"input", headerMenu:headerMenu},
+            {title:"Anfiteatro aulas", field:"Anfiteatro aulas", headerFilter:"input", headerMenu:headerMenu},
+            {title:"Apoio técnico eventos", field:"Apoio técnico eventos", headerFilter:"input", headerMenu:headerMenu},
+            {title:"Arq 1", field:"Arq 1", headerFilter:"input", headerMenu:headerMenu},
+            {title:"Arq 2", field:"Arq 2", headerFilter:"input", headerMenu:headerMenu},
+            {title:"Arq 3", field:"Arq 3", headerFilter:"input", headerMenu:headerMenu},
+            {title:"Arq 4", field:"Arq 4", headerFilter:"input", headerMenu:headerMenu},
+            {title:"Arq 5", field:"Arq 5", headerFilter:"input", headerMenu:headerMenu},
+            {title:"Arq 6", field:"Arq 6", headerFilter:"input", headerMenu:headerMenu},
+            {title:"Arq 9", field:"Arq 9", headerFilter:"input", headerMenu:headerMenu},
+            {title:"BYOD (Bring Your Own Device)", field:"BYOD (Bring Your Own Device)", headerFilter:"input", headerMenu:headerMenu},
+            {title:"Focus Group", field:"Focus Group", headerFilter:"input", headerMenu:headerMenu},
+            {title:"Horário sala visível portal público", field:"Horário sala visível portal público", headerFilter:"input", headerMenu:headerMenu},
+            {title:"Laboratório de Arquitectura de Computadores I", field:"Laboratório de Arquitectura de Computadores I", headerFilter:"input", headerMenu:headerMenu},
+            {title:"Laboratório de Arquitectura de Computadores II", field:"Laboratório de Arquitectura de Computadores II", headerFilter:"input", headerMenu:headerMenu},
+            {title:"Laboratório de Bases de Engenharia", field:"Laboratório de Bases de Engenharia", headerFilter:"input", headerMenu:headerMenu},
+            {title:"Laboratório de Electrónica", field:"Laboratório de Electrónica", headerFilter:"input", headerMenu:headerMenu},
+            {title:"Laboratório de Informática", field:"Laboratório de Informática", headerFilter:"input", headerMenu:headerMenu},
+            {title:"Laboratório de Jornalismo", field:"Laboratório de Jornalismo", headerFilter:"input", headerMenu:headerMenu},
+            {title:"Laboratório de Redes de Computadores I", field:"Laboratório de Redes de Computadores I", headerFilter:"input", headerMenu:headerMenu},
+            {title:"Laboratório de Redes de Computadores II", field:"Laboratório de Redes de Computadores II", headerFilter:"input", headerMenu:headerMenu},
+            {title:"Laboratório de Telecomunicações", field:"Laboratório de Telecomunicações", headerFilter:"input", headerMenu:headerMenu},
+            {title:"Sala Aulas Mestrado", field:"Sala Aulas Mestrado", headerFilter:"input", headerMenu:headerMenu},
+            {title:"Sala Aulas Mestrado Plus", field:"Sala Aulas Mestrado Plus", headerFilter:"input", headerMenu:headerMenu},
+            {title:"Sala NEE", field:"Sala NEE", headerFilter:"input", headerMenu:headerMenu},
+            {title:"Sala Provas", field:"Sala Provas", headerFilter:"input", headerMenu:headerMenu},
+            {title:"Sala Reunião", field:"Sala Reunião", headerFilter:"input", headerMenu:headerMenu},
+            {title:"Sala de Arquitectura", field:"Sala de Arquitectura", headerFilter:"input", headerMenu:headerMenu},
+            {title:"Videoconferência", field:"videoconferência", headerFilter:"input", headerMenu:headerMenu},
+            {title:"Átrio", field:"átrio", headerFilter:"input", headerMenu:headerMenu},
+        ],
+    });
+    var filterMatrix = [];
+    var counter = 0;
+
+    tablefinal.on("tableBuilt",function(){
+        const ORtoggle = document.getElementById('ORtoggle');
+        const ResetFilter = document.getElementById('ResetFilter');
+        const cur_filter = document.getElementById('cur_filter');
+
+        ResetFilter.addEventListener('click', function(){
+            cur_filter.innerText = "";
+            tablefinal.clearHeaderFilter();
+            tablefinal.clearFilter();
+            counter = 0;
+            filterMatrix = [];
+        })
+
+        ORtoggle.addEventListener('click',function(){
+            var headerFilters = tablefinal.getHeaderFilters();
+            console.log(headerFilters);
+            if(headerFilters === null){
+                return;
             }
-        }
-        expression += ")";
-        if (i < dataArray.length - 1) {
-            expression += " || ";
-        }
+            filterMatrix[counter]=[];
+            filterMatrix[counter]=headerFilters;
+            counter++;
+            tablefinal.clearHeaderFilter();
+            tablefinal.clearFilter();
+            cur_filter.innerText =formatString(generateFilterExpression(filterMatrix));
+            tablefinal.setFilter(customFilter,generateFilterExpression(filterMatrix));
+        })
+    }); 
+
+};
+
+var headerMenu = function(){
+    var menu = [];
+    var columns = this.getColumns();
+
+    for(let column of columns){
+
+        //create checkbox element using font awesome icons
+        let icon = document.createElement("i");
+        icon.classList.add("fas");
+        icon.classList.add(column.isVisible() ? "fa-check-square" : "fa-square");
+
+        //build label
+        let label = document.createElement("span");
+        let title = document.createElement("span");
+
+        title.textContent = " " + column.getDefinition().title;
+
+        label.appendChild(icon);
+        label.appendChild(title);
+
+        //create menu item
+        menu.push({
+            label:label,
+            action:function(e){
+                //prevent menu closing
+                e.stopPropagation();
+
+                //toggle current column visibility
+                column.toggle();
+
+                //change menu item icon
+                if(column.isVisible()){
+                    icon.classList.remove("fa-square");
+                    icon.classList.add("fa-check-square");
+                }else{
+                    icon.classList.remove("fa-check-square");
+                    icon.classList.add("fa-square");
+                }
+            }
+        });
     }
-    expression += ")";
-    return expression.replace(/like/g, "==");
-}
 
-function customFilter(data,str){
-    cur_filter.innerText =formatString(str);
-    return eval(str);
-}
-
-function formatString(input) {
-    let formattedString = input.replace(/\(/, ''); // Remove the first opening parenthesis
-    formattedString = formattedString.replace(/\)$/, ''); // Remove the last closing parenthesis
-    formattedString = formattedString.replace(/==/g, ' é '); // Replace "==" with " é "
-    formattedString = formattedString.replace(/data\["/g, ''); // Remove "data["
-    formattedString = formattedString.replace(/"\] /g, ''); // Remove "] "
-    formattedString = formattedString.replace(/&&/g, ' e '); // Replace "&&" with " e "
-    formattedString = formattedString.replace(/\|\|/g, ' ou '); // Replace "||" with " ou "
-    
-    return formattedString;
-}
-
+   return menu;
 };
