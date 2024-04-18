@@ -1,5 +1,5 @@
 import { describe, test, it, expect } from "vitest";
-import { dataParse, } from "../js/horario";
+import { dataParse, formatString, generateFilterExpression} from "../js/horario";
 
 
 describe('dateParse', () => {

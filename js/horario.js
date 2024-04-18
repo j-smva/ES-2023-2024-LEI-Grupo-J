@@ -1,4 +1,4 @@
-import {TabulatorFull as Tabulator} from 'tabulator-tables';
+import {Tabulator} from 'tabulator-tables';
 
 import { giveSemanaAno, giveSemanaSemestre } from './calcSemanas';
 
@@ -235,4 +235,4 @@ function formatString(input) {
 
 };
 
-module.exports ={dataParse, generateFilterExpression, createTable, formatString, customFilter, generateFilterExpression, gitHubCSV}
+export {dataParse, generateFilterExpression, formatString, customFilter, generateFilterExpression};
