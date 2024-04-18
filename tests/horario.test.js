@@ -18,6 +18,26 @@ const expectedOutput = [
   }
 ];
 
+const matrixString = `[
+    {field:"Curso", type:"=", value:ME},
+    {field:"Turma", type:"=", value:MEA1}
+],
+[
+    {field:"Curso", type:">", value:ME}
+]`;
+
+const preString = '((data["Curso"] == "ME" && data["Turma"] == "MEA1") || (data["Curso"] > "ME"))';
+
+const postString = 'Curso é "ME" e Turma é "MEA1" ou Curso é "ME"'
+
 test('Verificar que a informação do CSV é dividida corretamente', () => {
-    expect(dataParse(csvText)).toEqual(expectedOutput);
+    expect(dataParse(csvText)).toBe(expectedOutput);
+});
+
+test('Verificar que a string de filtro é traduzida para Português', () => {
+    expect(formatString(preString)).toBe(postString);
+});
+
+test('Verificar que os vários parametros de pesquisa são convertidos em expressões corretas',() =>{
+    expect(generateFilterExpression(matrixString)).toBe(preString);
 });
