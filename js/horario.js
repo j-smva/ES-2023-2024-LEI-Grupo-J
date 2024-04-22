@@ -11,7 +11,12 @@ var table = new Tabulator("#example-table", {
     paginationCounter: "rows",
     placeholder:"Awaiting Data, Please Load File",
 });
-var tablefinal = null;
+
+var tablefinal;
+var headerFilters;
+var filterMatrix = [];
+var counter = 0;
+var cur_filter;
 
 document.addEventListener('DOMContentLoaded', function () {
     const githubButton = document.getElementById('githubButton');
@@ -122,8 +127,7 @@ function gitHubCSVSalas(){
 
 function createTableHorario(tabledata){
 
-
-    var tablefinal = new Tabulator("#example-table", {
+    tablefinal = new Tabulator("#example-table", {
         layout: "fitColumns",
         data:tabledata,
         pagination: "local",
@@ -148,50 +152,13 @@ function createTableHorario(tabledata){
             {title:"Semana do Semestre", field:"Semana do Semestre", headerFilter:"input", headerMenu:headerMenu},
         ],
     });
+    tablefinal.on("tableBuilt", addEventListeners);  
+}
 
-    var filterMatrix = [];
-    var counter = 0;
-
-    tablefinal.on("tableBuilt",function(){
-        const ORtoggle = document.getElementById('ORtoggle');
-        const ResetFilter = document.getElementById('ResetFilter');
-        const cur_filter = document.getElementById('cur_filter');
-        const CSV = document.getElementById('CSV');
-        const JSON = document.getElementById('JSON');
-
-        ResetFilter.addEventListener('click', function(){
-            cur_filter.innerText = "";
-            tablefinal.clearHeaderFilter();
-            tablefinal.clearFilter();
-            counter = 0;
-            filterMatrix = [];
-        })
-
-        ORtoggle.addEventListener('click',function(){
-            var headerFilters = tablefinal.getHeaderFilters();
-            if(headerFilters.length==0)return;
-            filterMatrix[counter]=[];
-            filterMatrix[counter]=headerFilters;
-            counter++;
-            tablefinal.clearHeaderFilter();
-            tablefinal.clearFilter();
-            cur_filter.innerText =formatString(generateFilterExpression(filterMatrix));
-            tablefinal.setFilter(customFilter,generateFilterExpression(filterMatrix));
-        })
-
-        CSV.addEventListener('click', function(){
-            tablefinal.download("csv", "table.csv");
-        })
-
-        JSON.addEventListener('click', function(){
-            tablefinal.download("json", "table.json");
-        })
-    }); 
-
-};
 
 function createTableSalas(tabledata){
-    var tablefinal = new Tabulator("#example-table", {
+    
+    tablefinal = new Tabulator("#example-table", {
         layout: "fitData",
         data:tabledata,
         pagination: "local",
@@ -238,46 +205,68 @@ function createTableSalas(tabledata){
             {title:"Átrio", field:"átrio", headerFilter:"input", headerMenu:headerMenu},
         ],
     });
-    var filterMatrix = [];
-    var counter = 0;
 
-    tablefinal.on("tableBuilt",function(){
-        const ORtoggle = document.getElementById('ORtoggle');
-        const ResetFilter = document.getElementById('ResetFilter');
-        const cur_filter = document.getElementById('cur_filter');
-        const CSV = document.getElementById('CSV');
-        const JSON = document.getElementById('JSON');
-
-        ResetFilter.addEventListener('click', function(){
-            cur_filter.innerText = "";
-            tablefinal.clearHeaderFilter();
-            tablefinal.clearFilter();
-            counter = 0;
-            filterMatrix = [];
-        })
-
-        ORtoggle.addEventListener('click',function(){
-            var headerFilters = tablefinal.getHeaderFilters();
-            if(headerFilters.length==0)return;
-            filterMatrix[counter]=[];
-            filterMatrix[counter]=headerFilters;
-            counter++;
-            tablefinal.clearHeaderFilter();
-            tablefinal.clearFilter();
-            cur_filter.innerText =formatString(generateFilterExpression(filterMatrix));
-            tablefinal.setFilter(customFilter,generateFilterExpression(filterMatrix));
-        })
-    
-        CSV.addEventListener('click', function(){
-            tablefinal.download("csv", "table.csv");
-        })
-
-        JSON.addEventListener('click', function(){
-            tablefinal.download("json", "table.json");
-        })
-    }); 
+    tablefinal.on("tableBuilt", addEventListeners);  
 
 };
+
+function addEventListeners() {
+    const ORtoggle = document.getElementById('ORtoggle');
+    const ResetFilter = document.getElementById('ResetFilter');
+    cur_filter = document.getElementById('cur_filter');
+    const CSV = document.getElementById('CSV');
+    const JSON = document.getElementById('JSON');
+
+    ResetFilter.removeEventListener('click', resetFilters);
+    ORtoggle.removeEventListener('click', toggleFilter);
+    CSV.removeEventListener('click', downloadCSV);
+    JSON.removeEventListener('click', downloadJSON);
+
+    ResetFilter.addEventListener('click', resetFilters);
+    ORtoggle.addEventListener('click', toggleFilter);
+    CSV.addEventListener('click', downloadCSV);
+    JSON.addEventListener('click', downloadJSON);
+}
+
+
+
+function resetFilters() {
+    if (tablefinal) {
+        cur_filter.innerText = "";
+        tablefinal.clearHeaderFilter();
+        tablefinal.clearFilter();
+        counter = 0;
+        filterMatrix = [];
+    }
+}
+
+function toggleFilter() {
+    if (tablefinal) {
+        headerFilters = tablefinal.getHeaderFilters();
+        if (headerFilters.length == 0) return;
+        filterMatrix[counter] = [];
+        filterMatrix[counter] = headerFilters;
+        counter++;
+        tablefinal.clearHeaderFilter();
+        tablefinal.clearFilter();
+        cur_filter.innerText = formatString(generateFilterExpression(filterMatrix));
+        tablefinal.setFilter(customFilter, generateFilterExpression(filterMatrix));
+    }
+}
+
+function downloadCSV() {
+    if (tablefinal) {
+        //console.log("1");
+        tablefinal.download("csv", "table.csv");
+    }
+}
+
+function downloadJSON() {
+    if (tablefinal) {
+        //console.log("2");
+        tablefinal.download("json", "table.json");
+    }
+}
 
 var headerMenu = function(){
     var menu = [];
