@@ -30,6 +30,20 @@ h1{
 h2{
     font-size:17px;
 }
+button{
+    background-color: #dee7f3;
+    border-radius: 5px;
+    border-color:#c3d8f3;
+    border-style: solid;
+}
+input{
+    background-color: #dee7f3;
+    border-radius: 5px;
+    border-color: #c3d8f3;
+    margin:2px;
+    border-style: solid;
+}
+
 .container{
     height: auto;
     width:100%;
@@ -45,6 +59,10 @@ h2{
     box-sizing:border-box;
     position:relative;
 }
+.button-container {
+    display: flex;
+    flex-direction: column;
+  }
 #box{
     background-color: #ffffffb0;
     border-radius: 10px;
@@ -433,10 +451,10 @@ input:checked + .slider:before {
     min-height:100%
 }
 .tabulator .tabulator-tableholder .tabulator-placeholder .tabulator-placeholder-contents{
-    color:#ccc;
+    color:white;
     display:inline-block;
     font-size:20px;
-    font-weight:700;
+    font-weight:600;
     padding:10px;
     text-align:center;
     white-space:normal
@@ -572,8 +590,8 @@ input:checked + .slider:before {
     margin:0 7px
 }
 .tabulator .tabulator-footer .tabulator-page{
-    background:#ebf4ff;
-    border:1px solid #aaa;
+    background:#d2e2f5;
+    border:1px solid #c3d8f3;
     border-radius:3px;
     display:inline-block;
     margin:0 2px;

@@ -13,12 +13,7 @@
   <body>
     <div class="container">
       <h1>HORÁRIO LETIVO</h1>
-      <input type="file" id="localButton" accept=".csv">
-      <input type="text" id="githubLink" placeholder="Enter GitHub Raw Link" value="https://raw.githubusercontent.com/j-smva/ES-2023-2024-LEI-Grupo-J/main/CSVs/HorarioDeExemplo.csv">
-      <button id="githubButton">Fetch and Process CSV</button>
-    </div>
-<button id='CSV'>Download CSV</button>
-<button id='JSON'>Download JSON</button>  
+    </div>  
   <div id="example-table">
     <script type="module" src="js\horario.js"></script>
   </div>
@@ -26,10 +21,19 @@
   <!--div id="table-salas"-->
     <!--script type="module" src="js\salas.js"></script-->
   <!--/div-->
-  <div>
+  <div class="button-container">
+    <div class="normal">
+    <input type="file" id="localButton" accept=".csv">
+    <input type="text" id="githubLink" placeholder="Enter GitHub Raw Link" value="https://raw.githubusercontent.com/j-smva/ES-2023-2024-LEI-Grupo-J/main/CSVs/HorarioDeExemplo.csv">
+    <button id="githubButton">Fetch and Process CSV</button>
+  </div>
+  <div class="salas">
     <input type="file" id="localButtonSalas" accept=".csv">
     <input type="text" id="githubLinkSalas" placeholder="Enter GitHub Raw Link - salas" value="https://raw.githubusercontent.com/j-smva/ES-2023-2024-LEI-Grupo-J/main/CSVs/CaracterizaçãoDasSalas.csv">
     <button id="githubButtonSalas">Fetch and Process CSV - salas</button>
   </div>
+  </div>
+  <button id='CSV'>Download CSV</button>
+<button id='JSON'>Download JSON</button>
   </body>
 </html>
