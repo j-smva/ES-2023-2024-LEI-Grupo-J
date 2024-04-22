@@ -156,6 +156,8 @@ function createTableHorario(tabledata){
         const ORtoggle = document.getElementById('ORtoggle');
         const ResetFilter = document.getElementById('ResetFilter');
         const cur_filter = document.getElementById('cur_filter');
+        const CSV = document.getElementById('CSV');
+        const JSON = document.getElementById('JSON');
 
         ResetFilter.addEventListener('click', function(){
             cur_filter.innerText = "";
@@ -167,6 +169,7 @@ function createTableHorario(tabledata){
 
         ORtoggle.addEventListener('click',function(){
             var headerFilters = tablefinal.getHeaderFilters();
+            if(headerFilters.length==0)return;
             filterMatrix[counter]=[];
             filterMatrix[counter]=headerFilters;
             counter++;
@@ -174,6 +177,14 @@ function createTableHorario(tabledata){
             tablefinal.clearFilter();
             cur_filter.innerText =formatString(generateFilterExpression(filterMatrix));
             tablefinal.setFilter(customFilter,generateFilterExpression(filterMatrix));
+        })
+
+        CSV.addEventListener('click', function(){
+            tablefinal.download("csv", "table.csv");
+        })
+
+        JSON.addEventListener('click', function(){
+            tablefinal.download("json", "table.json");
         })
     }); 
 
@@ -234,6 +245,8 @@ function createTableSalas(tabledata){
         const ORtoggle = document.getElementById('ORtoggle');
         const ResetFilter = document.getElementById('ResetFilter');
         const cur_filter = document.getElementById('cur_filter');
+        const CSV = document.getElementById('CSV');
+        const JSON = document.getElementById('JSON');
 
         ResetFilter.addEventListener('click', function(){
             cur_filter.innerText = "";
@@ -245,10 +258,7 @@ function createTableSalas(tabledata){
 
         ORtoggle.addEventListener('click',function(){
             var headerFilters = tablefinal.getHeaderFilters();
-            console.log(headerFilters);
-            if(headerFilters === null){
-                return;
-            }
+            if(headerFilters.length==0)return;
             filterMatrix[counter]=[];
             filterMatrix[counter]=headerFilters;
             counter++;
@@ -256,6 +266,14 @@ function createTableSalas(tabledata){
             tablefinal.clearFilter();
             cur_filter.innerText =formatString(generateFilterExpression(filterMatrix));
             tablefinal.setFilter(customFilter,generateFilterExpression(filterMatrix));
+        })
+    
+        CSV.addEventListener('click', function(){
+            tablefinal.download("csv", "table.csv");
+        })
+
+        JSON.addEventListener('click', function(){
+            tablefinal.download("json", "table.json");
         })
     }); 
 
