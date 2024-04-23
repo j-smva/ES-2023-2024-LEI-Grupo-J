@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/307</span>
+                <span class='fraction'>0/314</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/307</span>
+                <span class='fraction'>0/314</span>
             </div>
         
             
@@ -370,7 +370,13 @@
 <a name='L305'></a><a href='#L305'>305</a>
 <a name='L306'></a><a href='#L306'>306</a>
 <a name='L307'></a><a href='#L307'>307</a>
-<a name='L308'></a><a href='#L308'>308</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<a name='L308'></a><a href='#L308'>308</a>
+<a name='L309'></a><a href='#L309'>309</a>
+<a name='L310'></a><a href='#L310'>310</a>
+<a name='L311'></a><a href='#L311'>311</a>
+<a name='L312'></a><a href='#L312'>312</a>
+<a name='L313'></a><a href='#L313'>313</a>
+<a name='L314'></a><a href='#L314'>314</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -677,7 +683,13 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js"><span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" ><span class="branch-0 cbranch-no" title="branch not covered" >import {TabulatorFull as Tabulator} from 'tabulator-tables';</span></span></span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js"><span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" ><span class="branch-0 cbranch-no" title="branch not covered" >import {TabulatorFull as Tabulator} from 'tabulator-tables';</span></span></span>
 <span class="cstat-no" title="statement not covered" >import { generateFilterExpression, customFilter, formatString } from './filters';</span>
 <span class="cstat-no" title="statement not covered" >import {dataParseHorario, dataParseSalas} from './utils';</span>
 <span class="cstat-no" title="statement not covered" ></span>
@@ -690,7 +702,12 @@
 <span class="cstat-no" title="statement not covered" >    paginationCounter: "rows",</span>
 <span class="cstat-no" title="statement not covered" >    placeholder:"Awaiting Data, Please Load File",</span>
 <span class="cstat-no" title="statement not covered" >});</span>
-<span class="cstat-no" title="statement not covered" >var tablefinal = null;</span>
+<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" >var tablefinal;</span>
+<span class="cstat-no" title="statement not covered" >var headerFilters;</span>
+<span class="cstat-no" title="statement not covered" >var filterMatrix = [];</span>
+<span class="cstat-no" title="statement not covered" >var counter = 0;</span>
+<span class="cstat-no" title="statement not covered" >var cur_filter;</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >document.addEventListener('DOMContentLoaded', function () {</span>
 <span class="cstat-no" title="statement not covered" >    const githubButton = document.getElementById('githubButton');</span>
@@ -801,8 +818,7 @@
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >function createTableHorario(tabledata){</span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >    var tablefinal = new Tabulator("#example-table", {</span>
+<span class="cstat-no" title="statement not covered" >    tablefinal = new Tabulator("#example-table", {</span>
 <span class="cstat-no" title="statement not covered" >        layout: "fitColumns",</span>
 <span class="cstat-no" title="statement not covered" >        data:tabledata,</span>
 <span class="cstat-no" title="statement not covered" >        pagination: "local",</span>
@@ -827,39 +843,13 @@
 <span class="cstat-no" title="statement not covered" >            {title:"Semana do Semestre", field:"Semana do Semestre", headerFilter:"input", headerMenu:headerMenu},</span>
 <span class="cstat-no" title="statement not covered" >        ],</span>
 <span class="cstat-no" title="statement not covered" >    });</span>
+<span class="cstat-no" title="statement not covered" >    tablefinal.on("tableBuilt", addEventListeners);  </span>
+<span class="cstat-no" title="statement not covered" >}</span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >    var filterMatrix = [];</span>
-<span class="cstat-no" title="statement not covered" >    var counter = 0;</span>
-<span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >    tablefinal.on("tableBuilt",function(){</span>
-<span class="cstat-no" title="statement not covered" >        const ORtoggle = document.getElementById('ORtoggle');</span>
-<span class="cstat-no" title="statement not covered" >        const ResetFilter = document.getElementById('ResetFilter');</span>
-<span class="cstat-no" title="statement not covered" >        const cur_filter = document.getElementById('cur_filter');</span>
-<span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >        ResetFilter.addEventListener('click', function(){</span>
-<span class="cstat-no" title="statement not covered" >            cur_filter.innerText = "";</span>
-<span class="cstat-no" title="statement not covered" >            tablefinal.clearHeaderFilter();</span>
-<span class="cstat-no" title="statement not covered" >            tablefinal.clearFilter();</span>
-<span class="cstat-no" title="statement not covered" >            counter = 0;</span>
-<span class="cstat-no" title="statement not covered" >            filterMatrix = [];</span>
-<span class="cstat-no" title="statement not covered" >        })</span>
-<span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >        ORtoggle.addEventListener('click',function(){</span>
-<span class="cstat-no" title="statement not covered" >            var headerFilters = tablefinal.getHeaderFilters();</span>
-<span class="cstat-no" title="statement not covered" >            filterMatrix[counter]=[];</span>
-<span class="cstat-no" title="statement not covered" >            filterMatrix[counter]=headerFilters;</span>
-<span class="cstat-no" title="statement not covered" >            counter++;</span>
-<span class="cstat-no" title="statement not covered" >            tablefinal.clearHeaderFilter();</span>
-<span class="cstat-no" title="statement not covered" >            tablefinal.clearFilter();</span>
-<span class="cstat-no" title="statement not covered" >            cur_filter.innerText =formatString(generateFilterExpression(filterMatrix));</span>
-<span class="cstat-no" title="statement not covered" >            tablefinal.setFilter(customFilter,generateFilterExpression(filterMatrix));</span>
-<span class="cstat-no" title="statement not covered" >        })</span>
-<span class="cstat-no" title="statement not covered" >    }); </span>
-<span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >};</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >function createTableSalas(tabledata){</span>
-<span class="cstat-no" title="statement not covered" >    var tablefinal = new Tabulator("#example-table", {</span>
+<span class="cstat-no" title="statement not covered" >    </span>
+<span class="cstat-no" title="statement not covered" >    tablefinal = new Tabulator("#example-table", {</span>
 <span class="cstat-no" title="statement not covered" >        layout: "fitData",</span>
 <span class="cstat-no" title="statement not covered" >        data:tabledata,</span>
 <span class="cstat-no" title="statement not covered" >        pagination: "local",</span>
@@ -906,39 +896,68 @@
 <span class="cstat-no" title="statement not covered" >            {title:"Átrio", field:"átrio", headerFilter:"input", headerMenu:headerMenu},</span>
 <span class="cstat-no" title="statement not covered" >        ],</span>
 <span class="cstat-no" title="statement not covered" >    });</span>
-<span class="cstat-no" title="statement not covered" >    var filterMatrix = [];</span>
-<span class="cstat-no" title="statement not covered" >    var counter = 0;</span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >    tablefinal.on("tableBuilt",function(){</span>
-<span class="cstat-no" title="statement not covered" >        const ORtoggle = document.getElementById('ORtoggle');</span>
-<span class="cstat-no" title="statement not covered" >        const ResetFilter = document.getElementById('ResetFilter');</span>
-<span class="cstat-no" title="statement not covered" >        const cur_filter = document.getElementById('cur_filter');</span>
-<span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >        ResetFilter.addEventListener('click', function(){</span>
-<span class="cstat-no" title="statement not covered" >            cur_filter.innerText = "";</span>
-<span class="cstat-no" title="statement not covered" >            tablefinal.clearHeaderFilter();</span>
-<span class="cstat-no" title="statement not covered" >            tablefinal.clearFilter();</span>
-<span class="cstat-no" title="statement not covered" >            counter = 0;</span>
-<span class="cstat-no" title="statement not covered" >            filterMatrix = [];</span>
-<span class="cstat-no" title="statement not covered" >        })</span>
-<span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >        ORtoggle.addEventListener('click',function(){</span>
-<span class="cstat-no" title="statement not covered" >            var headerFilters = tablefinal.getHeaderFilters();</span>
-<span class="cstat-no" title="statement not covered" >            console.log(headerFilters);</span>
-<span class="cstat-no" title="statement not covered" >            if(headerFilters === null){</span>
-<span class="cstat-no" title="statement not covered" >                return;</span>
-<span class="cstat-no" title="statement not covered" >            }</span>
-<span class="cstat-no" title="statement not covered" >            filterMatrix[counter]=[];</span>
-<span class="cstat-no" title="statement not covered" >            filterMatrix[counter]=headerFilters;</span>
-<span class="cstat-no" title="statement not covered" >            counter++;</span>
-<span class="cstat-no" title="statement not covered" >            tablefinal.clearHeaderFilter();</span>
-<span class="cstat-no" title="statement not covered" >            tablefinal.clearFilter();</span>
-<span class="cstat-no" title="statement not covered" >            cur_filter.innerText =formatString(generateFilterExpression(filterMatrix));</span>
-<span class="cstat-no" title="statement not covered" >            tablefinal.setFilter(customFilter,generateFilterExpression(filterMatrix));</span>
-<span class="cstat-no" title="statement not covered" >        })</span>
-<span class="cstat-no" title="statement not covered" >    }); </span>
+<span class="cstat-no" title="statement not covered" >    tablefinal.on("tableBuilt", addEventListeners);  </span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >};</span>
+<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" >function addEventListeners() {</span>
+<span class="cstat-no" title="statement not covered" >    const ORtoggle = document.getElementById('ORtoggle');</span>
+<span class="cstat-no" title="statement not covered" >    const ResetFilter = document.getElementById('ResetFilter');</span>
+<span class="cstat-no" title="statement not covered" >    cur_filter = document.getElementById('cur_filter');</span>
+<span class="cstat-no" title="statement not covered" >    const CSV = document.getElementById('CSV');</span>
+<span class="cstat-no" title="statement not covered" >    const JSON = document.getElementById('JSON');</span>
+<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" >    ResetFilter.removeEventListener('click', resetFilters);</span>
+<span class="cstat-no" title="statement not covered" >    ORtoggle.removeEventListener('click', toggleFilter);</span>
+<span class="cstat-no" title="statement not covered" >    CSV.removeEventListener('click', downloadCSV);</span>
+<span class="cstat-no" title="statement not covered" >    JSON.removeEventListener('click', downloadJSON);</span>
+<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" >    ResetFilter.addEventListener('click', resetFilters);</span>
+<span class="cstat-no" title="statement not covered" >    ORtoggle.addEventListener('click', toggleFilter);</span>
+<span class="cstat-no" title="statement not covered" >    CSV.addEventListener('click', downloadCSV);</span>
+<span class="cstat-no" title="statement not covered" >    JSON.addEventListener('click', downloadJSON);</span>
+<span class="cstat-no" title="statement not covered" >}</span>
+<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" >function resetFilters() {</span>
+<span class="cstat-no" title="statement not covered" >    if (tablefinal) {</span>
+<span class="cstat-no" title="statement not covered" >        cur_filter.innerText = "";</span>
+<span class="cstat-no" title="statement not covered" >        tablefinal.clearHeaderFilter();</span>
+<span class="cstat-no" title="statement not covered" >        tablefinal.clearFilter();</span>
+<span class="cstat-no" title="statement not covered" >        counter = 0;</span>
+<span class="cstat-no" title="statement not covered" >        filterMatrix = [];</span>
+<span class="cstat-no" title="statement not covered" >    }</span>
+<span class="cstat-no" title="statement not covered" >}</span>
+<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" >function toggleFilter() {</span>
+<span class="cstat-no" title="statement not covered" >    if (tablefinal) {</span>
+<span class="cstat-no" title="statement not covered" >        headerFilters = tablefinal.getHeaderFilters();</span>
+<span class="cstat-no" title="statement not covered" >        if (headerFilters.length == 0) return;</span>
+<span class="cstat-no" title="statement not covered" >        filterMatrix[counter] = [];</span>
+<span class="cstat-no" title="statement not covered" >        filterMatrix[counter] = headerFilters;</span>
+<span class="cstat-no" title="statement not covered" >        counter++;</span>
+<span class="cstat-no" title="statement not covered" >        tablefinal.clearHeaderFilter();</span>
+<span class="cstat-no" title="statement not covered" >        tablefinal.clearFilter();</span>
+<span class="cstat-no" title="statement not covered" >        cur_filter.innerText = formatString(generateFilterExpression(filterMatrix));</span>
+<span class="cstat-no" title="statement not covered" >        tablefinal.setFilter(customFilter, generateFilterExpression(filterMatrix));</span>
+<span class="cstat-no" title="statement not covered" >    }</span>
+<span class="cstat-no" title="statement not covered" >}</span>
+<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" >function downloadCSV() {</span>
+<span class="cstat-no" title="statement not covered" >    if (tablefinal) {</span>
+<span class="cstat-no" title="statement not covered" >        //console.log("1");</span>
+<span class="cstat-no" title="statement not covered" >        tablefinal.download("csv", "table.csv");</span>
+<span class="cstat-no" title="statement not covered" >    }</span>
+<span class="cstat-no" title="statement not covered" >}</span>
+<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" >function downloadJSON() {</span>
+<span class="cstat-no" title="statement not covered" >    if (tablefinal) {</span>
+<span class="cstat-no" title="statement not covered" >        //console.log("2");</span>
+<span class="cstat-no" title="statement not covered" >        tablefinal.download("json", "table.json");</span>
+<span class="cstat-no" title="statement not covered" >    }</span>
+<span class="cstat-no" title="statement not covered" >}</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >var headerMenu = function(){</span>
 <span class="cstat-no" title="statement not covered" >    var menu = [];</span>
@@ -983,15 +1002,14 @@
 <span class="cstat-no" title="statement not covered" >    }</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >   return menu;</span>
-<span class="cstat-no" title="statement not covered" >};</span>
-&nbsp;</pre></td></tr></table></pre>
+<span class="cstat-no" title="statement not covered" >};</span></pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
             </div><!-- /wrapper -->
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2024-04-23T17:49:06.815Z
+                at 2024-04-23T21:23:33.156Z
             </div>
         <script src="prettify.js"></script>
         <script>

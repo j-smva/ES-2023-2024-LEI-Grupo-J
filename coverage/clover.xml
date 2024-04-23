@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1713894546825" clover="3.2.0">
-  <project timestamp="1713894546825" name="All files">
-    <metrics statements="516" coveredstatements="192" conditionals="25" coveredconditionals="20" methods="11" coveredmethods="10" elements="552" coveredelements="222" complexity="0" loc="516" ncloc="516" packages="1" files="4" classes="4"/>
+<coverage generated="1713907413189" clover="3.2.0">
+  <project timestamp="1713907413189" name="All files">
+    <metrics statements="523" coveredstatements="192" conditionals="25" coveredconditionals="20" methods="11" coveredmethods="10" elements="559" coveredelements="222" complexity="0" loc="523" ncloc="523" packages="1" files="4" classes="4"/>
     <file name="calcSemanas.js" path="C:\Users\Utilizador\Documents\GitHub\ES-2023-2024-LEI-Grupo-J\js\calcSemanas.js">
       <metrics statements="78" coveredstatements="75" conditionals="9" coveredconditionals="6" methods="4" coveredmethods="4"/>
       <line num="1" count="5" type="cond" truecount="1" falsecount="0"/>
@@ -128,7 +128,7 @@
       <line num="41" count="1" type="stmt"/>
     </file>
     <file name="horario.js" path="C:\Users\Utilizador\Documents\GitHub\ES-2023-2024-LEI-Grupo-J\js\horario.js">
-      <metrics statements="307" coveredstatements="0" conditionals="1" coveredconditionals="0" methods="1" coveredmethods="0"/>
+      <metrics statements="314" coveredstatements="0" conditionals="1" coveredconditionals="0" methods="1" coveredmethods="0"/>
       <line num="1" count="0" type="cond" truecount="0" falsecount="1"/>
       <line num="2" count="0" type="stmt"/>
       <line num="3" count="0" type="stmt"/>
@@ -436,6 +436,13 @@
       <line num="305" count="0" type="stmt"/>
       <line num="306" count="0" type="stmt"/>
       <line num="307" count="0" type="stmt"/>
+      <line num="308" count="0" type="stmt"/>
+      <line num="309" count="0" type="stmt"/>
+      <line num="310" count="0" type="stmt"/>
+      <line num="311" count="0" type="stmt"/>
+      <line num="312" count="0" type="stmt"/>
+      <line num="313" count="0" type="stmt"/>
+      <line num="314" count="0" type="stmt"/>
     </file>
     <file name="utils.js" path="C:\Users\Utilizador\Documents\GitHub\ES-2023-2024-LEI-Grupo-J\js\utils.js">
       <metrics statements="90" coveredstatements="90" conditionals="11" coveredconditionals="11" methods="3" coveredmethods="3"/>

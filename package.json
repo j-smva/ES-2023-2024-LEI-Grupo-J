@@ -8,17 +8,19 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "test": "vitest",
-    "coverage": "vitest run --coverage"
+    "coverage": "vitest run --coverage",
+    "doc":"jsdoc -c jsdoc.json"
   },
   "devDependencies": {
     "@vitest/coverage-v8": "^1.5.0",
+    "jsdoc": "^4.0.2",
+    "typedoc": "^0.25.13",
     "typescript": "^5.2.2",
     "vite": "^5.2.0",
     "vitest": "^1.5.0"
   },
   "dependencies": {
-    "tabulator-tables": "^6.2.0",
-    "typedoc": "^0.25.13"
+    "tabulator-tables": "^6.2.0"
   },
   "description": "Software Engineering - LEI @ ISCTE 2023/2024.\r  Project by:\r   - Joana Afonso, nº104817, GitHub name: Joana Afonso/j-smva;\r   - Filipe Delmotte, nº104937 , GitHub name: flipflopster;\r   - Guilherme Lopes, nº104691, GitHub name: Camarão/Shr11mp;\r   - Miguel Miranda, nº104601, GitHub name: Miguel-iscteiul;\r   - Tomás Pereira, nº104824, GitHub name: FeroWar/Trcvp;\r   - Vicente Laia, nº103961, GitHub name: Vicente/vicentelaia.",
   "main": "index.js",
