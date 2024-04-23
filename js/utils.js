@@ -87,4 +87,4 @@ function fixTextLocal(csvDataSalas){
 
 };
 
-export { dataParseHorario, dataParseSalas};
+export { dataParseHorario, dataParseSalas, fixTextLocal};

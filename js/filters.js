@@ -20,7 +20,7 @@ function generateFilterExpression(dataArray) {
 }
 
 
-function customFilter(data,str){
+function customFilter(data, str){
     //cur_filter.innerText =formatString(str);
     return eval(str);
 }
@@ -38,4 +38,4 @@ function formatString(input) {
 }
 
 
-export { generateFilterExpression, customFilter, formatString };
+export {generateFilterExpression, customFilter, formatString};
