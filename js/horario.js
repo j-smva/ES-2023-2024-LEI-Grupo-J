@@ -126,18 +126,21 @@ function paramsSubstituicao() {
     messageDiv.textContent = ""; // Clear any previous content
     messageDiv.style.display = "block";
 
-    aulaParaSubstituicao = tablefinal.getSelectedData();
-    setAulaforSub(aulaParaSubstituicao[0]); //importante
-    aulaParaSubstituicao = aulaParaSubstituicao[0];
+
+    const dataselected = tablefinal.getSelectedData();
+    //aulaParaSubstituicao = tablefinal.getSelectedData();
+    aulaParaSubstituicao = dataselected[0];
+    setAulaforSub(aulaParaSubstituicao); //importante
+    //aulaParaSubstituicao = aulaParaSubstituicao[0];
 
     console.log(aulaParaSubstituicao);
-    if (aulaParaSubstituicao.length === 0) {
+    if (dataselected.length === 0) {
         const messageError = "Aula não selecionada";
         var messagePara = document.createElement("p");
         messagePara.textContent = messageError;
         messageDiv.appendChild(messagePara);
         return;
-    } else if (aulaParaSubstituicao.length > 1) {
+    } else if (dataselected.length > 1) {
         var message = "Mais do que uma aula selecionada";
         var messagePara = document.createElement("p");
         messagePara.textContent = message;
@@ -380,6 +383,7 @@ function createAllocationOptions() {
                     break;
                 case "Opções de Exclusão":
                     //handleExclusionOptions();
+                    setDatasBasedOnSub();
                     createExclusionOptions();
                     console.log("Opções de Exclusão");
                     break;
