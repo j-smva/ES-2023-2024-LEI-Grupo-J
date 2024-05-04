@@ -1,3 +1,6 @@
+import dateCraft from 'date-craft';
+
+
 /**
  * Current Week Number
  * @param {Date} date - Data onde ocorre uma aula
@@ -42,9 +45,6 @@ function currentWeekNumber(date){
   var weekNumber = 1 + Math.ceil((firstThursday - target) / 604800000);
   return weekNumber;
 }
-
-
-
 
 /**
  * Turn to Date
@@ -94,5 +94,20 @@ function giveSemanaAno(date){
     return week;
 }
 
+//recebe datas no formato "yyyy/mm/dd" mas faz array com datas no formato "dd/mm/yyy"
+function getArrayDatesBetween(start, end){
+  const allDates = [];
+  let currentDate = start;
+  while(dateCraft.isSameOrBeforeDate(currentDate, end)){
+    //console.log(currentDate);
+    const day = currentDate.getDay();
+    if(day !== 0 && day !==6){
+      allDates.push(dateCraft.formatDate(currentDate).format('DD/MM/YYYY'));
+    }
+    currentDate = dateCraft.addDays(currentDate, 1);
+  }
+  return allDates;
+}
+
 //module.exports = currentWeekNumber, giveSemanaAno, giveSemanaSemestre, turnToDate
-export {currentWeekNumber, giveSemanaAno, giveSemanaSemestre, turnToDate};
+export {currentWeekNumber, giveSemanaAno, giveSemanaSemestre, turnToDate, getArrayDatesBetween};

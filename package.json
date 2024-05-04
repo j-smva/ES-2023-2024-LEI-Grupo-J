@@ -9,7 +9,7 @@
     "preview": "vite preview",
     "test": "vitest",
     "coverage": "vitest run --coverage",
-    "doc":"jsdoc -c jsdoc.json"
+    "doc": "jsdoc -c jsdoc.json"
   },
   "devDependencies": {
     "@vitest/coverage-v8": "^1.5.0",
@@ -20,6 +20,7 @@
     "vitest": "^1.5.0"
   },
   "dependencies": {
+    "date-craft": "^1.0.8",
     "tabulator-tables": "^6.2.0"
   },
   "description": "Software Engineering - LEI @ ISCTE 2023/2024.\r  Project by:\r   - Joana Afonso, nº104817, GitHub name: Joana Afonso/j-smva;\r   - Filipe Delmotte, nº104937 , GitHub name: flipflopster;\r   - Guilherme Lopes, nº104691, GitHub name: Camarão/Shr11mp;\r   - Miguel Miranda, nº104601, GitHub name: Miguel-iscteiul;\r   - Tomás Pereira, nº104824, GitHub name: FeroWar/Trcvp;\r   - Vicente Laia, nº103961, GitHub name: Vicente/vicentelaia.",
