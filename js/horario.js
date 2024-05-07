@@ -1,7 +1,7 @@
 import { TabulatorFull as Tabulator } from 'tabulator-tables';
 import { generateFilterExpression, customFilter, formatString } from './filters';
-import { dataParseHorario, dataParseSalas, extractAttributes, extractNomeSalas } from './utils';
-import { generateClassDuration, generateSubClasses, generateTimeStamps, removeDuplicatesTimestamps, removeSalasFromList, setAulaforSub, setDatas, setDatasBasedOnSub, setSalas, setSalasByType, setSingleDay, setWeekDays, removeSelectedWeekdaysFromMap, datasLength } from './suggestion';
+import { dataParseHorario, dataParseSalas, extractAttributes, extractNomeSalas, getUCs, getCursos, getTurmas} from './utils';
+import { generateClassDuration, generateSubClasses, generateTimeStamps, removeDuplicatesTimestamps, removeSalasFromList, setAulaforSub, setDatas, setDatasBasedOnSub, setSalas, setSalasByType, setSingleDay, setWeekDays, removeSelectedWeekdaysFromMap, datasLength, setCursos, setTurmas, setAulas, setTamanhoAula, getAulaforSub, setSemestre, getNumAulas} from './suggestion';
 import dateCraft from 'date-craft';
 import { turnToDate } from './calcSemanas';
 
@@ -47,6 +47,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const githubButtonSalas = document.getElementById('githubButtonSalas');
     const localButtonSalas = document.getElementById('localButtonSalas');
     const substituirAula = document.getElementById('substituirAula');
+    const AulasUC = document.getElementById('AulasUC');
     githubButtonSalas.addEventListener('click', function () {
         const githubLink = document.getElementById('githubLinkSalas').value;
         gitHubCSVSalas(1, githubLink);
@@ -118,9 +119,79 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
     substituirAula.addEventListener('click', paramsSubstituicao);
+    AulasUC.addEventListener('click', paramsUC);
 
 });
+function paramsUC() {
+    var messageDiv = document.getElementById("params");
+    messageDiv.textContent = ""; // Clear any previous content
+    messageDiv.style.display = "block";
 
+    console.log("Message added");
+
+    // Add input field for GitHub raw link
+    var githubInput = document.createElement("input");
+    githubInput.setAttribute("type", "text");
+    githubInput.setAttribute("placeholder", "Enter GitHub raw link...");
+    messageDiv.appendChild(githubInput);
+
+    console.log("GitHub input added");
+
+    // Add button to submit GitHub link
+    var submitGithubButton = document.createElement("button");
+    submitGithubButton.textContent = "Submit GitHub Link";
+    submitGithubButton.onclick = function () {
+        const githubLink = githubInput.value;
+        gitHubCSVSalas(3, githubLink);
+        messageDiv.style.display = "none";
+    };
+    messageDiv.appendChild(submitGithubButton);
+
+    console.log("GitHub button added");
+
+    // Add line break
+    messageDiv.appendChild(document.createElement("br"));
+
+    // Add file input element for local file
+    var fileInput = document.createElement("input");
+    fileInput.setAttribute("type", "file");
+    messageDiv.appendChild(fileInput);
+    fileInput.addEventListener("change", function (event) {
+        // Get the selected file(s)
+        const file = event.target.files[0];
+
+        // Check if a file was selected
+        if (file) {
+            // Check if the selected file is a CSV file
+            if (file.type === 'text/csv') {
+                // Create a FileReader object
+                const reader = new FileReader();
+
+                // Set up event listener for when file reading is finished
+                reader.onload = function (event) {
+                    // event.target.result contains the contents of the file
+                    const fileContent = event.target.result;
+                    // Here you can process the CSV contents as needed
+                    handleFileUCS(fileContent);
+                    messageDiv.style.display = "none";
+                };
+
+                // Read the contents of the selected file as text
+                reader.readAsText(file);
+            } else {
+                // Selected file is not a CSV file, display an error message
+                console.error('Please select a CSV file.');
+            }
+        } else {
+            // No file selected, display an error message
+            console.error('No file selected.');
+        }
+    });
+
+    console.log("File input added");
+
+
+};
 function paramsSubstituicao() {
     var messageDiv = document.getElementById("params");
     messageDiv.textContent = ""; // Clear any previous content
@@ -222,6 +293,23 @@ function paramsSubstituicao() {
 
 };
 
+function handleFileUCS(content) {
+    var buttonContainer = document.getElementById("buttonContainer");
+
+    if (!buttonContainer) {
+        buttonContainer = document.createElement("div");
+        buttonContainer.id = "dropdownContainer";
+        document.body.appendChild(buttonContainer);
+    }
+
+    var tableData = tablefinal
+    var UCs = getUCs(tableData)
+    dataSalas = dataParseSalas(content);
+    nomeSalas = extractNomeSalas(dataSalas);
+    tipoSalas = extractAttributes(dataSalas);
+    populateDropdown(UCs, "Nome UCs");
+}
+
 function handleFileSub(content) {
     var buttonContainer = document.getElementById("buttonContainer");
 
@@ -240,6 +328,7 @@ function handleFileSub(content) {
     alocarButton.addEventListener("click", function () {
         dataSalas = dataParseSalas(content);
         nomeSalas = extractNomeSalas(dataSalas);
+        setAulas(1);
         tipoSalas = extractAttributes(dataSalas);
         populateDropdown(nomeSalas, "Nome Sala Alocar");
         console.log("Alocar button clicked");
@@ -293,6 +382,7 @@ function populateDropdown(options, dropdownLabel) {
 
 
 function handleSubmitFilters(label) {
+    console.log(label);
     if (label.textContent === "Nome Sala Alocar: ") {
         var selectedNomeOptionsAlocar = Array.from(document.getElementById("dropdown_Nome Sala Alocar").selectedOptions).map(option => option.value);
         //console.log(selectedNomeOptionsAlocar);
@@ -328,10 +418,76 @@ function handleSubmitFilters(label) {
             removeSalasFromList(setSalasByType(dataSalas, selectedTipoOptionsExcluir));
         }
         createAllocationOptions();
-    }
+    } else if (label.textContent === "Nome UCs: ") {
+        var selectedUC = Array.from(document.getElementById("dropdown_Nome UCs").selectedOptions).map(option => option.value);
+        if (selectedUC.length > 0) {+
+            setAulaforSub({"Curso": "LIGE, LIGE-PL", "Unidade Curricular": selectedUC[0], "Turno": "---", "Turma": "IGE-PL-C2, IGE-PL-C1", "Inscritos no turno": "-", "Dia da semana": "Ter", "Hora início da aula": "18:00:00", "Hora fim da aula": "19:30:00", "Data da aula": "00/00/0000", "Semana do Ano": 43});
+        }
+        getSemestre();
+    } else if (label.textContent === "Cursos: ") {
+        var selectedCursos = Array.from(document.getElementById("dropdown_Cursos").selectedOptions).map(option => option.value);
+        if (selectedCursos.length > 0) {
+            setCursos(selectedCursos)
+        }
+        console.log("Done cursos");
+        populateDropdown(getTurmas(tablefinal), "Turmas");
+    } else if (label.textContent === "Turmas: ") {
+        var selectedTurmas = Array.from(document.getElementById("dropdown_Turmas").selectedOptions).map(option => option.value);
+        if (selectedTurmas.length > 0) {
+            setTurmas(selectedTurmas)
+        }
+        console.log("Done Turmas");
+        createAmountAulasInput("Quantidade de Aulas",1);
+    } else if (label.textContent === "Quantidade de Aulas: ") {
+        setAulas(document.getElementById("dropdown_Quantidade de Aulas").value);
+        console.log("Done Quantidade de Aulas");
+        createAmountAulasInput("Tempo de Aula",30);
+    } else if (label.textContent === "Tempo de Aula: ") {
+        setTamanhoAula(document.getElementById("dropdown_Tempo de Aula").value);
+        console.log("Done Tempo de Aula");
+        populateDropdown(nomeSalas, "Nome Sala Alocar");
+    }    
 }
 
-
+function createAmountAulasInput(dropdownLabel,step){
+     // Remove existing dropdown container if it exists
+     var existingDropdownContainer = document.getElementById("dropdownContainer");
+     if (existingDropdownContainer) {
+         existingDropdownContainer.parentNode.removeChild(existingDropdownContainer);
+     }
+ 
+     // Create dropdown container
+     var dropdownContainer = document.createElement("div");
+     dropdownContainer.id = "dropdownContainer";
+ 
+     // Create label for dropdown
+     var label = document.createElement("label");
+     label.textContent = dropdownLabel + ": ";
+     dropdownContainer.appendChild(label);
+ 
+    // Create the number input element
+    var numberInput = document.createElement("input");
+    numberInput.type = "number";
+    numberInput.id = "dropdown_" + dropdownLabel;
+    numberInput.name = "quantity";
+    numberInput.min = step;
+    numberInput.value = step;
+    numberInput.step = step;
+ 
+     // Create submit button
+     var submitButton = document.createElement("button");
+     submitButton.textContent = "Submit";
+     submitButton.addEventListener("click", function () {
+         handleSubmitFilters(label);
+     });
+ 
+     // Append dropdown and submit button to dropdownContainer
+     dropdownContainer.appendChild(numberInput);
+     dropdownContainer.appendChild(submitButton);
+ 
+     // Append dropdownContainer to body or any other parent element
+     document.body.appendChild(dropdownContainer);
+}
 function createAllocationOptions() {
     // Get the dropdown container
     var dropdownContainer = document.getElementById("dropdownContainer");
@@ -352,7 +508,9 @@ function createAllocationOptions() {
     dropdownContainer.appendChild(title);
 
     // Create buttons
-    var buttons = ["Mesmo dia", "Mesma Semana", "Entre Datas", "Opções de Exclusão"];
+    var buttons = ["Mesmo dia", "Mesma Semana", "Entre Datas", "Opções de Exclusão"]; 
+    if(getAulaforSub()["Turno"]=="---"){buttons = ["Entre Datas", "Opções de Exclusão"];}    
+    console.log(buttons);
     buttons.forEach(function (buttonText) {
         var button = document.createElement("button");
         button.textContent = buttonText;
@@ -481,8 +639,53 @@ function createExclusionOptions() {
     });
 }
 
+function getSemestre(){
+    // Get the dropdown container
+    var dropdownContainer = document.getElementById("dropdownContainer");
 
+    // Clear existing content if it exists
+    if (dropdownContainer) {
+        dropdownContainer.innerHTML = "";
+    } else {
+        // Create dropdown container if it doesn't exist
+        dropdownContainer = document.createElement("div");
+        dropdownContainer.id = "dropdownContainer";
+        document.body.appendChild(dropdownContainer); // Append to body or any other parent element
+    }
 
+    // Create title for allocation options
+    var title = document.createElement("h2");
+    title.textContent = "Semestre da Cadeira";
+    dropdownContainer.appendChild(title);
+
+    // Create buttons
+    const buttons = ["1º Semestre", "2º Semestre"]; 
+    buttons.forEach(function (buttonText) {
+        var button = document.createElement("button");
+        button.textContent = buttonText;
+        dropdownContainer.appendChild(button);
+
+        // Associate function with button click
+        button.addEventListener("click", function () {
+            // Call appropriate function based on button text
+            switch (buttonText) {
+                case "1º Semestre":
+                    setSemestre(1);
+                    console.log("1º Semestre");
+                    populateDropdown(getCursos(tablefinal), "Cursos");
+                    break;
+                case "2º Semestre":
+                    setSemestre(2);
+                    console.log("2º Semestre");
+                    populateDropdown(getCursos(tablefinal), "Cursos");
+                    break;
+                default:
+                    // Default action
+                    break;
+            }
+        });
+    });
+}
 function createDateInputs() {
     // Get the dropdown container
     var dropdownContainer = document.getElementById("dropdownContainer");
@@ -770,16 +973,28 @@ function createTableSugestion() {
         function handleClick() {
             const novaAula = tableS.getSelectedData(); // Move the definition here
             if (novaAula.length === 0) {
-                alert('Nenhuma aula selecionada');
-            } else if (novaAula.length > 1) {
-                alert('Mais do que uma aula selecionada');
+                alert('Nenhuma aula selecionada.');
+            } else if (novaAula.length > getNumAulas()) {
+                alert('Maximo numero de aulas ultrapasado.');
             } else {
-                tablefinal.addData(novaAula[0],true);
+                if(getAulaforSub()["Turno"]=="---"){
+                    setAulas(getNumAulas()-novaAula.length);
+                    novaAula.forEach(function(row) {
+                        tablefinal.addRow(row,true)
+                        console.log("row added");
+                    });
+                    if (suggestionDiv && getNumAulas()==0) {
+                        suggestionDiv.remove();
+                    }
+                }else{
+                tablefinal.addRow(novaAula[0],true);
+                console.log("row added");
                 const row = tablefinal.getSelectedRows();
                 row[0].delete();
                 if (suggestionDiv) {
                     suggestionDiv.remove();
                 }
+            }
             }
         }
     
@@ -826,6 +1041,8 @@ function gitHubCSVSalas(number, githubLink) {
                 console.log("isto funcionou a gerar tabela");
             } else if (number == 2) {
                 handleFileSub(csvDataSalas);
+            }else if (number  == 3){
+                handleFileUCS(csvDataSalas)
             }
 
 
@@ -874,6 +1091,11 @@ function createTableHorario(tabledata) {
         ],
     });
     tablefinal.on("tableBuilt", addEventListeners);
+    tablefinal.on("rowAdded", function(row) {
+        console.log("adawdawda");
+        // Set the background color of the newly added row to green
+        row.getElement().style.backgroundColor = "green";
+    });
 }
 
 /**

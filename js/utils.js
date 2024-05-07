@@ -137,6 +137,47 @@ function extractNomeSalas(jsonString) {
     return nomeSalasArray;
 }
 
+function getUCs(table) {
+    var uniqueValues = {};
+    table.getData().forEach(function(row) {
+        var columnValue = row["Unidade Curricular"];
+        if (!uniqueValues[columnValue]) {
+            uniqueValues[columnValue] = true;
+        }
+    });
+
+    var uniqueEntries = Object.keys(uniqueValues);
+    return uniqueEntries;
+}
+function getCursos(table) {
+    var uniqueValues = {};
+    table.getData().forEach(function(row) {
+        var columnValue = row["Curso"].split(', ');
+        columnValue.forEach(function(entrie){
+            if (!uniqueValues[entrie]) {
+                uniqueValues[entrie] = true;
+            }
+        })
+    });
+
+    var uniqueEntries = Object.keys(uniqueValues);
+    return uniqueEntries;
+}
+function getTurmas(table) {
+    var uniqueValues = {};
+    table.getData().forEach(function(row) {
+        var columnValue = row["Turma"].split(', ');
+        columnValue.forEach(function(entrie){
+            if (!uniqueValues[entrie]) {
+                uniqueValues[entrie] = true;
+            }
+        })
+    });
+
+    var uniqueEntries = Object.keys(uniqueValues);
+    return uniqueEntries;
+}
+
 function extractAttributes(jsonString) {
     // Parse the JSON string into a JavaScript object
     let jsonData = [];
@@ -202,4 +243,4 @@ function extractAttributes(jsonString) {
         return []; // Return an empty array if input is not a valid JSON object
     }
 }
-export { dataParseHorario, dataParseSalas, fixTextLocal, extractNomeSalas, extractAttributes};
+export { dataParseHorario, dataParseSalas, fixTextLocal, extractNomeSalas, extractAttributes, getUCs, getCursos, getTurmas};

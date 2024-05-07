@@ -7,6 +7,7 @@ var weekDays; //pares de chave valor com números e dias da semana baseados nos 
 var salasAula = []; // array que recebe as salas de aula.
 var horasInicio = []; //array que recebe as horas possiveis de inicio de uma sala.
 var datas = []; //array que guarda todas as datas em que é possivel marcar as aulas; 
+var aulas; //quantos aulas para marcar
 
 //função que dá set a todos os dias da semana e a sua chave.
 function setWeekDays(){
@@ -19,7 +20,48 @@ function setWeekDays(){
       };
     console.log(weekDays);
 };
+function getNumAulas(){
+    return aulas;
+}
+function setCursos(cursosL){
+    aulaForSub["Curso"]=cursosL.toString();
+};
+function setAulas(num){
+    aulas = num;
+};
+function setTurmas(turmasL){
+    aulaForSub["Turma"]=turmasL.toString();
+};
+function setSemestre(num){
+    if(num==1){
+        aulaForSub["Data da aula"]="02/09/2022";
+    }else{
+        aulaForSub["Data da aula"]="30/01/2023";}
+};
+function setTamanhoAula(num){
+    aulaForSub["Hora início da aula"]="08:00:00";
+    aulaForSub["Hora fim da aula"]=millisecondsToTimestamp(timestampToMilliseconds("08:00:00")+(60000*num));
+};
+function getAulaforSub(){
+    console.log(aulaForSub);
+    return aulaForSub;
+}
 
+function extractCursos(table){
+    const uniqueValues = new Set();
+    table.getData().forEach(row => {
+        uniqueValues.add(row["Curso"]);
+    });
+    cursos = Array.from(uniqueValues);
+}
+
+function extractTurmas(table){
+    const uniqueValues = new Set();
+    table.getData().forEach(row => {
+        uniqueValues.add(row["Curso"]);
+    });
+    turmas = Array.from(uniqueValues);
+}
 function datasLength(){
     return datas.length;
 }
@@ -50,11 +92,15 @@ function setDatasBasedOnSub(){
     const semestreOneEnd = new Date('2022/12/17');
     const semestreTwoBeg = new Date('2023/01/30');
     const semestreTwoEnd = new Date('2023/05/27');
+    if(getAulaforSub()["Turno"]=="---"){
+        datas = getArrayDatesBetween(semestreOneBeg,semestreOneEnd).concat(getArrayDatesBetween(semestreTwoBeg,semestreTwoEnd));
+    }else{
     const dateForCheck = turnToDate(aulaForSub["Data da aula"]);
     if(dateCraft.isSameOrAfterDate(dateForCheck, semestreOneBeg) && dateCraft.isSameOrBeforeDate(dateForCheck, semestreOneEnd)){
         datas = getArrayDatesBetween(semestreOneBeg,semestreOneEnd);
     } else if(dateCraft.isSameOrAfterDate(dateForCheck, semestreTwoBeg) && dateCraft.isSameOrBeforeDate(dateForCheck, semestreTwoEnd)){
         datas = getArrayDatesBetween(semestreTwoBeg,semestreTwoEnd);
+    }
     }
     console.log("as datas são: " + datas);
     
@@ -208,4 +254,4 @@ function generateSubClasses(tabledata){
 
 
 
-export {setSalas, setSalasByType, generateTimeStamps, setAulaforSub, setWeekDays, removeSalasFromList, setDatasBasedOnSub, generateSubClasses, setSingleDay, setDatas, removeDuplicatesTimestamps, generateClassDuration, removeSelectedWeekdaysFromMap, datasLength};
+export {setSalas, setSalasByType, generateTimeStamps, setAulaforSub, setWeekDays, removeSalasFromList, setDatasBasedOnSub, generateSubClasses, setSingleDay, setDatas, removeDuplicatesTimestamps, generateClassDuration, removeSelectedWeekdaysFromMap, datasLength, getAulaforSub, extractCursos, extractTurmas, setCursos, setTurmas, setAulas, setTamanhoAula, setSemestre, getNumAulas};
