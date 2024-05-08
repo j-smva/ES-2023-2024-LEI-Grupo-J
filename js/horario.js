@@ -3,8 +3,9 @@ import { generateFilterExpression, customFilter, formatString } from './filters'
 import { dataParseHorario, dataParseSalas, extractAttributes, extractNomeSalas, getUCs, getCursos, getTurmas } from './utils';
 import { generateClassDuration, generateSubClasses, generateTimeStamps, removeDuplicatesTimestamps, removeSalasFromList, setAulaforSub, setDatas, setDatasBasedOnSub, setSalas, setSalasByType, setSingleDay, setWeekDays, removeSelectedWeekdaysFromMap, datasLength, setCursos, setTurmas, setAulas, setTamanhoAula, getAulaforSub, setSemestre, getNumAulas } from './suggestion';
 import dateCraft from 'date-craft';
-import { turnToDate } from './calcSemanas';
-import { handleGithubDataHeatmap, salasSetter } from './heatmap'
+import { turnToDate, getArrayDatesBetween } from './calcSemanas';
+import { handleGithubDataHeatmap, salasSetter, datasSetter, setMatrix, createHeatMap } from './heatmap'
+
 
 //https://raw.githubusercontent.com/j-smva/ES-2023-2024-LEI-Grupo-J/main/CSVs/HorarioDeExemplo.csv
 
@@ -479,9 +480,17 @@ function handleSubmitFilters(label) {
         populateDropdown(nomeSalas, "Nome Sala Alocar");
 
     } else if (label.textContent === "nomesSalasTEmp: ") { //flop
-        var selectedTipo = Array.from(document.getElementById("dropdown_nomesSalasTEmp").selectedOptions).map(option => option.value);
 
-        salasSetter(setSalasByType(dataSalas, selectedTipo));
+        var selectedTipo = Array.from(document.getElementById("dropdown_nomesSalasTEmp").selectedOptions).map(option => option.value);
+        if (!selectedTipo) {
+            nomeSalas = extractNomeSalas(dataSalas);
+            salasSetter(nomeSalas);
+        }
+        else {
+            salasSetter(setSalasByType(dataSalas, selectedTipo));
+        }
+
+        createDateInputs(2);
 
     }
 }
@@ -573,7 +582,7 @@ function createAllocationOptions() {
                 case "Entre Datas":
                     //handleBetweenDates();
                     //setDatasBasedOnSub();
-                    createDateInputs();
+                    createDateInputs(1);
                     console.log("Entre Datas");
                     break;
                 case "Opções de Exclusão":
@@ -723,7 +732,7 @@ function getSemestre() {
         });
     });
 }
-function createDateInputs() {
+function createDateInputs(number) {
     // Get the dropdown container
     var dropdownContainer = document.getElementById("dropdownContainer");
 
@@ -780,12 +789,22 @@ function createDateInputs() {
         // Check if both textboxes are filled
         if (dataInicio && dataFim) {
             // Validate date format for both dates
+
             if (isValidDateFormat(dataInicio) && isValidDateFormat(dataFim)) {
-                // Call a function to handle the submitted data
                 console.log(dataInicio + "    " + dataFim);
-                setDatas(turnToDate(dataInicio), turnToDate(dataFim));
-                //dropdownContainer.innerHTML = "";
-                createExclusionOptions();
+                switch (number) {
+                    case 1:
+                        // Call a function to handle the submitted data
+
+                        setDatas(turnToDate(dataInicio), turnToDate(dataFim));
+                        //dropdownContainer.innerHTML = "";
+                        createExclusionOptions();
+                        break;
+                    case 2:
+                        datasSetter(getArrayDatesBetween(turnToDate(dataInicio), turnToDate(dataFim)));
+                        console.log(getArrayDatesBetween(turnToDate(dataInicio), turnToDate(dataFim)));
+                        createHeatMap(setMatrix(tabledata));
+                }
             } else {
                 // Alert user about incorrect date format
                 alert("Por favor, preencha as datas no formato dd/mm/yyyy.");
