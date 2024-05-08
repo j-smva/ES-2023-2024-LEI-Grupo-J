@@ -10,44 +10,45 @@ var datas = []; //array que guarda todas as datas em que é possivel marcar as a
 var aulas; //quantos aulas para marcar
 
 //função que dá set a todos os dias da semana e a sua chave.
-function setWeekDays(){
+function setWeekDays() {
     weekDays = {
         1: "Seg",
         2: "Ter",
         3: "Qua",
         4: "Qui",
         5: "Sex"
-      };
+    };
     console.log(weekDays);
 };
-function getNumAulas(){
+function getNumAulas() {
     return aulas;
 }
-function setCursos(cursosL){
-    aulaForSub["Curso"]=cursosL.toString();
+function setCursos(cursosL) {
+    aulaForSub["Curso"] = cursosL.toString();
 };
-function setAulas(num){
+function setAulas(num) {
     aulas = num;
 };
-function setTurmas(turmasL){
-    aulaForSub["Turma"]=turmasL.toString();
+function setTurmas(turmasL) {
+    aulaForSub["Turma"] = turmasL.toString();
 };
-function setSemestre(num){
-    if(num==1){
-        aulaForSub["Data da aula"]="02/09/2022";
-    }else{
-        aulaForSub["Data da aula"]="30/01/2023";}
+function setSemestre(num) {
+    if (num == 1) {
+        aulaForSub["Data da aula"] = "02/09/2022";
+    } else {
+        aulaForSub["Data da aula"] = "30/01/2023";
+    }
 };
-function setTamanhoAula(num){
-    aulaForSub["Hora início da aula"]="08:00:00";
-    aulaForSub["Hora fim da aula"]=millisecondsToTimestamp(timestampToMilliseconds("08:00:00")+(60000*num));
+function setTamanhoAula(num) {
+    aulaForSub["Hora início da aula"] = "08:00:00";
+    aulaForSub["Hora fim da aula"] = millisecondsToTimestamp(timestampToMilliseconds("08:00:00") + (60000 * num));
 };
-function getAulaforSub(){
+function getAulaforSub() {
     console.log(aulaForSub);
     return aulaForSub;
 }
 
-function extractCursos(table){
+function extractCursos(table) {
     const uniqueValues = new Set();
     table.getData().forEach(row => {
         uniqueValues.add(row["Curso"]);
@@ -55,60 +56,60 @@ function extractCursos(table){
     cursos = Array.from(uniqueValues);
 }
 
-function extractTurmas(table){
+function extractTurmas(table) {
     const uniqueValues = new Set();
     table.getData().forEach(row => {
         uniqueValues.add(row["Curso"]);
     });
     turmas = Array.from(uniqueValues);
 }
-function datasLength(){
+function datasLength() {
     return datas.length;
 }
 
 function removeSelectedWeekdaysFromMap(selectedWeekdays) {
-    selectedWeekdays.forEach(function(day) {
+    selectedWeekdays.forEach(function (day) {
         delete weekDays[day];
     });
     console.log(weekDays);
 }
 
 //função que dá set à aula que foi selecionada para ser substituida
-function setAulaforSub(dataAula){
+function setAulaforSub(dataAula) {
     aulaForSub = dataAula;
     console.log(typeof aulaForSub);
     console.log(aulaForSub);
 }
 
 //função que dá set ao conjunto de salas selecionado (sejam estas todas as salas ou apenas algumas)
-function setSalas(salas){
+function setSalas(salas) {
     salasAula = salas;
     console.log(salasAula);
 }
 
 //funcao que da set as datas em que pode haver aulas antes de qualquer exlcusão, so pode ser chamada depois de se dar set à aulaForSub
-function setDatasBasedOnSub(){
+function setDatasBasedOnSub() {
     const semestreOneBeg = new Date('2022/09/01');
     const semestreOneEnd = new Date('2022/12/17');
     const semestreTwoBeg = new Date('2023/01/30');
     const semestreTwoEnd = new Date('2023/05/27');
-    if(getAulaforSub()["Turno"]=="---"){
-        datas = getArrayDatesBetween(semestreOneBeg,semestreOneEnd).concat(getArrayDatesBetween(semestreTwoBeg,semestreTwoEnd));
-    }else{
-    const dateForCheck = turnToDate(aulaForSub["Data da aula"]);
-    if(dateCraft.isSameOrAfterDate(dateForCheck, semestreOneBeg) && dateCraft.isSameOrBeforeDate(dateForCheck, semestreOneEnd)){
-        datas = getArrayDatesBetween(semestreOneBeg,semestreOneEnd);
-    } else if(dateCraft.isSameOrAfterDate(dateForCheck, semestreTwoBeg) && dateCraft.isSameOrBeforeDate(dateForCheck, semestreTwoEnd)){
-        datas = getArrayDatesBetween(semestreTwoBeg,semestreTwoEnd);
-    }
+    if (getAulaforSub()["Turno"] == "---") {
+        datas = getArrayDatesBetween(semestreOneBeg, semestreOneEnd).concat(getArrayDatesBetween(semestreTwoBeg, semestreTwoEnd));
+    } else {
+        const dateForCheck = turnToDate(aulaForSub["Data da aula"]);
+        if (dateCraft.isSameOrAfterDate(dateForCheck, semestreOneBeg) && dateCraft.isSameOrBeforeDate(dateForCheck, semestreOneEnd)) {
+            datas = getArrayDatesBetween(semestreOneBeg, semestreOneEnd);
+        } else if (dateCraft.isSameOrAfterDate(dateForCheck, semestreTwoBeg) && dateCraft.isSameOrBeforeDate(dateForCheck, semestreTwoEnd)) {
+            datas = getArrayDatesBetween(semestreTwoBeg, semestreTwoEnd);
+        }
     }
     console.log("as datas são: " + datas);
-    
+
 }
 
 
-function setDatas(start, end){
-    datas = getArrayDatesBetween(start,end);
+function setDatas(start, end) {
+    datas = getArrayDatesBetween(start, end);
     console.log(datas);
 }
 
@@ -157,7 +158,7 @@ function removeDuplicatesTimestamps(TimesToRemove) {
     console.log(horasInicio);
 }
 
-function setSingleDay(){
+function setSingleDay() {
     datas.push(aulaForSub["Data da aula"]);
     console.log(datas);
 }
@@ -165,11 +166,11 @@ function setSingleDay(){
 
 function generateClassDuration(startTimestamp, endTimestamp) {
     const timestamps = [];
-    
+
     // Convert start and end timestamps to milliseconds
     const startMilliseconds = timestampToMilliseconds(startTimestamp);
     const endMilliseconds = timestampToMilliseconds(endTimestamp);
-    
+
     // Start from the first timestamp
     let currentMilliseconds = startMilliseconds;
 
@@ -177,10 +178,10 @@ function generateClassDuration(startTimestamp, endTimestamp) {
     while (currentMilliseconds <= endMilliseconds) {
         // Convert the current timestamp to a string
         const timestampString = millisecondsToTimestamp(currentMilliseconds);
-        
+
         // Add the timestamp to the array
         timestamps.push(timestampString);
-        
+
         // Move to the next timestamp by adding 30 minutes (1800 seconds)
         currentMilliseconds += 1800000; // 30 minutes in milliseconds
     }
@@ -202,7 +203,7 @@ function millisecondsToTimestamp(milliseconds) {
     return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
 }
 
-function generateSubClasses(tabledata){
+function generateSubClasses(tabledata) {
     /*
         var aulaForSub; //aula que foi selecionada para ser substituida
         var weekDays; //pares de chave valor com números e dias da semana baseados nos resultados da função .getDay() da classe DATE
@@ -223,12 +224,12 @@ function generateSubClasses(tabledata){
     })
 
 
-    salasAula.forEach( sala => {
-        datas.forEach( data => {
+    salasAula.forEach(sala => {
+        datas.forEach(data => {
             const dataNovaAula = turnToDate(data);
             const dayOfWeek = dataNovaAula.getDay();
-            if(weekDays.hasOwnProperty(dayOfWeek)){
-                horasInicio.forEach(hora =>{
+            if (weekDays.hasOwnProperty(dayOfWeek)) {
+                horasInicio.forEach(hora => {
                     const copiedAulaForSub = Object.assign({}, aulaForSub);
                     copiedAulaForSub["Dia da semana"] = weekDays[dayOfWeek];
                     copiedAulaForSub["Hora início da aula"] = hora;
@@ -240,7 +241,9 @@ function generateSubClasses(tabledata){
                     const key2 = copiedAulaForSub["Data da aula"] + copiedAulaForSub["Sala atribuída à aula"] + copiedAulaForSub["Hora início da aula"];
                     if (!(key2 in dictionaryOriginal)) {
                         jsonArray.push(copiedAulaForSub);
+                        //flop
                     }
+
                 });
             }
         });
@@ -254,4 +257,4 @@ function generateSubClasses(tabledata){
 
 
 
-export {setSalas, setSalasByType, generateTimeStamps, setAulaforSub, setWeekDays, removeSalasFromList, setDatasBasedOnSub, generateSubClasses, setSingleDay, setDatas, removeDuplicatesTimestamps, generateClassDuration, removeSelectedWeekdaysFromMap, datasLength, getAulaforSub, extractCursos, extractTurmas, setCursos, setTurmas, setAulas, setTamanhoAula, setSemestre, getNumAulas};
+export { setSalas, setSalasByType, generateTimeStamps, setAulaforSub, setWeekDays, removeSalasFromList, setDatasBasedOnSub, generateSubClasses, setSingleDay, setDatas, removeDuplicatesTimestamps, generateClassDuration, removeSelectedWeekdaysFromMap, datasLength, getAulaforSub, extractCursos, extractTurmas, setCursos, setTurmas, setAulas, setTamanhoAula, setSemestre, getNumAulas };

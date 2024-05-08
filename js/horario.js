@@ -1,9 +1,10 @@
 import { TabulatorFull as Tabulator } from 'tabulator-tables';
 import { generateFilterExpression, customFilter, formatString } from './filters';
-import { dataParseHorario, dataParseSalas, extractAttributes, extractNomeSalas, getUCs, getCursos, getTurmas} from './utils';
-import { generateClassDuration, generateSubClasses, generateTimeStamps, removeDuplicatesTimestamps, removeSalasFromList, setAulaforSub, setDatas, setDatasBasedOnSub, setSalas, setSalasByType, setSingleDay, setWeekDays, removeSelectedWeekdaysFromMap, datasLength, setCursos, setTurmas, setAulas, setTamanhoAula, getAulaforSub, setSemestre, getNumAulas} from './suggestion';
+import { dataParseHorario, dataParseSalas, extractAttributes, extractNomeSalas, getUCs, getCursos, getTurmas } from './utils';
+import { generateClassDuration, generateSubClasses, generateTimeStamps, removeDuplicatesTimestamps, removeSalasFromList, setAulaforSub, setDatas, setDatasBasedOnSub, setSalas, setSalasByType, setSingleDay, setWeekDays, removeSelectedWeekdaysFromMap, datasLength, setCursos, setTurmas, setAulas, setTamanhoAula, getAulaforSub, setSemestre, getNumAulas } from './suggestion';
 import dateCraft from 'date-craft';
 import { turnToDate } from './calcSemanas';
+import { handleGithubDataHeatmap, salasSetter } from './heatmap'
 
 //https://raw.githubusercontent.com/j-smva/ES-2023-2024-LEI-Grupo-J/main/CSVs/HorarioDeExemplo.csv
 
@@ -120,6 +121,33 @@ document.addEventListener('DOMContentLoaded', function () {
     });
     substituirAula.addEventListener('click', paramsSubstituicao);
     AulasUC.addEventListener('click', paramsUC);
+    const graphButton = document.getElementById("graphButton");
+
+    graphButton.addEventListener("click", function () {
+        var messageDiv = document.getElementById("params");
+        messageDiv.textContent = ""; // Clear any previous content
+        messageDiv.style.display = "block";
+
+        var githubInput = document.createElement("input");
+        githubInput.setAttribute("type", "text");
+        githubInput.setAttribute("placeholder", "Enter GitHub raw link...");
+        githubInput.value = "https://raw.githubusercontent.com/j-smva/ES-2023-2024-LEI-Grupo-J/main/CSVs/CaracterizaçãoDasSalas.csv";
+        messageDiv.appendChild(githubInput);
+
+        console.log("GitHub input added");
+
+        // Add button to submit GitHub link
+        var submitGithubButton = document.createElement("button");
+        submitGithubButton.textContent = "Submit GitHub Link";
+        submitGithubButton.onclick = function () {
+            const githubLink = githubInput.value;
+            gitHubCSVSalas(4, githubLink);
+            messageDiv.style.display = "none";
+        };
+        messageDiv.appendChild(submitGithubButton);
+
+        console.log("GitHub button added");
+    })
 
 });
 function paramsUC() {
@@ -334,6 +362,8 @@ function handleFileSub(content) {
         console.log("Alocar button clicked");
         buttonContainer.removeChild(alocarButton);
     });
+
+
 }
 
 
@@ -420,8 +450,9 @@ function handleSubmitFilters(label) {
         createAllocationOptions();
     } else if (label.textContent === "Nome UCs: ") {
         var selectedUC = Array.from(document.getElementById("dropdown_Nome UCs").selectedOptions).map(option => option.value);
-        if (selectedUC.length > 0) {+
-            setAulaforSub({"Curso": "LIGE, LIGE-PL", "Unidade Curricular": selectedUC[0], "Turno": "---", "Turma": "IGE-PL-C2, IGE-PL-C1", "Inscritos no turno": "-", "Dia da semana": "Ter", "Hora início da aula": "18:00:00", "Hora fim da aula": "19:30:00", "Data da aula": "00/00/0000", "Semana do Ano": 43});
+        if (selectedUC.length > 0) {
+            +
+                setAulaforSub({ "Curso": "LIGE, LIGE-PL", "Unidade Curricular": selectedUC[0], "Turno": "---", "Turma": "IGE-PL-C2, IGE-PL-C1", "Inscritos no turno": "-", "Dia da semana": "Ter", "Hora início da aula": "18:00:00", "Hora fim da aula": "19:30:00", "Data da aula": "00/00/0000", "Semana do Ano": 43 });
         }
         getSemestre();
     } else if (label.textContent === "Cursos: ") {
@@ -437,34 +468,40 @@ function handleSubmitFilters(label) {
             setTurmas(selectedTurmas)
         }
         console.log("Done Turmas");
-        createAmountAulasInput("Quantidade de Aulas",1);
+        createAmountAulasInput("Quantidade de Aulas", 1);
     } else if (label.textContent === "Quantidade de Aulas: ") {
         setAulas(document.getElementById("dropdown_Quantidade de Aulas").value);
         console.log("Done Quantidade de Aulas");
-        createAmountAulasInput("Tempo de Aula",30);
+        createAmountAulasInput("Tempo de Aula", 30);
     } else if (label.textContent === "Tempo de Aula: ") {
         setTamanhoAula(document.getElementById("dropdown_Tempo de Aula").value);
         console.log("Done Tempo de Aula");
         populateDropdown(nomeSalas, "Nome Sala Alocar");
-    }    
+
+    } else if (label.textContent === "nomesSalasTEmp: ") { //flop
+        var selectedTipo = Array.from(document.getElementById("dropdown_nomesSalasTEmp").selectedOptions).map(option => option.value);
+
+        salasSetter(setSalasByType(dataSalas, selectedTipo));
+
+    }
 }
 
-function createAmountAulasInput(dropdownLabel,step){
-     // Remove existing dropdown container if it exists
-     var existingDropdownContainer = document.getElementById("dropdownContainer");
-     if (existingDropdownContainer) {
-         existingDropdownContainer.parentNode.removeChild(existingDropdownContainer);
-     }
- 
-     // Create dropdown container
-     var dropdownContainer = document.createElement("div");
-     dropdownContainer.id = "dropdownContainer";
- 
-     // Create label for dropdown
-     var label = document.createElement("label");
-     label.textContent = dropdownLabel + ": ";
-     dropdownContainer.appendChild(label);
- 
+function createAmountAulasInput(dropdownLabel, step) {
+    // Remove existing dropdown container if it exists
+    var existingDropdownContainer = document.getElementById("dropdownContainer");
+    if (existingDropdownContainer) {
+        existingDropdownContainer.parentNode.removeChild(existingDropdownContainer);
+    }
+
+    // Create dropdown container
+    var dropdownContainer = document.createElement("div");
+    dropdownContainer.id = "dropdownContainer";
+
+    // Create label for dropdown
+    var label = document.createElement("label");
+    label.textContent = dropdownLabel + ": ";
+    dropdownContainer.appendChild(label);
+
     // Create the number input element
     var numberInput = document.createElement("input");
     numberInput.type = "number";
@@ -473,20 +510,20 @@ function createAmountAulasInput(dropdownLabel,step){
     numberInput.min = step;
     numberInput.value = step;
     numberInput.step = step;
- 
-     // Create submit button
-     var submitButton = document.createElement("button");
-     submitButton.textContent = "Submit";
-     submitButton.addEventListener("click", function () {
-         handleSubmitFilters(label);
-     });
- 
-     // Append dropdown and submit button to dropdownContainer
-     dropdownContainer.appendChild(numberInput);
-     dropdownContainer.appendChild(submitButton);
- 
-     // Append dropdownContainer to body or any other parent element
-     document.body.appendChild(dropdownContainer);
+
+    // Create submit button
+    var submitButton = document.createElement("button");
+    submitButton.textContent = "Submit";
+    submitButton.addEventListener("click", function () {
+        handleSubmitFilters(label);
+    });
+
+    // Append dropdown and submit button to dropdownContainer
+    dropdownContainer.appendChild(numberInput);
+    dropdownContainer.appendChild(submitButton);
+
+    // Append dropdownContainer to body or any other parent element
+    document.body.appendChild(dropdownContainer);
 }
 function createAllocationOptions() {
     // Get the dropdown container
@@ -508,8 +545,8 @@ function createAllocationOptions() {
     dropdownContainer.appendChild(title);
 
     // Create buttons
-    var buttons = ["Mesmo dia", "Mesma Semana", "Entre Datas", "Opções de Exclusão"]; 
-    if(getAulaforSub()["Turno"]=="---"){buttons = ["Entre Datas", "Opções de Exclusão"];}    
+    var buttons = ["Mesmo dia", "Mesma Semana", "Entre Datas", "Opções de Exclusão"];
+    if (getAulaforSub()["Turno"] == "---") { buttons = ["Entre Datas", "Opções de Exclusão"]; }
     console.log(buttons);
     buttons.forEach(function (buttonText) {
         var button = document.createElement("button");
@@ -584,12 +621,12 @@ function createExclusionOptions() {
             // Call appropriate function based on button text
             const l = datasLength();
             switch (buttonText) {
-                
+
                 case "Manhã":
                     console.log("Manhã button clicked");
                     generateTimeStamps();
                     removeDuplicatesTimestamps(generateClassDuration("08:00:00", "12:30:00"));
-                    if(l === 1){
+                    if (l === 1) {
                         setWeekDays();
                         createGenerateSuggestionsButton();
                     } else {
@@ -600,7 +637,7 @@ function createExclusionOptions() {
                     console.log("Tarde button clicked");
                     generateTimeStamps();
                     removeDuplicatesTimestamps(generateClassDuration("13:00:00", "18:30:00"));
-                    if(l === 1){
+                    if (l === 1) {
                         setWeekDays();
                         createGenerateSuggestionsButton();
                     } else {
@@ -611,7 +648,7 @@ function createExclusionOptions() {
                     console.log("Noite button clicked");
                     generateTimeStamps();
                     removeDuplicatesTimestamps(generateClassDuration("19:00:00", "21:30:00"));
-                    if(l === 1){
+                    if (l === 1) {
                         setWeekDays();
                         createGenerateSuggestionsButton();
                     } else {
@@ -624,7 +661,7 @@ function createExclusionOptions() {
                     break;
                 case "Nenhum":
                     generateTimeStamps();
-                    if(l === 1){
+                    if (l === 1) {
                         setWeekDays();
                         createGenerateSuggestionsButton();
                     } else {
@@ -639,7 +676,7 @@ function createExclusionOptions() {
     });
 }
 
-function getSemestre(){
+function getSemestre() {
     // Get the dropdown container
     var dropdownContainer = document.getElementById("dropdownContainer");
 
@@ -659,7 +696,7 @@ function getSemestre(){
     dropdownContainer.appendChild(title);
 
     // Create buttons
-    const buttons = ["1º Semestre", "2º Semestre"]; 
+    const buttons = ["1º Semestre", "2º Semestre"];
     buttons.forEach(function (buttonText) {
         var button = document.createElement("button");
         button.textContent = buttonText;
@@ -818,7 +855,7 @@ function createTimestampInputs() {
                 generateTimeStamps();
                 removeDuplicatesTimestamps(generateClassDuration(startTimestamp, endTimestamp));
                 const l = datasLength();
-                if(l === 1){
+                if (l === 1) {
                     setWeekDays();
                     createGenerateSuggestionsButton();
                 } else {
@@ -946,7 +983,7 @@ function createTableSugestion() {
     document.body.appendChild(suggestionDiv); // Append the div to the body or any other parent element
 
 
-    const novatabledata = generateSubClasses(tabledata);
+    const novatabledata = generateSubClasses(tabledata); //flop
     console.log(novatabledata);
     const tableS = new Tabulator("#suggestion", {
         data: novatabledata, // Your data array here,
@@ -968,7 +1005,7 @@ function createTableSugestion() {
 
     tableS.on("tableBuilt", function () {
         const buttonSub = document.getElementById("Select");
-    
+
         // Define the event listener function
         function handleClick() {
             const novaAula = tableS.getSelectedData(); // Move the definition here
@@ -977,30 +1014,30 @@ function createTableSugestion() {
             } else if (novaAula.length > getNumAulas()) {
                 alert('Maximo numero de aulas ultrapasado.');
             } else {
-                if(getAulaforSub()["Turno"]=="---"){
-                    setAulas(getNumAulas()-novaAula.length);
-                    novaAula.forEach(function(row) {
-                        tablefinal.addRow(row,true)
+                if (getAulaforSub()["Turno"] == "---") {
+                    setAulas(getNumAulas() - novaAula.length);
+                    novaAula.forEach(function (row) {
+                        tablefinal.addRow(row, true)
                         console.log("row added");
                     });
-                    if (suggestionDiv && getNumAulas()==0) {
+                    if (suggestionDiv && getNumAulas() == 0) {
                         suggestionDiv.remove();
                     }
-                }else{
-                tablefinal.addRow(novaAula[0],true);
-                console.log("row added");
-                const row = tablefinal.getSelectedRows();
-                row[0].delete();
-                if (suggestionDiv) {
-                    suggestionDiv.remove();
+                } else {
+                    tablefinal.addRow(novaAula[0], true);
+                    console.log("row added");
+                    const row = tablefinal.getSelectedRows();
+                    row[0].delete();
+                    if (suggestionDiv) {
+                        suggestionDiv.remove();
+                    }
                 }
             }
-            }
         }
-    
+
         // Remove the existing event listener, if any
         buttonSub.removeEventListener('click', handleClick);
-    
+
         // Add the event listener
         buttonSub.addEventListener('click', handleClick);
     });
@@ -1041,8 +1078,13 @@ function gitHubCSVSalas(number, githubLink) {
                 console.log("isto funcionou a gerar tabela");
             } else if (number == 2) {
                 handleFileSub(csvDataSalas);
-            }else if (number  == 3){
+            } else if (number == 3) {
                 handleFileUCS(csvDataSalas)
+            } else if (number == 4) {
+
+                dataSalas = dataParseSalas(csvDataSalas);
+                console.log(dataSalas);
+                handleGithubDataHeatmap(dataSalas);
             }
 
 
@@ -1091,7 +1133,7 @@ function createTableHorario(tabledata) {
         ],
     });
     tablefinal.on("tableBuilt", addEventListeners);
-    tablefinal.on("rowAdded", function(row) {
+    tablefinal.on("rowAdded", function (row) {
         console.log("adawdawda");
         // Set the background color of the newly added row to green
         row.getElement().style.backgroundColor = "green";
@@ -1276,3 +1318,5 @@ var headerMenu = function () {
 
     return menu;
 };
+
+export { populateDropdown }
