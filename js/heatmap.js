@@ -94,14 +94,6 @@ function createHeatMap(matrix) {
         .append("title")
         .text(d => `Value: ${d.value}`);
 
-    // Add x-axis
-    svg.append("g")
-        .attr("transform", "translate(0," + height + ")")
-        .call(d3.axisBottom(x));
-
-    // Add y-axis
-    svg.append("g")
-        .call(d3.axisLeft(y));
 
     svg.append("g")
         .attr("transform", "translate(0," + height + ")")
