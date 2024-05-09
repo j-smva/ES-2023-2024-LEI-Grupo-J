@@ -76,7 +76,7 @@ function removeSelectedWeekdaysFromMap(selectedWeekdays) {
 //função que dá set à aula que foi selecionada para ser substituida
 function setAulaforSub(dataAula){
     aulaForSub = dataAula;
-    console.log(typeof aulaForSub);
+    //console.log(typeof aulaForSub);
     console.log(aulaForSub);
 }
 

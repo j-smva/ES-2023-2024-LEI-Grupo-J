@@ -3,16 +3,19 @@ import { dataParseHorario, dataParseSalas } from './utils';
 import { generateFilterExpression, customFilter, formatString } from './filters';
 
 
-import { createButton } from './htmlelems';
+import { addHeaderToDiv, createButton, createDiv, createInput } from './htmlelems';
+import { setAulaforSub } from './suggestion';
 
 
-var tablefinal;
-var tabledata;
-var cur_filter;
-var headerFilters;
-var filterMatrix = [];
-var counter = 0;
-    
+var tablefinal; //tabela geral
+var tabledata; // dados da tabela geral
+var cur_filter; //filtro atual da tabela
+var headerFilters; //filtros dos headerInputs
+var filterMatrix = []; //matriz para o calculo dos filtros
+var counter = 0; //contador para o calculo dos filtros
+var aulaParaSubstituicao; //ter atenção se este é mesmon necessário
+var divMain;
+
 tablefinal = new Tabulator("#example-table", {
     pagination: "local",
     paginationSize: 10,
@@ -23,7 +26,7 @@ tablefinal = new Tabulator("#example-table", {
 
 
 
-document.addEventListener('DOMContentLoaded', function(){
+document.addEventListener('DOMContentLoaded', function () {
     const githubButton = document.getElementById('githubButton');
     githubButton.addEventListener('click', gitHubCSVHorario);
     const githubButtonSalas = document.getElementById('githubButtonSalas');
@@ -32,38 +35,94 @@ document.addEventListener('DOMContentLoaded', function(){
         gitHubCSVSalas(1, githubLink);
     });
     const localButton = document.getElementById('localButton');
-    localButton.addEventListener('change', function(event){
-        readLocalFile(event,1);
+    localButton.addEventListener('change', function (event) {
+        readLocalFile(event, 1);
     })
     const localButtonSalas = document.getElementById('localButtonSalas');
-    localButtonSalas.addEventListener('change', function(event){
-        readLocalFile(event,2);
+    localButtonSalas.addEventListener('change', function (event) {
+        readLocalFile(event, 2);
     })
 });
 
+function tableOptionsStartup() {
+    if (!divMain) {
+        divMain = createDiv('Sub');
+        //divMain.style.display = "block";
+        divMain.style.display = "flex";
+        divMain.style.flexDirection = "column";
+        document.body.appendChild(divMain);
+    } else {
+        divMain.innerHTML = '';
+    }
+    const buttonSub = createButton('Substituir Aula', '', handleSubAula);
+    addHeaderToDiv(1, "Opções", divMain);
+    divMain.appendChild(buttonSub);
+}
+
+function handleSubAula(){
+    if (!tabledata) {
+        alert('Horário não gerado');
+    } else {
+        const aulaSelected = tablefinal.getSelectedData();
+        switch (aulaSelected.length) {
+            case 0:
+                alert('Aula não selecionada');
+                break;
+            case 1:
+                //alert('tudo fixolas');
+                aulaParaSubstituicao = aulaSelected[0];
+                setAulaforSub(aulaParaSubstituicao);
+                secondSalaSubmission(3,2);
+                break;
+            default:
+                alert('Selecionar apenas uma aula');
+        }
+    }
+}
+
+function secondSalaSubmission(numberLocal, numberGitHub) {
+    while (divMain.firstChild) {
+        divMain.removeChild(divMain.firstChild);
+    }
+
+    const textInput = createInput('text', 'Enter Raw Link', '', null);
+    divMain.appendChild(textInput);
+    textInput.addEventListener('change', function () {
+        // Call the gitHubCSVSalas function with the updated value of the input field
+        gitHubCSVSalas(numberGitHub, textInput.value);
+    });
+    const fileInput = createInput('file', 'Enter File', '', null);
+    divMain.appendChild(fileInput);
+    fileInput.addEventListener('change', function (event) {
+        // Call the gitHubCSVSalas function with the updated value of the input field
+        readLocalFile(event, numberLocal);
+    });
+}
+
 function gitHubCSVSalas(number, githubLink) {
-    //numbers: 1 -> tabela Salas;
+    //numbers: 1 -> tabela Salas; 2->Substituir aula
     //const githubLink = document.getElementById('githubLinkSalas').value;
     fetch(githubLink)
         .then(response => response.text())
         .then(csvDataSalas => {
-            if (number == 1) {
-                tabledata = dataParseSalas(csvDataSalas);
-                //console.log(tabledata);
-                createTableSalas(tabledata);
-                //console.log("isto funcionou a gerar tabela");
-            } else if (number == 2) {
-                handleFileSub(csvDataSalas);
-            } else if (number == 3) {
-                handleFileUCS(csvDataSalas)
+            switch (number) {
+                case 1:
+                    tabledata = dataParseSalas(csvDataSalas);
+                    //console.log(tabledata);
+                    createTableSalas(tabledata);
+                    //console.log("isto funcionou a gerar tabela");
+                    break;
+                case 2:
+                    //handleFileSub(csvDataSalas);
+                    alert('ta tudo fixolas');
+                    console.log(dataParseSalas(csvDataSalas));
+                    break;
             }
-
-
         })
         .catch(error => {
             console.error('Error fetching CSV data:', error);
         });
-};
+}
 
 function gitHubCSVHorario() {
     const githubLink = document.getElementById('githubLink').value;
@@ -78,18 +137,18 @@ function gitHubCSVHorario() {
         .catch(error => {
             console.error('Error fetching CSV data:', error);
         });
-};
+}
 
-function readLocalFile(event, number){
+function readLocalFile(event, number) {
     //numbers: 1 -> Horario; 2 -> Salas;
     const file = event.target.files[0];
 
-    if(file){
-        if(file.type === 'text/csv'){
+    if (file) {
+        if (file.type === 'text/csv') {
             const reader = new FileReader();
-            reader.onload = function (event){
+            reader.onload = function (event) {
                 const fileContent = event.target.result;
-                switch(number) {
+                switch (number) {
                     case 1:
                         tabledata = dataParseHorario(fileContent);
                         createTableHorario(tabledata);
@@ -97,7 +156,11 @@ function readLocalFile(event, number){
                     case 2:
                         tabledata = dataParseSalas(fileContent);
                         createTableSalas(tabledata);
-                        
+                        break;
+                    case 3:
+                        alert('ta tudo fixolas mas local');
+                        console.log(dataParseSalas(fileContent));
+                        break;
                 }
 
             }
@@ -108,7 +171,7 @@ function readLocalFile(event, number){
     } else {
         console.error('No file selected.');
     }
-} 
+}
 
 function createTableHorario(tabledata) {
 
@@ -150,7 +213,7 @@ function createTableHorario(tabledata) {
     });
 }
 
-function createTableSalas(tabledata){
+function createTableSalas(tabledata) {
     tablefinal = new Tabulator("#example-table", {
         layout: "fitData",
         data: tabledata,
@@ -219,6 +282,7 @@ function addEventListeners() {
     ORtoggle.addEventListener('click', toggleFilter);
     CSV.addEventListener('click', downloadCSV);
     JSON.addEventListener('click', downloadJSON);
+    tableOptionsStartup();
 }
 
 function resetFilters() {
@@ -303,4 +367,4 @@ var headerMenu = function () {
     }
 
     return menu;
-};
+}
