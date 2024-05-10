@@ -194,7 +194,105 @@ function createDateInputWithSubmit(className, submitHandler) {
     return container;
 }
 
+function createDualSelect(options, className, submitHandler) {
+    const container = document.createElement('div');
+
+    // Create the first select field
+    const select1 = document.createElement('select');
+    if (className) {
+        select1.className = className;
+    }
+
+    // Add options to the first select field
+    options.forEach(function(option) {
+        let optionElement = document.createElement('option');
+        optionElement.value = option;
+        optionElement.textContent = option;
+        select1.appendChild(optionElement);
+    });
+    container.appendChild(select1);
+
+    // Create the second select field
+    const select2 = document.createElement('select');
+    if (className) {
+        select2.className = className;
+    }
+
+    // Add options to the second select field
+    options.forEach(function(option) {
+        let optionElement = document.createElement('option');
+        optionElement.value = option;
+        optionElement.textContent = option;
+        select2.appendChild(optionElement);
+    });
+    container.appendChild(select2);
+
+    // Create the submit button
+    const submitButton = document.createElement('button');
+    submitButton.textContent = 'Submit';
+
+    // Add click event listener to the submit button
+    submitButton.addEventListener('click', function() {
+        // Get the selected options
+        const selectedOption1 = select1.value;
+        const selectedOption2 = select2.value;
+        // Call the submit handler with the selected options
+        if (submitHandler && typeof submitHandler === 'function') {
+            submitHandler(selectedOption1, selectedOption2);
+        }
+    });
+    container.appendChild(submitButton);
+
+    // Return the container div
+    return container;
+}
+
+function createCheckboxes(options, className, submitHandler) {
+    const container = document.createElement('div');
+
+    // Create checkboxes for each option
+    options.forEach(function(option, index) {
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.value = index + 1; // Associate value with index (starting from 1)
+        const label = document.createElement('label');
+        label.textContent = option;
+
+        // Append checkbox and label to container
+        container.appendChild(checkbox);
+        container.appendChild(label);
+        container.appendChild(document.createElement('br')); // Line break
+    });
+
+    // Create submit button
+    const submitButton = document.createElement('button');
+    submitButton.textContent = 'Submit';
+
+    // Add click event listener to the submit button
+    submitButton.addEventListener('click', function() {
+        // Get the values of the checked checkboxes
+        const selectedOptions = [];
+        options.forEach(function(option, index) {
+            const checkbox = container.querySelector('input[type="checkbox"][value="' + (index + 1) + '"]');
+            if (checkbox.checked) {
+                selectedOptions.push(checkbox.value);
+            }
+        });
+        // Call the submit handler with the selected options
+        if (submitHandler && typeof submitHandler === 'function') {
+            submitHandler(selectedOptions);
+        }
+    });
+    container.appendChild(submitButton);
+
+    // Set class name if provided
+    if (className) {
+        container.className = className;
+    }
+
+    // Return the container div
+    return container;
+}
 
 
-
-export { addParagraphToDiv, createButton, createDiv, addHeaderToDiv, createInput, createMultiSelect, createDateInputWithSubmit };
+export { createCheckboxes ,createDualSelect, addParagraphToDiv, createButton, createDiv, addHeaderToDiv, createInput, createMultiSelect, createDateInputWithSubmit };

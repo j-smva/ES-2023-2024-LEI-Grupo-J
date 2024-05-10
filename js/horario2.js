@@ -1291,3 +1291,55 @@ var headerMenu = function () {
 
     return menu;
 };
+
+
+
+
+
+
+function generateSubClasses(tabledata){
+    /*
+        var aulaForSub; //aula que foi selecionada para ser substituida
+        var weekDays; //pares de chave valor com números e dias da semana baseados nos resultados da função .getDay() da classe DATE
+        var salasAula = []; // array que recebe as salas de aula.
+        var horasInicio = []; //array que recebe as horas possiveis de inicio de uma sala.
+        var datas = []; //array que guarda todas as datas em que é possivel marcar as aulas; 
+    */
+    const inicio = timestampToMilliseconds(aulaForSub["Hora início da aula"]);
+    const fim = timestampToMilliseconds(aulaForSub["Hora fim da aula"]);
+    const duration = fim - inicio;
+    const parsedTableData = JSON.parse(tabledata);
+    const jsonArray = [];
+    const dictionaryOriginal = {};
+    //console.log(typeof datas[0]);
+    parsedTableData.forEach(aula => {
+        const key = aula["Data da aula"] + aula["Sala atribuída à aula"] + aula["Hora início da aula"];
+        dictionaryOriginal[key] = aula;
+    })
+
+
+    salasAula.forEach( sala => {
+        datas.forEach( data => {
+            const dataNovaAula = turnToDate(data);
+            const dayOfWeek = dataNovaAula.getDay();
+            if(weekDays.hasOwnProperty(dayOfWeek)){
+                horasInicio.forEach(hora =>{
+                    const copiedAulaForSub = Object.assign({}, aulaForSub);
+                    copiedAulaForSub["Dia da semana"] = weekDays[dayOfWeek];
+                    copiedAulaForSub["Hora início da aula"] = hora;
+                    copiedAulaForSub["Hora fim da aula"] = millisecondsToTimestamp(timestampToMilliseconds(hora) + duration);
+                    copiedAulaForSub["Data da aula"] = data;
+                    copiedAulaForSub["Semana do Ano"] = giveSemanaAno(data);
+                    copiedAulaForSub["Semana do Semestre"] = giveSemanaSemestre(data);
+                    copiedAulaForSub["Sala atribuída à aula"] = sala;
+                    const key2 = copiedAulaForSub["Data da aula"] + copiedAulaForSub["Sala atribuída à aula"] + copiedAulaForSub["Hora início da aula"];
+                    if (!(key2 in dictionaryOriginal)) {
+                        jsonArray.push(copiedAulaForSub);
+                    }
+                });
+            }
+        });
+    });
+    console.log(jsonArray);
+    return JSON.stringify(jsonArray);
+}

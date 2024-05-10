@@ -3,8 +3,8 @@ import { dataParseHorario, dataParseSalas, extractAttributes, extractNomeSalas }
 import { generateFilterExpression, customFilter, formatString } from './filters';
 
 
-import { addHeaderToDiv, addParagraphToDiv, createButton, createDateInputWithSubmit, createDiv, createInput, createMultiSelect } from './htmlelems';
-import { generateClassDuration, generateTimeStamps, horasInicioLength, removeDuplicatesTimestamps, removeSalasFromList, setAulaforSub, setDatas, setDatasBasedOnSub, setSalas, setSalasByType, setSingleDay } from './suggestion';
+import { addHeaderToDiv, addParagraphToDiv, createButton, createCheckboxes, createDateInputWithSubmit, createDiv, createDualSelect, createInput, createMultiSelect } from './htmlelems';
+import { datasLength, generateClassDuration, generateSubClasses, generateTimeStamps, horasInicioLength, removeDuplicatesTimestamps, removeSalasFromList, removeSelectedWeekdaysFromMap, setAulaforSub, setDatas, setDatasBasedOnSub, setSalas, setSalasByType, setSingleDay, setWeekDays, timestampToMilliseconds } from './suggestion';
 import dateCraft from 'date-craft';
 import { turnToDate } from './calcSemanas';
 
@@ -59,11 +59,17 @@ function tableOptionsStartup() {
         divMain.style.flexDirection = "column";
         document.body.appendChild(divMain);
     } else {
-        divMain.innerHTML = '';
+        clearDiv(divMain);
     }
     const buttonSub = createButton('Substituir Aula', '', handleSubAula);
     addHeaderToDiv(1, "Opções", divMain);
     divMain.appendChild(buttonSub);
+}
+
+function clearDiv(div) {
+    while (div.firstChild) {
+        div.removeChild(div.firstChild);
+    }
 }
 
 function handleSubAula() {
@@ -88,10 +94,7 @@ function handleSubAula() {
 }
 
 function secondSalaSubmission(numberLocal, numberGitHub) {
-    while (divMain.firstChild) {
-        divMain.removeChild(divMain.firstChild);
-    }
-
+    clearDiv(divMain);
     const textInput = createInput('url', 'Enter Raw Link', '', null);
     divMain.appendChild(textInput);
     textInput.addEventListener('change', function () {
@@ -117,9 +120,7 @@ function subAulaInfoSetter(content) {
 } //vai dar para reutilizar
 
 function salasButtonsSetter() {
-    while (divMain.firstChild) {
-        divMain.removeChild(divMain.firstChild);
-    }
+    clearDiv(divMain);
     const buttonAlocarSala = createButton('Alocar Sala(s) Específica', '', createOptionsAndBackButton, [nomeSalas, handleAllocateSalas, 'Alocar Sala']);
     divMain.appendChild(buttonAlocarSala);
 
@@ -131,12 +132,18 @@ function salasButtonsSetter() {
 
     const buttonExcludeTipo = createButton('Excluir Tipo(s) de Sala Específco', '', createOptionsAndBackButton, [tipoSalas, handleExcludeTipo, 'Excluir Tipo(s) de sala']);
     divMain.appendChild(buttonExcludeTipo);
+
+    const allsalas = createButton('Incluir Todas as Salas', '', handleAllSalas);
+    divMain.appendChild(allsalas);
+}
+
+function handleAllSalas(){
+    setSalas(nomeSalas);
+    setAllocationOptions();
 }
 
 function createOptionsAndBackButton(options, handler, headerText) {
-    while (divMain.firstChild) {
-        divMain.removeChild(divMain.firstChild);
-    }
+    clearDiv(divMain);
     addHeaderToDiv(1, headerText, divMain);
     const div = createMultiSelect(options, '', handler);
     divMain.appendChild(div);
@@ -184,10 +191,7 @@ function handleExcludeTipo(options) {
 }
 
 function setAllocationOptions() {
-    while (divMain.firstChild) {
-        divMain.removeChild(divMain.firstChild);
-    }
-
+    clearDiv(divMain);
     addHeaderToDiv(1, 'Opções de Alocação', divMain);
     const sameDay = createButton('Mesmo Dia', '', handleSameDay);
     const sameWeek = createButton('Mesma Semana', '', handleSameWeek);
@@ -197,7 +201,6 @@ function setAllocationOptions() {
     divMain.appendChild(sameWeek);
     divMain.appendChild(betweenDates);
     divMain.appendChild(excludeOptions);
-
 }
 
 function handleSameDay() {
@@ -213,9 +216,7 @@ function handleSameWeek() {
 }
 
 function handleBetweenDates() {
-    while (divMain.firstChild) {
-        divMain.removeChild(divMain.firstChild);
-    }
+    clearDiv(divMain);
     addHeaderToDiv(1, 'Entre Datas', divMain);
     const datesInput = createDateInputWithSubmit('', handleBetweenDatesInput);
     divMain.appendChild(datesInput);
@@ -246,22 +247,22 @@ function handleExlusionOptions() {
 }
 
 function setExclusionOptions() {
-    while (divMain.firstChild) {
-        divMain.removeChild(divMain.firstChild);
-    }
+    clearDiv(divMain);
     addHeaderToDiv(1, 'Opções de Exclusão (Horas)', divMain);
     const setPeriods = createButton('Períodos Predefinidos', '', handleSetPeriods);
     divMain.appendChild(setPeriods);
     const entreHoras = createButton('Entre Horas', '', handleEntreHoras);
     divMain.appendChild(entreHoras);
+    const nenhum = createButton('Nenhum', '', callSetDays);
+    divMain.appendChild(nenhum);
+    const goBackButton = createButton('Voltar Atrás', '', setAllocationOptions);
+    divMain.appendChild(goBackButton);
 
 }
 
 
-function handleSetPeriods(){
-    while (divMain.firstChild) {
-        divMain.removeChild(divMain.firstChild);
-    }
+function handleSetPeriods() {
+    clearDiv(divMain);
     addHeaderToDiv(1, 'Períodos Predefinidos para Horas de Início', divMain);
     addParagraphToDiv('Manhã: 08:00:00 - 12:30:00', divMain);
     addParagraphToDiv('Tarde: 13:00:00 - 18:30:00', divMain);
@@ -270,34 +271,140 @@ function handleSetPeriods(){
     divMain.appendChild(option);
 }
 
-function handleSetPeriodsSelect(options){
+function handleSetPeriodsSelect(options) {
     generateTimeStamps();
-    options.forEach(option =>{
-        switch(option){
+    options.forEach(option => {
+        switch (option) {
             case 'Manhã':
-                removeDuplicatesTimestamps(generateClassDuration("08:00:00","12:30:00"));
+                removeDuplicatesTimestamps(generateClassDuration("08:00:00", "12:30:00"));
                 break;
             case 'Tarde':
-                removeDuplicatesTimestamps(generateClassDuration("13:00:00","18:30:00"));
+                removeDuplicatesTimestamps(generateClassDuration("13:00:00", "18:30:00"));
                 break;
             case 'Noite':
-                removeDuplicatesTimestamps(generateClassDuration("19:00:00","21:30:00"));
+                removeDuplicatesTimestamps(generateClassDuration("19:00:00", "21:30:00"));
                 break;
         }
     });
     //console.log(horasInicioLength());
-    if(horasInicioLength() === 0){
+    if (horasInicioLength() === 0) {
         alert('Não é possivel remover todas as opções');
         handleSetPeriods();
     } else {
-        alert('tudo de boa');
+        if (datasLength() === 1) {
+            setWeekDays();
+            readyToShowSuggestion();
+        } else {
+            setDaysOfWeek();
+        }
+        //alert('tudo de boa');
     }
 }
 
-function handleEntreHoras(){
-    
+function handleEntreHoras() {
+    clearDiv(divMain);
+    addParagraphToDiv('Escolher Horas inicias e finais do período a excluir', divMain);
+    const container = createDualSelect(generateClassDuration("08:00:00", "21:30:00"), '', handleEntreHorasSelection);
+    divMain.appendChild(container);
 }
 
+function handleEntreHorasSelection(horaIni, horaEnd) {
+    console.log(horaIni);
+    console.log(horaEnd);
+    console.log(timestampToMilliseconds(horaIni));
+    console.log(timestampToMilliseconds(horaEnd));
+    if (timestampToMilliseconds(horaIni) > timestampToMilliseconds(horaEnd)) {
+        alert('Hora de fim maior do que hora de início');
+    } else {
+        generateTimeStamps();
+        removeDuplicatesTimestamps(generateClassDuration(horaIni, horaEnd));
+        if (datasLength() === 1) {
+            setWeekDays();
+            readyToShowSuggestion();
+        } else {
+            setDaysOfWeek();
+        }
+    }
+}
+
+function callSetDays(){
+    generateTimeStamps();
+    if (datasLength() === 1) {
+        setWeekDays();
+        readyToShowSuggestion();
+    } else {
+        setDaysOfWeek();
+    }
+}
+
+function setDaysOfWeek() {
+    clearDiv(divMain);
+    addParagraphToDiv('Escolher Dias da Semana a excluir', divMain);
+    const check = createCheckboxes(["Seg", "Ter", "Qua", "Qui", "Sex"], '', handleDaysOfWeekSelect);
+    divMain.appendChild(check);
+}
+
+function handleDaysOfWeekSelect(selectedWeekDays) {
+    console.log(selectedWeekDays);
+    setWeekDays();
+    removeSelectedWeekdaysFromMap(selectedWeekDays);
+    readyToShowSuggestion();
+}
+
+function readyToShowSuggestion() {
+    clearDiv(divMain);
+    const generate = createButton('Gerar Sugestões', '', createTableSuggestion);
+    divMain.appendChild(generate);
+}
+
+function createTableSuggestion() {
+    clearDiv(divMain);
+    const suggestion = createDiv('tabulator');
+    suggestion.id = 'suggestion'
+    divMain.appendChild(suggestion);
+    const novatabledata = generateSubClasses(tabledata);
+    const tableS = new Tabulator("#suggestion", {
+        data: novatabledata, // Your data array here,
+        layout: "fitColumns", // Adjust table layout as needed
+        autoColumns: true,
+        pagination: "local",
+        paginationSize: 10,
+        paginationSizeSelector: [5, 10, 20, 40],
+        paginationCounter: "rows",
+        headerFilter: true,
+        rowHeader: {
+            headerSort: false, resizable: false, frozen: true, headerHozAlign: "center", hozAlign: "center", formatter: "rowSelection", titleFormatter: "rowSelection", cellClick: function (e, cell) {
+                cell.getRow().toggleSelect();
+            }
+        },
+        footerElement: "<button id='Select'>Selecionar Aula Sub</button><button id='Reset'>Reset</button>",
+
+    });
+    tableS.on("tableBuilt", function () {
+        const buttonSub = document.getElementById("Select");
+        const button2 = document.getElementById("Reset");
+        function handleClick() {
+            const novaAula = tableS.getSelectedData();
+            if (novaAula.length == 0) {
+                alert('Nenhuma aula selecionada');
+            } else {
+                tablefinal.addRow(novaAula[0], true);
+                const row = tablefinal.getSelectedRows();
+                row[0].delete();
+                //clearDiv(divMain);
+                //divMain.remove();
+                tableOptionsStartup();
+            }
+        }
+        function reset(){
+            tableOptionsStartup();
+        }
+        button2.removeEventListener('click',reset);
+        button2.addEventListener('click',reset);
+        buttonSub.removeEventListener('click', handleClick);
+        buttonSub.addEventListener('click', handleClick);
+    });
+}
 
 
 function gitHubCSVSalas(number, githubLink) {
