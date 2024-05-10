@@ -20,6 +20,7 @@ function setWeekDays(){
       };
     console.log(weekDays);
 };
+
 function getNumAulas(){
     return aulas;
 }
@@ -65,6 +66,9 @@ function extractTurmas(table){
 function datasLength(){
     return datas.length;
 }
+function horasInicioLength(){
+    return horasInicio.length;
+}
 
 function removeSelectedWeekdaysFromMap(selectedWeekdays) {
     selectedWeekdays.forEach(function(day) {
@@ -102,7 +106,7 @@ function setDatasBasedOnSub(){
         datas = getArrayDatesBetween(semestreTwoBeg,semestreTwoEnd);
     }
     }
-    console.log("as datas são: " + datas);
+    console.log(datas);
     
 }
 
@@ -254,4 +258,4 @@ function generateSubClasses(tabledata){
 
 
 
-export {setSalas, setSalasByType, generateTimeStamps, setAulaforSub, setWeekDays, removeSalasFromList, setDatasBasedOnSub, generateSubClasses, setSingleDay, setDatas, removeDuplicatesTimestamps, generateClassDuration, removeSelectedWeekdaysFromMap, datasLength, getAulaforSub, extractCursos, extractTurmas, setCursos, setTurmas, setAulas, setTamanhoAula, setSemestre, getNumAulas};
+export { horasInicioLength,setSalas, setSalasByType, generateTimeStamps, setAulaforSub, setWeekDays, removeSalasFromList, setDatasBasedOnSub, generateSubClasses, setSingleDay, setDatas, removeDuplicatesTimestamps, generateClassDuration, removeSelectedWeekdaysFromMap, datasLength, getAulaforSub, extractCursos, extractTurmas, setCursos, setTurmas, setAulas, setTamanhoAula, setSemestre, getNumAulas};

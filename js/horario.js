@@ -1,20 +1,27 @@
 import { TabulatorFull as Tabulator } from 'tabulator-tables';
-import { dataParseHorario, dataParseSalas } from './utils';
+import { dataParseHorario, dataParseSalas, extractAttributes, extractNomeSalas } from './utils';
 import { generateFilterExpression, customFilter, formatString } from './filters';
 
 
-import { addHeaderToDiv, createButton, createDiv, createInput } from './htmlelems';
-import { setAulaforSub } from './suggestion';
+import { addHeaderToDiv, addParagraphToDiv, createButton, createDateInputWithSubmit, createDiv, createInput, createMultiSelect } from './htmlelems';
+import { generateClassDuration, generateTimeStamps, horasInicioLength, removeDuplicatesTimestamps, removeSalasFromList, setAulaforSub, setDatas, setDatasBasedOnSub, setSalas, setSalasByType, setSingleDay } from './suggestion';
+import dateCraft from 'date-craft';
+import { turnToDate } from './calcSemanas';
 
 
 var tablefinal; //tabela geral
 var tabledata; // dados da tabela geral
+
 var cur_filter; //filtro atual da tabela
 var headerFilters; //filtros dos headerInputs
 var filterMatrix = []; //matriz para o calculo dos filtros
 var counter = 0; //contador para o calculo dos filtros
+
 var aulaParaSubstituicao; //ter atenção se este é mesmon necessário
 var divMain;
+var dataSalas;
+var nomeSalas = [];
+var tipoSalas = [];
 
 tablefinal = new Tabulator("#example-table", {
     pagination: "local",
@@ -59,7 +66,7 @@ function tableOptionsStartup() {
     divMain.appendChild(buttonSub);
 }
 
-function handleSubAula(){
+function handleSubAula() {
     if (!tabledata) {
         alert('Horário não gerado');
     } else {
@@ -72,7 +79,7 @@ function handleSubAula(){
                 //alert('tudo fixolas');
                 aulaParaSubstituicao = aulaSelected[0];
                 setAulaforSub(aulaParaSubstituicao);
-                secondSalaSubmission(3,2);
+                secondSalaSubmission(3, 2);
                 break;
             default:
                 alert('Selecionar apenas uma aula');
@@ -85,7 +92,7 @@ function secondSalaSubmission(numberLocal, numberGitHub) {
         divMain.removeChild(divMain.firstChild);
     }
 
-    const textInput = createInput('text', 'Enter Raw Link', '', null);
+    const textInput = createInput('url', 'Enter Raw Link', '', null);
     divMain.appendChild(textInput);
     textInput.addEventListener('change', function () {
         // Call the gitHubCSVSalas function with the updated value of the input field
@@ -97,7 +104,201 @@ function secondSalaSubmission(numberLocal, numberGitHub) {
         // Call the gitHubCSVSalas function with the updated value of the input field
         readLocalFile(event, numberLocal);
     });
+} //vai dar para reutilizar
+
+function subAulaInfoSetter(content) {
+    dataSalas = dataParseSalas(content);
+    nomeSalas = extractNomeSalas(dataSalas);
+    tipoSalas = extractAttributes(dataSalas);
+
+    //console.log(dataSalas);
+    //console.log(nomeSalas);
+    //console.log(tipoSalas);
+} //vai dar para reutilizar
+
+function salasButtonsSetter() {
+    while (divMain.firstChild) {
+        divMain.removeChild(divMain.firstChild);
+    }
+    const buttonAlocarSala = createButton('Alocar Sala(s) Específica', '', createOptionsAndBackButton, [nomeSalas, handleAllocateSalas, 'Alocar Sala']);
+    divMain.appendChild(buttonAlocarSala);
+
+    const buttonAlocarTipo = createButton('Alocar Tipo(s) de Sala Específico', '', createOptionsAndBackButton, [tipoSalas, handleAllocateTipo, 'Alocar Tipo(s) de Sala']);
+    divMain.appendChild(buttonAlocarTipo);
+
+    const buttonExludeSala = createButton('Excluir Sala(s) Especifica', '', createOptionsAndBackButton, [nomeSalas, handleExcludeSalas, 'Excluir Sala']);
+    divMain.appendChild(buttonExludeSala);
+
+    const buttonExcludeTipo = createButton('Excluir Tipo(s) de Sala Específco', '', createOptionsAndBackButton, [tipoSalas, handleExcludeTipo, 'Excluir Tipo(s) de sala']);
+    divMain.appendChild(buttonExcludeTipo);
 }
+
+function createOptionsAndBackButton(options, handler, headerText) {
+    while (divMain.firstChild) {
+        divMain.removeChild(divMain.firstChild);
+    }
+    addHeaderToDiv(1, headerText, divMain);
+    const div = createMultiSelect(options, '', handler);
+    divMain.appendChild(div);
+    const goBackButton = createButton('Voltar a opções de Salas', '', salasButtonsSetter);
+    divMain.appendChild(goBackButton);
+}
+
+function handleAllocateTipo(options) {
+    if (options.length === 0) {
+        alert('Nenhum Tipo de Sala selecionada');
+    } else {
+        setSalas(setSalasByType(dataSalas, options));
+        setAllocationOptions();
+    }
+}
+
+function handleAllocateSalas(options) {
+    if (options.length === 0) {
+        alert('Nenhuma Sala selecionada');
+    } else {
+        setSalas(options);
+        setAllocationOptions();
+    }
+}
+
+function handleExcludeSalas(options) {
+    if (options.length === 0) {
+        alert('Nenhuma Sala selecionada');
+    } else {
+        setSalas(nomeSalas);
+        removeSalasFromList(options);
+        setAllocationOptions();
+    }
+
+}
+
+function handleExcludeTipo(options) {
+    if (options.length === 0) {
+        alert('Nenhum Tipo de Sala selecionada');
+    } else {
+        setSalas(nomeSalas);
+        removeSalasFromList(setSalasByType(dataSalas, options));
+        setAllocationOptions();
+    }
+}
+
+function setAllocationOptions() {
+    while (divMain.firstChild) {
+        divMain.removeChild(divMain.firstChild);
+    }
+
+    addHeaderToDiv(1, 'Opções de Alocação', divMain);
+    const sameDay = createButton('Mesmo Dia', '', handleSameDay);
+    const sameWeek = createButton('Mesma Semana', '', handleSameWeek);
+    const betweenDates = createButton('Entre Datas', '', handleBetweenDates);
+    const excludeOptions = createButton('Opções de Exclusão', '', handleExlusionOptions);
+    divMain.appendChild(sameDay);
+    divMain.appendChild(sameWeek);
+    divMain.appendChild(betweenDates);
+    divMain.appendChild(excludeOptions);
+
+}
+
+function handleSameDay() {
+    setSingleDay();
+    setExclusionOptions();
+}
+
+function handleSameWeek() {
+    const weekIni = dateCraft.getStartOfWeek(turnToDate(aulaParaSubstituicao["Data da aula"]));
+    const weekEnd = dateCraft.subtractDays(dateCraft.getEndOfWeek(turnToDate(aulaParaSubstituicao["Data da aula"])), 2);
+    setDatas(weekIni, weekEnd);
+    setExclusionOptions();
+}
+
+function handleBetweenDates() {
+    while (divMain.firstChild) {
+        divMain.removeChild(divMain.firstChild);
+    }
+    addHeaderToDiv(1, 'Entre Datas', divMain);
+    const datesInput = createDateInputWithSubmit('', handleBetweenDatesInput);
+    divMain.appendChild(datesInput);
+    const goBackButton = createButton('Voltar a opções de Alocação', '', setAllocationOptions);
+    divMain.appendChild(goBackButton);
+}
+
+function handleBetweenDatesInput(inicio, fim) {
+    //console.log(inicio);
+    //console.log(fim);
+    if (inicio && fim) {
+        const ini = new Date(inicio);
+        const end = new Date(fim);
+        if (end > ini) {
+            setDatas(ini, end);
+            setExclusionOptions();
+        } else {
+            alert('Data de Inicio maior que Data de fim');
+        }
+    } else {
+        alert('Submeter ambas as datas');
+    }
+}
+
+function handleExlusionOptions() {
+    setDatasBasedOnSub();
+    setExclusionOptions();
+}
+
+function setExclusionOptions() {
+    while (divMain.firstChild) {
+        divMain.removeChild(divMain.firstChild);
+    }
+    addHeaderToDiv(1, 'Opções de Exclusão (Horas)', divMain);
+    const setPeriods = createButton('Períodos Predefinidos', '', handleSetPeriods);
+    divMain.appendChild(setPeriods);
+    const entreHoras = createButton('Entre Horas', '', handleEntreHoras);
+    divMain.appendChild(entreHoras);
+
+}
+
+
+function handleSetPeriods(){
+    while (divMain.firstChild) {
+        divMain.removeChild(divMain.firstChild);
+    }
+    addHeaderToDiv(1, 'Períodos Predefinidos para Horas de Início', divMain);
+    addParagraphToDiv('Manhã: 08:00:00 - 12:30:00', divMain);
+    addParagraphToDiv('Tarde: 13:00:00 - 18:30:00', divMain);
+    addParagraphToDiv('Noite: 19:00:00 - 21:30:00', divMain);
+    const option = createMultiSelect(['Manhã', 'Tarde', 'Noite'], '', handleSetPeriodsSelect);
+    divMain.appendChild(option);
+}
+
+function handleSetPeriodsSelect(options){
+    generateTimeStamps();
+    options.forEach(option =>{
+        switch(option){
+            case 'Manhã':
+                removeDuplicatesTimestamps(generateClassDuration("08:00:00","12:30:00"));
+                break;
+            case 'Tarde':
+                removeDuplicatesTimestamps(generateClassDuration("13:00:00","18:30:00"));
+                break;
+            case 'Noite':
+                removeDuplicatesTimestamps(generateClassDuration("19:00:00","21:30:00"));
+                break;
+        }
+    });
+    //console.log(horasInicioLength());
+    if(horasInicioLength() === 0){
+        alert('Não é possivel remover todas as opções');
+        handleSetPeriods();
+    } else {
+        alert('tudo de boa');
+    }
+}
+
+function handleEntreHoras(){
+    
+}
+
+
 
 function gitHubCSVSalas(number, githubLink) {
     //numbers: 1 -> tabela Salas; 2->Substituir aula
@@ -114,8 +315,10 @@ function gitHubCSVSalas(number, githubLink) {
                     break;
                 case 2:
                     //handleFileSub(csvDataSalas);
-                    alert('ta tudo fixolas');
-                    console.log(dataParseSalas(csvDataSalas));
+                    //alert('ta tudo fixolas');
+                    subAulaInfoSetter(csvDataSalas);
+                    salasButtonsSetter();
+                    //console.log(dataParseSalas(csvDataSalas));
                     break;
             }
         })
@@ -158,8 +361,10 @@ function readLocalFile(event, number) {
                         createTableSalas(tabledata);
                         break;
                     case 3:
-                        alert('ta tudo fixolas mas local');
-                        console.log(dataParseSalas(fileContent));
+                        //alert('ta tudo fixolas mas local');
+                        subAulaInfoSetter(fileContent);
+                        salasButtonsSetter();
+                        //console.log(dataParseSalas(fileContent));
                         break;
                 }
 
@@ -322,7 +527,6 @@ function downloadJSON() {
         tablefinal.download("json", "table.json");
     }
 }
-
 
 var headerMenu = function () {
     var menu = [];
