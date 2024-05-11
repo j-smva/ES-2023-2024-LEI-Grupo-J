@@ -1,3 +1,8 @@
+/**
+ * Função que gera a expressão do filtro pretendido.
+ * @param {Array<String>} dataArray - Array com filtros presentes nos headers das colunas
+ * @returns {String} - Expressão gerada de acordo com os filtros passados
+ */
 function generateFilterExpression(dataArray) {
     let expression = "(";
     for (let i = 0; i < dataArray.length; i++) {
@@ -19,12 +24,21 @@ function generateFilterExpression(dataArray) {
     return expression.replace(/like/g, "==");
 }
 
-
+/**
+ * Função que avalia o filtro utilizado.
+ * @param {String} data - Linha da tabela
+ * @param {String} str - String que define a função boolean que processa a data
+ * @returns {Boolean} - Define se uma determinada linha da tabela deve ou não ser mostrada
+ */
 function customFilter(data, str){
-    //cur_filter.innerText =formatString(str);
     return eval(str);
 }
 
+/**
+ * Função utilizada para mostrar a expressão do filtro utilizado em texto.
+ * @param {String} input - Expressão do filtro que está atualmente a ser utilizado
+ * @returns {String} - Tradução do filtro para texto mais facilmente reconhecível
+ */
 function formatString(input) {
     let formattedString = input.replace(/\(/, ''); // Remove the first opening parenthesis
     formattedString = formattedString.replace(/\)$/, ''); // Remove the last closing parenthesis

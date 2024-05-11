@@ -1,4 +1,5 @@
 
+import { Tabulator } from 'tabulator-tables';
 import { giveSemanaAno, giveSemanaSemestre } from './calcSemanas';
 
 
@@ -105,7 +106,11 @@ function fixTextLocal(csvDataSalas){
 
 };
 
-
+/**
+ * Função que extrai o nome de todas as salas da informação sobre as salas fornecida pelo utilizador
+ * @param {String} jsonString - Informação sobre as salas
+ * @returns {Array<String>} - Array com o nome de todas as salas existentes no ficheiro
+ */
 function extractNomeSalas(jsonString) {
     // Parse the JSON string into a JavaScript object
     let jsonData = [];
@@ -137,10 +142,15 @@ function extractNomeSalas(jsonString) {
     return nomeSalasArray;
 }
 
+/**
+ * Função que extrai o nome de todos as unidade curriculares presentes na tabela
+ * @param {Tabulator} table - tabela do tabulator de onde serão extraidos os nomes das UCs
+ * @returns {Map} - Mapa com os nomes de todas as UCs
+ */
 function getUCs(table) {
     const uniqueValues = {};
     table.getData().forEach(function(row) {
-        var columnValue = row["Unidade Curricular"];
+        const columnValue = row["Unidade Curricular"];
         if (!uniqueValues[columnValue]) {
             uniqueValues[columnValue] = true;
         }
@@ -150,10 +160,16 @@ function getUCs(table) {
     console.log(uniqueEntries);
     return uniqueEntries;
 }
+
+/**
+ * Função que extrai o nome de todos os cursos presentes na tabela
+ * @param {Tabulator} table - tabela de onde serão extraídos os nomes dos Cursos
+ * @returns {Map} - Mapa com os nomes de todos os Cursos
+ */
 function getCursos(table) {
     const uniqueValues = {};
     table.getData().forEach(function(row) {
-        var columnValue = row["Curso"].split(', ');
+        const columnValue = row["Curso"].split(', ');
         columnValue.forEach(function(entrie){
             if (!uniqueValues[entrie]) {
                 uniqueValues[entrie] = true;
@@ -165,10 +181,16 @@ function getCursos(table) {
     console.log(uniqueEntries);
     return uniqueEntries;
 }
+
+/**
+ * Função que extrai o nome de todas as turmas presentes na tabela
+ * @param {Tabulator} table - tabela de onde serão extraidos os nomes das turmas
+ * @returns {Map} - Mapa com os nomes de todas as turmas
+ */
 function getTurmas(table) {
-    var uniqueValues = {};
+    const uniqueValues = {};
     table.getData().forEach(function(row) {
-        var columnValue = row["Turma"].split(', ');
+        const columnValue = row["Turma"].split(', ');
         columnValue.forEach(function(entrie){
             if (!uniqueValues[entrie]) {
                 uniqueValues[entrie] = true;
@@ -180,6 +202,11 @@ function getTurmas(table) {
     return uniqueEntries;
 }
 
+/**
+ * Função que extrai todos os tipos de salas existentes no ficheiro
+ * @param {String} jsonString - Informação sobre as salas
+ * @returns {Array<String>} - Array com todos os tipos de salas
+ */
 function extractAttributes(jsonString) {
     // Parse the JSON string into a JavaScript object
     let jsonData = [];
@@ -245,4 +272,5 @@ function extractAttributes(jsonString) {
         return []; // Return an empty array if input is not a valid JSON object
     }
 }
+
 export { dataParseHorario, dataParseSalas, fixTextLocal, extractNomeSalas, extractAttributes, getUCs, getCursos, getTurmas};

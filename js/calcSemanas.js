@@ -2,7 +2,7 @@ import dateCraft from 'date-craft';
 
 
 /**
- * Current Week Number
+ * Função utiliada para calcular o número da semana do ano correspondente a uma determinada data.
  * @param {Date} date - Data onde ocorre uma aula
  * @returns {number} - Número da semana do ano da data onde ocorre a aula
  */
@@ -47,7 +47,7 @@ function currentWeekNumber(date){
 }
 
 /**
- * Turn to Date
+ * Função utilizada para transformar uma string no formato dd/mm/yyy num objeto Date no formato yyyy/mm/dd.
  * @param {String} dateStr - String para ser convertida num objeto Date
  * @returns {Date} - Objeto Date formado a partir da String dada
  */
@@ -61,7 +61,7 @@ function turnToDate(dateStr){
 }
 
 /**
- * Give Semana Semestre
+ * Função utilizada para calcular a semana do semestre em que acontece uma determinada aula.
  * @param {Date} date - Data onde ocorre uma aula
  * @returns {number} - Número da semana do semestre da data onde ocorre a aula
  */
@@ -84,8 +84,7 @@ function giveSemanaSemestre(date){
 }
 
 /**
- * Give Semana Ano,
- * chama as funções Turn to Date e CurrentWeekNumber
+ * Chama as funções Turn to Date e CurrentWeekNumber para returnar a semana do ano em que ocorre determinada aula.
  * @param {Date} date - Data onde ocorre uma aula
  * @returns {number} - Número da semana do ano da data onde ocorre a aula
  */
@@ -94,12 +93,16 @@ function giveSemanaAno(date){
     return week;
 }
 
-//recebe datas no formato "yyyy/mm/dd" mas faz array com datas no formato "dd/mm/yyy"
+/**
+ * Função utilizada para obter todos os dias utéis entre duais quaisquer datas.
+ * @param {Date} start - Data inicial no formato yyyy/mm/dd
+ * @param {Date} end - Data final no formato yyyy/mm/dd
+ * @returns {Array<String>} - Array com todas as datas excluindo sábados e domingos que se encontrem entre start e end
+ */
 function getArrayDatesBetween(start, end){
   const allDates = [];
   let currentDate = start;
   while(dateCraft.isSameOrBeforeDate(currentDate, end)){
-    //console.log(currentDate);
     const day = currentDate.getDay();
     if(day !== 0 && day !==6){
       allDates.push(dateCraft.formatDate(currentDate).format('DD/MM/YYYY'));

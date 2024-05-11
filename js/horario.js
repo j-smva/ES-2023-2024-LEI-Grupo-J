@@ -18,12 +18,12 @@ var filterMatrix = []; //matriz para o calculo dos filtros
 var counter = 0; //contador para o calculo dos filtros
 
 var aulaParaSubstituicao; //ter atenção se este é mesmon necessário
-var divMain;
-var dataSalas;
-var nomeSalas = [];
-var tipoSalas = [];
-var UCs = [];
-var isUCAllocation = false;
+var divMain; //divPrincipal a ser utilzada para mostrar os elementos html criados
+var dataSalas; //dados referentes às salas
+var nomeSalas = []; //nomes das salas
+var tipoSalas = []; //tipos de salas
+var UCs = []; //todas as UCs existentes
+var isUCAllocation = false; //variavel que distingue se estamos a utilizar a funcionalidade de substituição de aulas ou de alocação de aulas de uma uc
 
 tablefinal = new Tabulator("#example-table", {
     pagination: "local",
@@ -53,6 +53,9 @@ document.addEventListener('DOMContentLoaded', function () {
     })
 });
 
+/**
+ * Função que inicializa os botões relativos a substituir aula ou Alocar aulas de uma UC
+ */
 function tableOptionsStartup() {
     if (!divMain) {
         divMain = createDiv('Sub');
@@ -70,13 +73,19 @@ function tableOptionsStartup() {
     divMain.appendChild(buttonAulaNew);
 }
 
-
+/**
+ * Função utilizada para limpar o conteúdo de uma determinada div
+ * @param {HTMLElement} div - div na qual queremos remover o conteúdo 
+ */
 function clearDiv(div) {
     while (div.firstChild) {
         div.removeChild(div.firstChild);
     }
 }
 
+/**
+ * Função que dá handle ao cenário de clique no botão de substituir aula
+ */
 function handleSubAula() {
     setAulas(1);
     if (!tabledata) {
@@ -99,22 +108,31 @@ function handleSubAula() {
     }
 }
 
+/**
+ * Função que dá hanlde à submission do ficheiro de salas para a substituição de aula ou alocação de aula de uma uc
+ * @param {Number} numberLocal - cenário a despoletar na função que lê ficheiros local
+ * @param {Number} numberGitHub - cenário a despoletar na função que obtém o ficheiro a partir de um link no github
+ */
 function secondSalaSubmission(numberLocal, numberGitHub) {
     clearDiv(divMain);
     const textInput = createInput('url', 'Enter Raw Link', '', null);
     divMain.appendChild(textInput);
     textInput.addEventListener('change', function () {
-        // Call the gitHubCSVSalas function with the updated value of the input field
+        
         gitHubCSVSalas(numberGitHub, textInput.value);
     });
     const fileInput = createInput('file', 'Enter File', '', null);
     divMain.appendChild(fileInput);
     fileInput.addEventListener('change', function (event) {
-        // Call the gitHubCSVSalas function with the updated value of the input field
+        
         readLocalFile(event, numberLocal);
     });
-} //vai dar para reutilizar
+}
 
+/**
+ * Função que dá set aos parâmetros necessários para o cálculo das sugestões
+ * @param {} content - conteudo do ficheiro de salas
+ */
 function subAulaInfoSetter(content) {
     dataSalas = dataParseSalas(content);
     nomeSalas = extractNomeSalas(dataSalas);
@@ -123,8 +141,11 @@ function subAulaInfoSetter(content) {
     //console.log(dataSalas);
     //console.log(nomeSalas);
     //console.log(tipoSalas);
-} //vai dar para reutilizar
+}
 
+/**
+ * Função que dá set aos botões que permitem alocar ou excluir salas
+ */
 function salasButtonsSetter() {
     clearDiv(divMain);
     const buttonAlocarSala = createButton('Alocar Sala(s) Específica', '', createOptionsAndBackButton, [nomeSalas, handleAllocateSalas, 'Alocar Sala']);
@@ -143,11 +164,20 @@ function salasButtonsSetter() {
     divMain.appendChild(allsalas);
 }
 
+/**
+ * Função que dá handle ao caso de se decidir usar todas as salas
+ */
 function handleAllSalas() {
     setSalas(nomeSalas);
     setAllocationOptions();
 }
 
+/**
+ * Função que cria um select multiple com determinadas opções e um botão para voltar ao ecrã de decisão de salas
+ * @param {Array<String>} options - opções para popular o select
+ * @param {Function} handler - função que dará handle à seleção de opções
+ * @param {String} headerText - texto de header a mostrar na página
+ */
 function createOptionsAndBackButton(options, handler, headerText) {
     clearDiv(divMain);
     addHeaderToDiv(1, headerText, divMain);
@@ -157,6 +187,10 @@ function createOptionsAndBackButton(options, handler, headerText) {
     divMain.appendChild(goBackButton);
 }
 
+/**
+ * Função que dá handle ao cenário de escolher salas por tipo
+ * @param {Array<String>} options - tipos de salas selecionados
+ */
 function handleAllocateTipo(options) {
     if (options.length === 0) {
         alert('Nenhum Tipo de Sala selecionada');
@@ -166,6 +200,10 @@ function handleAllocateTipo(options) {
     }
 }
 
+/**
+ * Função que dá handle ao cenário de escolha de salas específicas
+ * @param {Array<String>} options 
+ */
 function handleAllocateSalas(options) {
     if (options.length === 0) {
         alert('Nenhuma Sala selecionada');
@@ -175,6 +213,10 @@ function handleAllocateSalas(options) {
     }
 }
 
+/**
+ * Função que dá handle ao cenário de exclusão de salas específicas
+ * @param {Array<String>} options 
+ */
 function handleExcludeSalas(options) {
     if (options.length === 0) {
         alert('Nenhuma Sala selecionada');
@@ -186,6 +228,10 @@ function handleExcludeSalas(options) {
 
 }
 
+/**
+ * Função que dá handle ao cenário de exclusão de salas por tipo
+ * @param {Array<String>} options 
+ */
 function handleExcludeTipo(options) {
     if (options.length === 0) {
         alert('Nenhum Tipo de Sala selecionada');
@@ -196,6 +242,9 @@ function handleExcludeTipo(options) {
     }
 }
 
+/**
+ * Função que define os botões para seleção de opções de alocação
+ */
 function setAllocationOptions() {
     if(isUCAllocation){
         isUCAllocation = false;
@@ -214,11 +263,17 @@ function setAllocationOptions() {
     }
 }
 
+/**
+ * Função que dá handle à escolha de alocação no mesmo dia
+ */
 function handleSameDay() {
     setSingleDay();
     setExclusionOptions();
 }
 
+/**
+ * Função que dá handle à escolha de alocação na mesma semana
+ */
 function handleSameWeek() {
     const weekIni = dateCraft.getStartOfWeek(turnToDate(aulaParaSubstituicao["Data da aula"]));
     const weekEnd = dateCraft.subtractDays(dateCraft.getEndOfWeek(turnToDate(aulaParaSubstituicao["Data da aula"])), 2);
@@ -226,6 +281,9 @@ function handleSameWeek() {
     setExclusionOptions();
 }
 
+/**
+ * Função que gera campos para seleção de duas datas
+ */
 function handleBetweenDates() {
     clearDiv(divMain);
     addHeaderToDiv(1, 'Entre Datas', divMain);
@@ -235,6 +293,11 @@ function handleBetweenDates() {
     divMain.appendChild(goBackButton);
 }
 
+/**
+ * Função que dá handle à seleção das duas datas
+ * @param {String} inicio - data inicial
+ * @param {String} fim - data final
+ */
 function handleBetweenDatesInput(inicio, fim) {
     //console.log(inicio);
     //console.log(fim);
@@ -252,11 +315,17 @@ function handleBetweenDatesInput(inicio, fim) {
     }
 }
 
+/**
+ * Função que dá handle à seleção do botão de opções de exclusão
+ */
 function handleExlusionOptions() {
     setDatasBasedOnSub();
     setExclusionOptions();
 }
 
+/**
+ * Função que define os botões para seleção de opções de exclusão
+ */
 function setExclusionOptions() {
     clearDiv(divMain);
     addHeaderToDiv(1, 'Opções de Exclusão (Horas)', divMain);
@@ -271,7 +340,9 @@ function setExclusionOptions() {
 
 }
 
-
+/**
+ * Função que gera o select necessário para escolher períodos predefinidos
+ */
 function handleSetPeriods() {
     clearDiv(divMain);
     addHeaderToDiv(1, 'Períodos Predefinidos para Horas de Início', divMain);
@@ -282,6 +353,10 @@ function handleSetPeriods() {
     divMain.appendChild(option);
 }
 
+/**
+ * Função que dá handle ao cenário de escolha de periodos predefinidos para exclusão
+ * @param {Array<String>} options 
+ */
 function handleSetPeriodsSelect(options) {
     generateTimeStamps();
     options.forEach(option => {
@@ -312,6 +387,9 @@ function handleSetPeriodsSelect(options) {
     }
 }
 
+/**
+ * Função que gera os campos necessários para a escolha de duas timestamps
+ */
 function handleEntreHoras() {
     clearDiv(divMain);
     addParagraphToDiv('Escolher Horas inicias e finais do período a excluir', divMain);
@@ -319,6 +397,11 @@ function handleEntreHoras() {
     divMain.appendChild(container);
 }
 
+/**
+ * Função que dá handle à seleção de duas timestamps
+ * @param {String} horaIni - timetamp inicial
+ * @param {String} horaEnd  - timestamp final
+ */
 function handleEntreHorasSelection(horaIni, horaEnd) {
     console.log(horaIni);
     console.log(horaEnd);
@@ -338,6 +421,9 @@ function handleEntreHorasSelection(horaIni, horaEnd) {
     }
 }
 
+/**
+ * Função que dá handle à chamada dos dias da semana
+ */
 function callSetDays() {
     generateTimeStamps();
     if (datasLength() === 1) {
@@ -347,7 +433,10 @@ function callSetDays() {
         setDaysOfWeek();
     }
 }
-
+ 
+/**
+ * Função que gera as checkboxes necessárias para a escolha de dias da semana para exclusão
+ */
 function setDaysOfWeek() {
     clearDiv(divMain);
     addParagraphToDiv('Escolher Dias da Semana a excluir', divMain);
@@ -355,6 +444,10 @@ function setDaysOfWeek() {
     divMain.appendChild(check);
 }
 
+/**
+ * Função que dá handle aos dias da semana selecionados para exclusão
+ * @param {Array<Number>} selectedWeekDays - Números associados aos dias da semana selecionados: 1-segunda; 5-sexta
+ */
 function handleDaysOfWeekSelect(selectedWeekDays) {
     console.log(selectedWeekDays);
     setWeekDays();
@@ -362,12 +455,18 @@ function handleDaysOfWeekSelect(selectedWeekDays) {
     readyToShowSuggestion();
 }
 
+/**
+ * Função que prepara botão para a criação da tabela com as sugestões
+ */
 function readyToShowSuggestion() {
     clearDiv(divMain);
     const generate = createButton('Gerar Sugestões', '', createTableSuggestion);
     divMain.appendChild(generate);
 }
 
+/**
+ * Função que cria a tabela com as sugestões geradas
+ */
 function createTableSuggestion() {
     clearDiv(divMain);
     const suggestion = createDiv('tabulator');
@@ -378,6 +477,15 @@ function createTableSuggestion() {
         data: novatabledata, // Your data array here,
         layout: "fitColumns", // Adjust table layout as needed
         autoColumns: true,
+        autoColumnsDefinitions:function(definitions){
+            //definitions - array of column definition objects
+    
+            definitions.forEach((column) => {
+                column.headerFilter = true; // add header filter to every column
+            });
+    
+            return definitions;
+        },    
         pagination: "local",
         paginationSize: 10,
         paginationSizeSelector: [5, 10, 20, 40],
@@ -434,6 +542,9 @@ function createTableSuggestion() {
     });
 }
 
+/**
+ * Função que dá handle ao clique do botão alocar aulas
+ */
 function handleAlocarAulas() {
     if (!tabledata) {
         alert('Horário não gerado');
@@ -443,6 +554,10 @@ function handleAlocarAulas() {
     }
 }
 
+/**
+ * Função que gere as definições para a criação de sugestões
+ * @param {} content - conteudo do ficheiro de salas
+ */
 function handleAlocarAulasSettings(content) {
     clearDiv(divMain);
     addParagraphToDiv('Escolher UC', divMain);
@@ -454,6 +569,10 @@ function handleAlocarAulasSettings(content) {
     divMain.appendChild(select);
 }
 
+/**
+ * Função que dá handle à seleção de UCs
+ * @param {Array<String>} options - UCS escolhidas
+ */
 function handleUCsSelect(options) {
     setAulaforSub({ "Curso": "LIGE, LIGE-PL", "Unidade Curricular": options, "Turno": "---", "Turma": "IGE-PL-C2, IGE-PL-C1", "Inscritos no turno": "-", "Dia da semana": "Ter", "Hora início da aula": "18:00:00", "Hora fim da aula": "19:30:00", "Data da aula": "00/00/0000", "Semana do Ano": 43 });
     clearDiv(divMain);
@@ -464,6 +583,9 @@ function handleUCsSelect(options) {
     divMain.appendChild(ndSemestre);
 }
 
+/**
+ * Função que dá handle à seleção do primeiro semestre
+ */
 function handleStSemestre() {
     setSemestre(1);
     clearDiv(divMain);
@@ -471,6 +593,10 @@ function handleStSemestre() {
     const select = createMultiSelect(getCursos(tablefinal), '', handleCursosSelect);
     divMain.appendChild(select);
 }
+
+/**
+ *  Função que dá handle à seleção do segundo semestre
+ */
 function handlendSemestre() {
     setSemestre(2);
     clearDiv(divMain);
@@ -479,6 +605,10 @@ function handlendSemestre() {
     divMain.appendChild(select);
 }
 
+/**
+ * Função que dá handle à seleção de cursos
+ * @param {Array<String>} options - cursos escolhidos
+ */
 function handleCursosSelect(options) {
     if (options.length === 0) {
         alert('Escolher pelo menos um curso');
@@ -491,6 +621,10 @@ function handleCursosSelect(options) {
     }
 }
 
+/**
+ * Função que dá handle às turmas escolhidas
+ * @param {Array<String>} options - Turmas escolhidas
+ */
 function handleTurmasSelect(options){
     if(options.length === 0){
         alert('Escolher pelo menos uma turma');
@@ -502,6 +636,10 @@ function handleTurmasSelect(options){
     }
 }
 
+/**
+ * Função que dá handle ao número de aulas pretendido
+ * @param {Number} option - número de aulas
+ */
 function handleAulasNum(option){
     if(option === 0){
         alert('Escolher pelo menos uma aula');
@@ -515,6 +653,10 @@ function handleAulasNum(option){
     }
 }
 
+/**
+ * Função que dá handle à duração de aulas pretendida
+ * @param {Number} option - duração das aulas
+ */
 function handleAulasDuration(option){
     if(option === 0){
         alert('Escolher duração de aula');
@@ -524,6 +666,11 @@ function handleAulasDuration(option){
     }
 }
 
+/**
+ * Função que obtém o ficheiro através do link vindo do gitHub relativo às salas
+ * @param {Number} number - cenário pretendido
+ * @param {String} githubLink - link do ficheiro 
+ */
 function gitHubCSVSalas(number, githubLink) {
     //numbers: 1 -> tabela Salas; 2->Substituir aula
     //const githubLink = document.getElementById('githubLinkSalas').value;
@@ -554,6 +701,9 @@ function gitHubCSVSalas(number, githubLink) {
         });
 }
 
+/**
+ * Função que obtém o ficheiro através do link vindo do gitHub relativo ao Horário
+ */
 function gitHubCSVHorario() {
     const githubLink = document.getElementById('githubLink').value;
 
@@ -569,6 +719,11 @@ function gitHubCSVHorario() {
         });
 }
 
+/**
+ * Função que obtém o conteudo do ficheiro através da submissão de um ficheiro local
+ * @param {*} event 
+ * @param {Number} number - cenário pretendido
+ */
 function readLocalFile(event, number) {
     //numbers: 1 -> Horario; 2 -> Salas;
     const file = event.target.files[0];
@@ -608,6 +763,10 @@ function readLocalFile(event, number) {
     }
 }
 
+/**
+ * Função que gera a tabela do horário
+ * @param {JSON} tabledata - conteudo da tabela
+ */
 function createTableHorario(tabledata) {
 
     tablefinal = new Tabulator("#example-table", {
@@ -648,6 +807,10 @@ function createTableHorario(tabledata) {
     });
 }
 
+/**
+ * Função que gera a tabela das salas
+ * @param {JSON} tabledata - conteudo da tabela
+ */
 function createTableSalas(tabledata) {
     tablefinal = new Tabulator("#example-table", {
         layout: "fitData",
@@ -701,6 +864,9 @@ function createTableSalas(tabledata) {
     tablefinal.on("tableBuilt", addEventListeners);
 }
 
+/**
+ * Função que adiciona os event listeners relacionados com os botões nos footers da tabela
+ */
 function addEventListeners() {
     const ORtoggle = document.getElementById('ORtoggle');
     const ResetFilter = document.getElementById('ResetFilter');
@@ -720,6 +886,9 @@ function addEventListeners() {
     tableOptionsStartup();
 }
 
+/**
+ * função que trata do reset dos filtros colocados na tabela
+ */
 function resetFilters() {
     if (tablefinal) {
         cur_filter.innerText = "";
@@ -730,6 +899,10 @@ function resetFilters() {
     }
 }
 
+/**
+ * Função que calcula o filtro OR
+ * @returns - naão retorna nada se não houver filtros 
+ */
 function toggleFilter() {
     if (tablefinal) {
         headerFilters = tablefinal.getHeaderFilters();
@@ -744,6 +917,9 @@ function toggleFilter() {
     }
 }
 
+/**
+ * Função que faz download da tabela em formato csv
+ */
 function downloadCSV() {
     if (tablefinal) {
         //console.log("1");
@@ -751,6 +927,9 @@ function downloadCSV() {
     }
 }
 
+/**
+ * Função que faz download da tabela no formato json
+ */
 function downloadJSON() {
     if (tablefinal) {
         //console.log("2");
@@ -758,6 +937,10 @@ function downloadJSON() {
     }
 }
 
+/**
+ * Função que constroi o header menu que permite filtrar e esconder colunas
+ * @returns - retorna o header menu
+ */
 var headerMenu = function () {
     var menu = [];
     var columns = this.getColumns();

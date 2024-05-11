@@ -26,7 +26,9 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>import { giveSemanaAno, giveSemanaSemestre } from './calcSemanas';
+            <pre class="prettyprint source linenums"><code>
+import { Tabulator } from 'tabulator-tables';
+import { giveSemanaAno, giveSemanaSemestre } from './calcSemanas';
 
 
 /**
@@ -39,6 +41,7 @@ function dataParseSalas(csvDataSalas){
     //console.log(data);
     const lines = data.split('\n');
     const headers = lines[0].split(';');
+    headers[headers.length -1] = headers[headers.length -1].replace(/\r/g, '');
     //console.log(headers);
     const jsonArray = [];
     for(let i = 1; i &lt; lines.length; i++){
@@ -131,7 +134,174 @@ function fixTextLocal(csvDataSalas){
 
 };
 
-export { dataParseHorario, dataParseSalas, fixTextLocal};</code></pre>
+/**
+ * Função que extrai o nome de todas as salas da informação sobre as salas fornecida pelo utilizador
+ * @param {String} jsonString - Informação sobre as salas
+ * @returns {Array&lt;String>} - Array com o nome de todas as salas existentes no ficheiro
+ */
+function extractNomeSalas(jsonString) {
+    // Parse the JSON string into a JavaScript object
+    let jsonData = [];
+    try {
+        jsonData = JSON.parse(jsonString);
+    } catch (error) {
+        console.error("Error parsing JSON:", error);
+        return []; // Return an empty array if parsing fails
+    }
+
+    // Initialize an empty array to store the "Nome Sala" values
+    const nomeSalasArray = [];
+
+    // Check if the jsonData is an array
+    if (Array.isArray(jsonData)) {
+        // Loop through each entry in the JSON data
+        jsonData.forEach(function(entry) {
+            // Check if the current entry has the "Nome sala" property
+            if (entry &amp;&amp; entry["Nome sala"]) {
+                // Add the "Nome Sala" value to the array
+                nomeSalasArray.push(entry["Nome sala"]);
+            }
+        });
+    } else {
+        console.error("Input data is not an array.");
+    }
+
+    // Return the array containing "Nome Sala" values
+    return nomeSalasArray;
+}
+
+/**
+ * Função que extrai o nome de todos as unidade curriculares presentes na tabela
+ * @param {Tabulator} table - tabela do tabulator de onde serão extraidos os nomes das UCs
+ * @returns {Map} - Mapa com os nomes de todas as UCs
+ */
+function getUCs(table) {
+    const uniqueValues = {};
+    table.getData().forEach(function(row) {
+        const columnValue = row["Unidade Curricular"];
+        if (!uniqueValues[columnValue]) {
+            uniqueValues[columnValue] = true;
+        }
+    });
+
+    const uniqueEntries = Object.keys(uniqueValues);
+    console.log(uniqueEntries);
+    return uniqueEntries;
+}
+
+/**
+ * Função que extrai o nome de todos os cursos presentes na tabela
+ * @param {Tabulator} table - tabela de onde serão extraídos os nomes dos Cursos
+ * @returns {Map} - Mapa com os nomes de todos os Cursos
+ */
+function getCursos(table) {
+    const uniqueValues = {};
+    table.getData().forEach(function(row) {
+        const columnValue = row["Curso"].split(', ');
+        columnValue.forEach(function(entrie){
+            if (!uniqueValues[entrie]) {
+                uniqueValues[entrie] = true;
+            }
+        })
+    });
+
+    const uniqueEntries = Object.keys(uniqueValues);
+    console.log(uniqueEntries);
+    return uniqueEntries;
+}
+
+/**
+ * Função que extrai o nome de todas as turmas presentes na tabela
+ * @param {Tabulator} table - tabela de onde serão extraidos os nomes das turmas
+ * @returns {Map} - Mapa com os nomes de todas as turmas
+ */
+function getTurmas(table) {
+    const uniqueValues = {};
+    table.getData().forEach(function(row) {
+        const columnValue = row["Turma"].split(', ');
+        columnValue.forEach(function(entrie){
+            if (!uniqueValues[entrie]) {
+                uniqueValues[entrie] = true;
+            }
+        })
+    });
+
+    var uniqueEntries = Object.keys(uniqueValues);
+    return uniqueEntries;
+}
+
+/**
+ * Função que extrai todos os tipos de salas existentes no ficheiro
+ * @param {String} jsonString - Informação sobre as salas
+ * @returns {Array&lt;String>} - Array com todos os tipos de salas
+ */
+function extractAttributes(jsonString) {
+    // Parse the JSON string into a JavaScript object
+    let jsonData = [];
+    try {
+        jsonData = JSON.parse(jsonString);
+    } catch (error) {
+        console.error("Error parsing JSON:", error);
+        return []; // Return an empty array if parsing fails
+    }
+
+    // Array of keys within the desired range of attributes
+    var desiredKeys = [
+        "Anfiteatro aulas",
+        "Apoio técnico eventos",
+        "Arq 1",
+        "Arq 2",
+        "Arq 3",
+        "Arq 4",
+        "Arq 5",
+        "Arq 6",
+        "Arq 9",
+        "BYOD (Bring Your Own Device)",
+        "Focus Group",
+        "Horário sala visível portal público",
+        "Laboratório de Arquitectura de Computadores I",
+        "Laboratório de Arquitectura de Computadores II",
+        "Laboratório de Bases de Engenharia",
+        "Laboratório de Electrónica",
+        "Laboratório de Informática",
+        "Laboratório de Jornalismo",
+        "Laboratório de Redes de Computadores I",
+        "Laboratório de Redes de Computadores II",
+        "Laboratório de Telecomunicações",
+        "Sala Aulas Mestrado",
+        "Sala Aulas Mestrado Plus",
+        "Sala NEE",
+        "Sala Provas",
+        "Sala Reunião",
+        "Sala de Arquitectura",
+        "Sala de Aulas normal",
+        "videoconferência",
+        "átrio"
+    ];
+
+    // Check if the parsed JSON object is not null and is an object
+    if (jsonData[0] !== null &amp;&amp; typeof jsonData[0] === 'object') {
+        // Initialize an empty array to store the attribute names
+        const attributesArray = [];
+
+        // Loop through each key in the JSON object
+        for (var key in jsonData[0]) {
+            // Check if the key is within the desired range of attributes
+            if (desiredKeys.includes(key)) {
+                // Add the key (attribute name) to the array
+                attributesArray.push(key);
+            }
+        }
+
+        // Return the array containing attribute names
+        return attributesArray;
+    } else {
+        console.error("Input data is not a valid JSON object.");
+        return []; // Return an empty array if input is not a valid JSON object
+    }
+}
+
+export { dataParseHorario, dataParseSalas, fixTextLocal, extractNomeSalas, extractAttributes, getUCs, getCursos, getTurmas};</code></pre>
         </article>
     </section>
 
@@ -141,13 +311,13 @@ export { dataParseHorario, dataParseSalas, fixTextLocal};</code></pre>
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#addEventListeners">addEventListeners</a></li><li><a href="global.html#createTableHorario">createTableHorario</a></li><li><a href="global.html#createTableSalas">createTableSalas</a></li><li><a href="global.html#currentWeekNumber">currentWeekNumber</a></li><li><a href="global.html#dataParseHorario">dataParseHorario</a></li><li><a href="global.html#dataParseSalas">dataParseSalas</a></li><li><a href="global.html#downloadCSV">downloadCSV</a></li><li><a href="global.html#downloadJSON">downloadJSON</a></li><li><a href="global.html#fixTextLocal">fixTextLocal</a></li><li><a href="global.html#gitHubCSVHorario">gitHubCSVHorario</a></li><li><a href="global.html#gitHubCSVSalas">gitHubCSVSalas</a></li><li><a href="global.html#giveSemanaAno">giveSemanaAno</a></li><li><a href="global.html#giveSemanaSemestre">giveSemanaSemestre</a></li><li><a href="global.html#headerFilters">headerFilters</a></li><li><a href="global.html#resetFilters">resetFilters</a></li><li><a href="global.html#table">table</a></li><li><a href="global.html#tablefinal">tablefinal</a></li><li><a href="global.html#toggleFilter">toggleFilter</a></li><li><a href="global.html#turnToDate">turnToDate</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#addEventListeners">addEventListeners</a></li><li><a href="global.html#addHeaderToDiv">addHeaderToDiv</a></li><li><a href="global.html#addParagraphToDiv">addParagraphToDiv</a></li><li><a href="global.html#aulaForSub">aulaForSub</a></li><li><a href="global.html#aulas">aulas</a></li><li><a href="global.html#callSetDays">callSetDays</a></li><li><a href="global.html#clearDiv">clearDiv</a></li><li><a href="global.html#createButton">createButton</a></li><li><a href="global.html#createCheckboxes">createCheckboxes</a></li><li><a href="global.html#createDateInputWithSubmit">createDateInputWithSubmit</a></li><li><a href="global.html#createDiv">createDiv</a></li><li><a href="global.html#createDualSelect">createDualSelect</a></li><li><a href="global.html#createInput">createInput</a></li><li><a href="global.html#createMultiSelect">createMultiSelect</a></li><li><a href="global.html#createNumberInput">createNumberInput</a></li><li><a href="global.html#createOptionsAndBackButton">createOptionsAndBackButton</a></li><li><a href="global.html#createSingleSelect">createSingleSelect</a></li><li><a href="global.html#createTableHorario">createTableHorario</a></li><li><a href="global.html#createTableSalas">createTableSalas</a></li><li><a href="global.html#createTableSuggestion">createTableSuggestion</a></li><li><a href="global.html#currentWeekNumber">currentWeekNumber</a></li><li><a href="global.html#customFilter">customFilter</a></li><li><a href="global.html#dataParseHorario">dataParseHorario</a></li><li><a href="global.html#dataParseSalas">dataParseSalas</a></li><li><a href="global.html#datas">datas</a></li><li><a href="global.html#datasLength">datasLength</a></li><li><a href="global.html#downloadCSV">downloadCSV</a></li><li><a href="global.html#downloadJSON">downloadJSON</a></li><li><a href="global.html#extractAttributes">extractAttributes</a></li><li><a href="global.html#extractNomeSalas">extractNomeSalas</a></li><li><a href="global.html#fixTextLocal">fixTextLocal</a></li><li><a href="global.html#formatString">formatString</a></li><li><a href="global.html#generateClassDuration">generateClassDuration</a></li><li><a href="global.html#generateFilterExpression">generateFilterExpression</a></li><li><a href="global.html#generateSubClasses">generateSubClasses</a></li><li><a href="global.html#generateTimeStamps">generateTimeStamps</a></li><li><a href="global.html#getArrayDatesBetween">getArrayDatesBetween</a></li><li><a href="global.html#getAulaforSub">getAulaforSub</a></li><li><a href="global.html#getCursos">getCursos</a></li><li><a href="global.html#getNumAulas">getNumAulas</a></li><li><a href="global.html#getTurmas">getTurmas</a></li><li><a href="global.html#getUCs">getUCs</a></li><li><a href="global.html#gitHubCSVHorario">gitHubCSVHorario</a></li><li><a href="global.html#gitHubCSVSalas">gitHubCSVSalas</a></li><li><a href="global.html#giveSemanaAno">giveSemanaAno</a></li><li><a href="global.html#giveSemanaSemestre">giveSemanaSemestre</a></li><li><a href="global.html#handleAllSalas">handleAllSalas</a></li><li><a href="global.html#handleAllocateSalas">handleAllocateSalas</a></li><li><a href="global.html#handleAllocateTipo">handleAllocateTipo</a></li><li><a href="global.html#handleAlocarAulas">handleAlocarAulas</a></li><li><a href="global.html#handleAlocarAulasSettings">handleAlocarAulasSettings</a></li><li><a href="global.html#handleAulasDuration">handleAulasDuration</a></li><li><a href="global.html#handleAulasNum">handleAulasNum</a></li><li><a href="global.html#handleBetweenDates">handleBetweenDates</a></li><li><a href="global.html#handleBetweenDatesInput">handleBetweenDatesInput</a></li><li><a href="global.html#handleCursosSelect">handleCursosSelect</a></li><li><a href="global.html#handleDaysOfWeekSelect">handleDaysOfWeekSelect</a></li><li><a href="global.html#handleEntreHoras">handleEntreHoras</a></li><li><a href="global.html#handleEntreHorasSelection">handleEntreHorasSelection</a></li><li><a href="global.html#handleExcludeSalas">handleExcludeSalas</a></li><li><a href="global.html#handleExcludeTipo">handleExcludeTipo</a></li><li><a href="global.html#handleExlusionOptions">handleExlusionOptions</a></li><li><a href="global.html#handleSameDay">handleSameDay</a></li><li><a href="global.html#handleSameWeek">handleSameWeek</a></li><li><a href="global.html#handleSetPeriods">handleSetPeriods</a></li><li><a href="global.html#handleSetPeriodsSelect">handleSetPeriodsSelect</a></li><li><a href="global.html#handleStSemestre">handleStSemestre</a></li><li><a href="global.html#handleSubAula">handleSubAula</a></li><li><a href="global.html#handleTurmasSelect">handleTurmasSelect</a></li><li><a href="global.html#handleUCsSelect">handleUCsSelect</a></li><li><a href="global.html#handlendSemestre">handlendSemestre</a></li><li><a href="global.html#headerMenu">headerMenu</a></li><li><a href="global.html#horasInicio">horasInicio</a></li><li><a href="global.html#horasInicioLength">horasInicioLength</a></li><li><a href="global.html#millisecondsToTimestamp">millisecondsToTimestamp</a></li><li><a href="global.html#readLocalFile">readLocalFile</a></li><li><a href="global.html#readyToShowSuggestion">readyToShowSuggestion</a></li><li><a href="global.html#removeDuplicatesTimestamps">removeDuplicatesTimestamps</a></li><li><a href="global.html#removeSalasFromList">removeSalasFromList</a></li><li><a href="global.html#removeSelectedWeekdaysFromMap">removeSelectedWeekdaysFromMap</a></li><li><a href="global.html#resetFilters">resetFilters</a></li><li><a href="global.html#salasAula">salasAula</a></li><li><a href="global.html#salasButtonsSetter">salasButtonsSetter</a></li><li><a href="global.html#secondSalaSubmission">secondSalaSubmission</a></li><li><a href="global.html#setAllocationOptions">setAllocationOptions</a></li><li><a href="global.html#setAulaforSub">setAulaforSub</a></li><li><a href="global.html#setAulas">setAulas</a></li><li><a href="global.html#setCursos">setCursos</a></li><li><a href="global.html#setDatas">setDatas</a></li><li><a href="global.html#setDatasBasedOnSub">setDatasBasedOnSub</a></li><li><a href="global.html#setDaysOfWeek">setDaysOfWeek</a></li><li><a href="global.html#setExclusionOptions">setExclusionOptions</a></li><li><a href="global.html#setSalas">setSalas</a></li><li><a href="global.html#setSalasByType">setSalasByType</a></li><li><a href="global.html#setSemestre">setSemestre</a></li><li><a href="global.html#setSingleDay">setSingleDay</a></li><li><a href="global.html#setTamanhoAula">setTamanhoAula</a></li><li><a href="global.html#setTurmas">setTurmas</a></li><li><a href="global.html#setWeekDays">setWeekDays</a></li><li><a href="global.html#subAulaInfoSetter">subAulaInfoSetter</a></li><li><a href="global.html#tableOptionsStartup">tableOptionsStartup</a></li><li><a href="global.html#timestampToMilliseconds">timestampToMilliseconds</a></li><li><a href="global.html#toggleFilter">toggleFilter</a></li><li><a href="global.html#turnToDate">turnToDate</a></li><li><a href="global.html#weekDays">weekDays</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Tue Apr 23 2024 23:14:51 GMT+0100 (Hora de verão da Europa Ocidental)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Sat May 11 2024 18:37:26 GMT+0100 (Hora de verão da Europa Ocidental)
 </footer>
 
 <script> prettyPrint(); </script>

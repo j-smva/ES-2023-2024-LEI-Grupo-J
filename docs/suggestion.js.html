@@ -1,4 +1,32 @@
-import dateCraft from 'date-craft';
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: suggestion.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: suggestion.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import dateCraft from 'date-craft';
 import { getArrayDatesBetween, turnToDate, giveSemanaAno, giveSemanaSemestre } from './calcSemanas';
 
 //variáveis necessárias para o algoritmo 
@@ -16,19 +44,19 @@ var weekDays;
 
 /**
  * Array que contém as salas de aula a serem consideras
- * @type {Array<String>}
+ * @type {Array&lt;String>}
  */
 var salasAula = [];
 
 /**
  * Array que guarda as horas de início a serem consideradas
- * @type {Array<String>}
+ * @type {Array&lt;String>}
  */
 var horasInicio = [];
 
 /**
  * Array que guarda as datas a serem consideradas
- * @type {Array<String>}
+ * @type {Array&lt;String>}
  */
 var datas = []; 
 
@@ -62,7 +90,7 @@ function getNumAulas(){
 
  /**
   * Função que recebe um array de strings e coloca essas strings como cursos da aula a ser substituída
-  * @param {Array<String>} cursosL - Cursos escolhidos
+  * @param {Array&lt;String>} cursosL - Cursos escolhidos
   */
 function setCursos(cursosL){
     aulaForSub["Curso"]=cursosL.toString();
@@ -79,7 +107,7 @@ function setAulas(num){
 
 /**
  * Função que recebe um array de strings e coloca essas strings como turmas da aula a ser substituída
- * @param {Array<String>} turmasL - Turmas escolhidas
+ * @param {Array&lt;String>} turmasL - Turmas escolhidas
  */
 function setTurmas(turmasL){
     aulaForSub["Turma"]=turmasL.toString();
@@ -149,7 +177,7 @@ function horasInicioLength(){
 
 /**
  * Função que remove dias da semana específicos do array weekDays
- * @param {Array<Number>} selectedWeekdays - Dias da semana que foram selecionados para serem excluídos
+ * @param {Array&lt;Number>} selectedWeekdays - Dias da semana que foram selecionados para serem excluídos
  */
 function removeSelectedWeekdaysFromMap(selectedWeekdays) {
     selectedWeekdays.forEach(function(day) {
@@ -171,7 +199,7 @@ function setAulaforSub(dataAula){
 
 /**
  * Função que define o conjuto de salas a serem consideradas, sejam estas salas específicas ou tipos de salas
- * @param {Array<String>} salas - salas que foram selecionadas
+ * @param {Array&lt;String>} salas - salas que foram selecionadas
  */
 function setSalas(salas){
     salasAula = salas;
@@ -191,9 +219,9 @@ function setDatasBasedOnSub(){
         datas = getArrayDatesBetween(semestreOneBeg,semestreOneEnd).concat(getArrayDatesBetween(semestreTwoBeg,semestreTwoEnd));
     }else{*/
     const dateForCheck = turnToDate(aulaForSub["Data da aula"]);
-    if(dateCraft.isSameOrAfterDate(dateForCheck, semestreOneBeg) && dateCraft.isSameOrBeforeDate(dateForCheck, semestreOneEnd)){
+    if(dateCraft.isSameOrAfterDate(dateForCheck, semestreOneBeg) &amp;&amp; dateCraft.isSameOrBeforeDate(dateForCheck, semestreOneEnd)){
         datas = getArrayDatesBetween(semestreOneBeg,semestreOneEnd);
-    } else if(dateCraft.isSameOrAfterDate(dateForCheck, semestreTwoBeg) && dateCraft.isSameOrBeforeDate(dateForCheck, semestreTwoEnd)){
+    } else if(dateCraft.isSameOrAfterDate(dateForCheck, semestreTwoBeg) &amp;&amp; dateCraft.isSameOrBeforeDate(dateForCheck, semestreTwoEnd)){
         datas = getArrayDatesBetween(semestreTwoBeg,semestreTwoEnd);
     }
     //}
@@ -214,7 +242,7 @@ function setDatas(start, end){
 
 /**
  * Função que remove determinado conjunto de salas do conjunto total de salas
- * @param {Array<String>} salasToRemove - salas a serem removidas
+ * @param {Array&lt;String>} salasToRemove - salas a serem removidas
  */
 function removeSalasFromList(salasToRemove) {
     salasToRemove.forEach(sala => {
@@ -226,8 +254,8 @@ function removeSalasFromList(salasToRemove) {
 /**
  * Função que devolve o conjuto de salas baseado no conjunto de características escolhido
  * @param {jsonArray} dataSalas - dados sobre as salas de aula
- * @param {Array<String>} arrayTypes - Características de salas a serem procurados
- * @returns {Array<String>} - Array com as salas dos tipos determinados
+ * @param {Array&lt;String>} arrayTypes - Características de salas a serem procurados
+ * @returns {Array&lt;String>} - Array com as salas dos tipos determinados
  */
 function setSalasByType(dataSalas, arrayTypes) {
     const salasOfType = new Set();
@@ -247,8 +275,8 @@ function setSalasByType(dataSalas, arrayTypes) {
  */
 function generateTimeStamps() {
     const timeStamps = [];
-    for (let hour = 8; hour <= 21; hour++) {
-        for (let minute = 0; minute < 60; minute += 30) {
+    for (let hour = 8; hour &lt;= 21; hour++) {
+        for (let minute = 0; minute &lt; 60; minute += 30) {
             const formattedHour = hour.toString().padStart(2, '0');
             const formattedMinute = minute.toString().padStart(2, '0');
             timeStamps.push(`${formattedHour}:${formattedMinute}:00`);
@@ -260,7 +288,7 @@ function generateTimeStamps() {
 
 /**
  * Função que remove um conjunto de timestamps do conjunto total a ser considerado
- * @param {Array<String>} TimesToRemove - Timestamps a serem removidas
+ * @param {Array&lt;String>} TimesToRemove - Timestamps a serem removidas
  */
 function removeDuplicatesTimestamps(TimesToRemove) {
     // Filter out timestamps from originalArray that are not present in arrayToRemove
@@ -283,7 +311,7 @@ function setSingleDay(){
  * Função que dados dois timestamps devolve um array de todos os timestamps de inicio possiveis que ocorrem no intervalo descrito
  * @param {String} startTimestamp - Timestamp inicial
  * @param {String} endTimestamp - Timestamp final
- * @returns {Array<String>} - Array com timestamps que ocorrem no intervalo pretendido
+ * @returns {Array&lt;String>} - Array com timestamps que ocorrem no intervalo pretendido
  */
 function generateClassDuration(startTimestamp, endTimestamp) {
     const timestamps = [];
@@ -296,7 +324,7 @@ function generateClassDuration(startTimestamp, endTimestamp) {
     let currentMilliseconds = startMilliseconds;
 
     //Ciclo até atingirmos a timestamp final
-    while (currentMilliseconds <= endMilliseconds) {
+    while (currentMilliseconds &lt;= endMilliseconds) {
         //Converter os milisegundos atuais numa timestamp
         const timestampString = millisecondsToTimestamp(currentMilliseconds);
         
@@ -385,8 +413,8 @@ function generateSubClasses(tabledata) {
                     
                             if (
                                 //Confere se existe conflito entre a aula com a chave e a aula que foi gerada
-                                (copiedAulaForSub["Hora início da aula"] >= existingClassStart && copiedAulaForSub["Hora início da aula"] < existingClassEnd) ||
-                                (copiedAulaForSub["Hora fim da aula"] > existingClassStart && copiedAulaForSub["Hora fim da aula"] <= existingClassEnd)
+                                (copiedAulaForSub["Hora início da aula"] >= existingClassStart &amp;&amp; copiedAulaForSub["Hora início da aula"] &lt; existingClassEnd) ||
+                                (copiedAulaForSub["Hora fim da aula"] > existingClassStart &amp;&amp; copiedAulaForSub["Hora fim da aula"] &lt;= existingClassEnd)
                             ) {
                                 //Existe conflito
                                 hasOverlap = true;
@@ -414,4 +442,26 @@ function generateSubClasses(tabledata) {
 
 
 
-export { timestampToMilliseconds ,horasInicioLength,setSalas, setSalasByType, generateTimeStamps, setAulaforSub, setWeekDays, removeSalasFromList, setDatasBasedOnSub, generateSubClasses, setSingleDay, setDatas, removeDuplicatesTimestamps, generateClassDuration, removeSelectedWeekdaysFromMap, datasLength, getAulaforSub, extractCursos, extractTurmas, setCursos, setTurmas, setAulas, setTamanhoAula, setSemestre, getNumAulas};
+export { timestampToMilliseconds ,horasInicioLength,setSalas, setSalasByType, generateTimeStamps, setAulaforSub, setWeekDays, removeSalasFromList, setDatasBasedOnSub, generateSubClasses, setSingleDay, setDatas, removeDuplicatesTimestamps, generateClassDuration, removeSelectedWeekdaysFromMap, datasLength, getAulaforSub, extractCursos, extractTurmas, setCursos, setTurmas, setAulas, setTamanhoAula, setSemestre, getNumAulas};</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#addEventListeners">addEventListeners</a></li><li><a href="global.html#addHeaderToDiv">addHeaderToDiv</a></li><li><a href="global.html#addParagraphToDiv">addParagraphToDiv</a></li><li><a href="global.html#aulaForSub">aulaForSub</a></li><li><a href="global.html#aulas">aulas</a></li><li><a href="global.html#callSetDays">callSetDays</a></li><li><a href="global.html#clearDiv">clearDiv</a></li><li><a href="global.html#createButton">createButton</a></li><li><a href="global.html#createCheckboxes">createCheckboxes</a></li><li><a href="global.html#createDateInputWithSubmit">createDateInputWithSubmit</a></li><li><a href="global.html#createDiv">createDiv</a></li><li><a href="global.html#createDualSelect">createDualSelect</a></li><li><a href="global.html#createInput">createInput</a></li><li><a href="global.html#createMultiSelect">createMultiSelect</a></li><li><a href="global.html#createNumberInput">createNumberInput</a></li><li><a href="global.html#createOptionsAndBackButton">createOptionsAndBackButton</a></li><li><a href="global.html#createSingleSelect">createSingleSelect</a></li><li><a href="global.html#createTableHorario">createTableHorario</a></li><li><a href="global.html#createTableSalas">createTableSalas</a></li><li><a href="global.html#createTableSuggestion">createTableSuggestion</a></li><li><a href="global.html#currentWeekNumber">currentWeekNumber</a></li><li><a href="global.html#customFilter">customFilter</a></li><li><a href="global.html#dataParseHorario">dataParseHorario</a></li><li><a href="global.html#dataParseSalas">dataParseSalas</a></li><li><a href="global.html#datas">datas</a></li><li><a href="global.html#datasLength">datasLength</a></li><li><a href="global.html#downloadCSV">downloadCSV</a></li><li><a href="global.html#downloadJSON">downloadJSON</a></li><li><a href="global.html#extractAttributes">extractAttributes</a></li><li><a href="global.html#extractNomeSalas">extractNomeSalas</a></li><li><a href="global.html#fixTextLocal">fixTextLocal</a></li><li><a href="global.html#formatString">formatString</a></li><li><a href="global.html#generateClassDuration">generateClassDuration</a></li><li><a href="global.html#generateFilterExpression">generateFilterExpression</a></li><li><a href="global.html#generateSubClasses">generateSubClasses</a></li><li><a href="global.html#generateTimeStamps">generateTimeStamps</a></li><li><a href="global.html#getArrayDatesBetween">getArrayDatesBetween</a></li><li><a href="global.html#getAulaforSub">getAulaforSub</a></li><li><a href="global.html#getCursos">getCursos</a></li><li><a href="global.html#getNumAulas">getNumAulas</a></li><li><a href="global.html#getTurmas">getTurmas</a></li><li><a href="global.html#getUCs">getUCs</a></li><li><a href="global.html#gitHubCSVHorario">gitHubCSVHorario</a></li><li><a href="global.html#gitHubCSVSalas">gitHubCSVSalas</a></li><li><a href="global.html#giveSemanaAno">giveSemanaAno</a></li><li><a href="global.html#giveSemanaSemestre">giveSemanaSemestre</a></li><li><a href="global.html#handleAllSalas">handleAllSalas</a></li><li><a href="global.html#handleAllocateSalas">handleAllocateSalas</a></li><li><a href="global.html#handleAllocateTipo">handleAllocateTipo</a></li><li><a href="global.html#handleAlocarAulas">handleAlocarAulas</a></li><li><a href="global.html#handleAlocarAulasSettings">handleAlocarAulasSettings</a></li><li><a href="global.html#handleAulasDuration">handleAulasDuration</a></li><li><a href="global.html#handleAulasNum">handleAulasNum</a></li><li><a href="global.html#handleBetweenDates">handleBetweenDates</a></li><li><a href="global.html#handleBetweenDatesInput">handleBetweenDatesInput</a></li><li><a href="global.html#handleCursosSelect">handleCursosSelect</a></li><li><a href="global.html#handleDaysOfWeekSelect">handleDaysOfWeekSelect</a></li><li><a href="global.html#handleEntreHoras">handleEntreHoras</a></li><li><a href="global.html#handleEntreHorasSelection">handleEntreHorasSelection</a></li><li><a href="global.html#handleExcludeSalas">handleExcludeSalas</a></li><li><a href="global.html#handleExcludeTipo">handleExcludeTipo</a></li><li><a href="global.html#handleExlusionOptions">handleExlusionOptions</a></li><li><a href="global.html#handleSameDay">handleSameDay</a></li><li><a href="global.html#handleSameWeek">handleSameWeek</a></li><li><a href="global.html#handleSetPeriods">handleSetPeriods</a></li><li><a href="global.html#handleSetPeriodsSelect">handleSetPeriodsSelect</a></li><li><a href="global.html#handleStSemestre">handleStSemestre</a></li><li><a href="global.html#handleSubAula">handleSubAula</a></li><li><a href="global.html#handleTurmasSelect">handleTurmasSelect</a></li><li><a href="global.html#handleUCsSelect">handleUCsSelect</a></li><li><a href="global.html#handlendSemestre">handlendSemestre</a></li><li><a href="global.html#headerMenu">headerMenu</a></li><li><a href="global.html#horasInicio">horasInicio</a></li><li><a href="global.html#horasInicioLength">horasInicioLength</a></li><li><a href="global.html#millisecondsToTimestamp">millisecondsToTimestamp</a></li><li><a href="global.html#readLocalFile">readLocalFile</a></li><li><a href="global.html#readyToShowSuggestion">readyToShowSuggestion</a></li><li><a href="global.html#removeDuplicatesTimestamps">removeDuplicatesTimestamps</a></li><li><a href="global.html#removeSalasFromList">removeSalasFromList</a></li><li><a href="global.html#removeSelectedWeekdaysFromMap">removeSelectedWeekdaysFromMap</a></li><li><a href="global.html#resetFilters">resetFilters</a></li><li><a href="global.html#salasAula">salasAula</a></li><li><a href="global.html#salasButtonsSetter">salasButtonsSetter</a></li><li><a href="global.html#secondSalaSubmission">secondSalaSubmission</a></li><li><a href="global.html#setAllocationOptions">setAllocationOptions</a></li><li><a href="global.html#setAulaforSub">setAulaforSub</a></li><li><a href="global.html#setAulas">setAulas</a></li><li><a href="global.html#setCursos">setCursos</a></li><li><a href="global.html#setDatas">setDatas</a></li><li><a href="global.html#setDatasBasedOnSub">setDatasBasedOnSub</a></li><li><a href="global.html#setDaysOfWeek">setDaysOfWeek</a></li><li><a href="global.html#setExclusionOptions">setExclusionOptions</a></li><li><a href="global.html#setSalas">setSalas</a></li><li><a href="global.html#setSalasByType">setSalasByType</a></li><li><a href="global.html#setSemestre">setSemestre</a></li><li><a href="global.html#setSingleDay">setSingleDay</a></li><li><a href="global.html#setTamanhoAula">setTamanhoAula</a></li><li><a href="global.html#setTurmas">setTurmas</a></li><li><a href="global.html#setWeekDays">setWeekDays</a></li><li><a href="global.html#subAulaInfoSetter">subAulaInfoSetter</a></li><li><a href="global.html#tableOptionsStartup">tableOptionsStartup</a></li><li><a href="global.html#timestampToMilliseconds">timestampToMilliseconds</a></li><li><a href="global.html#toggleFilter">toggleFilter</a></li><li><a href="global.html#turnToDate">turnToDate</a></li><li><a href="global.html#weekDays">weekDays</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Sat May 11 2024 18:37:26 GMT+0100 (Hora de verão da Europa Ocidental)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
