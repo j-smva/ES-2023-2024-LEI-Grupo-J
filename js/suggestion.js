@@ -29,6 +29,7 @@ function setCursos(cursosL){
 };
 function setAulas(num){
     aulas = num;
+    console.log("número de aulas é:" + aulas);
 };
 function setTurmas(turmasL){
     aulaForSub["Turma"]=turmasL.toString();
@@ -97,16 +98,16 @@ function setDatasBasedOnSub(){
     const semestreTwoBeg = new Date('2023/01/30');
     const semestreTwoEnd = new Date('2023/05/27');
     datas = [];
-    if(getAulaforSub()["Turno"]=="---"){
+    /*if(getAulaforSub()["Turno"]=="---"){
         datas = getArrayDatesBetween(semestreOneBeg,semestreOneEnd).concat(getArrayDatesBetween(semestreTwoBeg,semestreTwoEnd));
-    }else{
+    }else{*/
     const dateForCheck = turnToDate(aulaForSub["Data da aula"]);
     if(dateCraft.isSameOrAfterDate(dateForCheck, semestreOneBeg) && dateCraft.isSameOrBeforeDate(dateForCheck, semestreOneEnd)){
         datas = getArrayDatesBetween(semestreOneBeg,semestreOneEnd);
     } else if(dateCraft.isSameOrAfterDate(dateForCheck, semestreTwoBeg) && dateCraft.isSameOrBeforeDate(dateForCheck, semestreTwoEnd)){
         datas = getArrayDatesBetween(semestreTwoBeg,semestreTwoEnd);
     }
-    }
+    //}
     console.log(datas);
     
 }

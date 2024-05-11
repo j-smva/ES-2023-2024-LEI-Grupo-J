@@ -435,7 +435,6 @@ function handleSubmitFilters(label) {
     } else if (label.textContent === "Nome UCs: ") {
         var selectedUC = Array.from(document.getElementById("dropdown_Nome UCs").selectedOptions).map(option => option.value);
         if (selectedUC.length > 0) {
-            +
                 setAulaforSub({ "Curso": "LIGE, LIGE-PL", "Unidade Curricular": selectedUC[0], "Turno": "---", "Turma": "IGE-PL-C2, IGE-PL-C1", "Inscritos no turno": "-", "Dia da semana": "Ter", "Hora início da aula": "18:00:00", "Hora fim da aula": "19:30:00", "Data da aula": "00/00/0000", "Semana do Ano": 43 });
         }
         getSemestre();
@@ -995,7 +994,8 @@ function createTableSugestion() {
                 if (getAulaforSub()["Turno"] == "---") {
                     setAulas(getNumAulas() - novaAula.length);
                     novaAula.forEach(function (row) {
-                        tablefinal.addRow(row, true)
+                        tablefinal.addRow(row, true);
+                        row.delete();
                         console.log("row added");
                     });
                     if (suggestionDiv && getNumAulas() == 0) {
@@ -1340,6 +1340,70 @@ function generateSubClasses(tabledata){
             }
         });
     });
+    console.log(jsonArray);
+    return JSON.stringify(jsonArray);
+}
+
+
+
+function generateSubClasses(tabledata){
+    const inicio = timestampToMilliseconds(aulaForSub["Hora início da aula"]);
+    const fim = timestampToMilliseconds(aulaForSub["Hora fim da aula"]);
+    const duration = fim - inicio;
+    const jsonArray = [];
+    const dictionaryOriginal = {};
+    const parsedTableData = JSON.parse(tabledata);
+    parsedTableData.forEach(aula => {
+        const durationAula = timestampToMilliseconds(aula["Hora fim da aula"]) - timestampToMilliseconds(aula["Hora início da aula"]);
+        const key = aula["Data da aula"] + aula["Sala atribuída à aula"];
+        const value = [aula["Hora início da aula"], durationAula];
+        if (!(key in dictionaryOriginal)) {
+            dictionaryOriginal[key] = [];
+        }
+        dictionaryOriginal[key].push(value);
+    })
+
+    salasAula.forEach(sala => {
+        datas.forEach(data => {
+            const dataNovaAula = turnToDate(data);
+            const dayOfWeek = dataNovaAula.getDay();
+            if(weekDays.hasOwnProperty(dayOfWeek)){
+                horasInicio.forEach(hora => {
+                    const copiedAulaForSub = Object.assign({}, aulaForSub);
+                    copiedAulaForSub["Dia da semana"] = weekDays[dayOfWeek];
+                    copiedAulaForSub["Hora início da aula"] = hora;
+                    copiedAulaForSub["Hora fim da aula"] = millisecondsToTimestamp(timestampToMilliseconds(hora) + duration);
+                    copiedAulaForSub["Data da aula"] = data;
+                    copiedAulaForSub["Semana do Ano"] = giveSemanaAno(data);
+                    copiedAulaForSub["Semana do Semestre"] = giveSemanaSemestre(data);
+                    copiedAulaForSub["Sala atribuída à aula"] = sala;
+                    const key2 = copiedAulaForSub["Data da aula"] + copiedAulaForSub["Sala atribuída à aula"];
+                    if(key2 in dictionaryOriginal){
+                        dictionaryOriginal[key2].forEach(item => {
+                            //console.log(item);
+                            const a = item[0];
+                            //console.log("a: " + a);
+                            const b = millisecondsToTimestamp(timestampToMilliseconds(item[0]) + item[1]);
+                            //console.log("b: " + b);
+                            const teste  = generateClassDuration(a,b);
+                            console.log("teste: " + teste);
+                            const teste2 = generateClassDuration(copiedAulaForSub["Hora início da aula"],copiedAulaForSub["Hora fim da aula"]);
+                            console.log("teste2: " + teste2);
+                            for(let i = 0; i < teste.length - 1; i++){
+                                if(!(teste2.includes(teste[i]))){
+                                    jsonArray.push(copiedAulaForSub);
+                                } else {
+                                    console.log("deu errado");
+                                }
+                            }
+                        })
+                    } else {
+                        jsonArray.push(copiedAulaForSub);
+                    }
+                })
+            }
+        })
+    })
     console.log(jsonArray);
     return JSON.stringify(jsonArray);
 }

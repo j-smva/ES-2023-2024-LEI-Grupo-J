@@ -138,7 +138,7 @@ function extractNomeSalas(jsonString) {
 }
 
 function getUCs(table) {
-    var uniqueValues = {};
+    const uniqueValues = {};
     table.getData().forEach(function(row) {
         var columnValue = row["Unidade Curricular"];
         if (!uniqueValues[columnValue]) {
@@ -146,11 +146,12 @@ function getUCs(table) {
         }
     });
 
-    var uniqueEntries = Object.keys(uniqueValues);
+    const uniqueEntries = Object.keys(uniqueValues);
+    console.log(uniqueEntries);
     return uniqueEntries;
 }
 function getCursos(table) {
-    var uniqueValues = {};
+    const uniqueValues = {};
     table.getData().forEach(function(row) {
         var columnValue = row["Curso"].split(', ');
         columnValue.forEach(function(entrie){
@@ -160,7 +161,8 @@ function getCursos(table) {
         })
     });
 
-    var uniqueEntries = Object.keys(uniqueValues);
+    const uniqueEntries = Object.keys(uniqueValues);
+    console.log(uniqueEntries);
     return uniqueEntries;
 }
 function getTurmas(table) {

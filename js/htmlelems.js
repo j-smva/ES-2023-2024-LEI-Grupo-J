@@ -294,5 +294,72 @@ function createCheckboxes(options, className, submitHandler) {
     return container;
 }
 
+function createSingleSelect(options, className, submitHandler) {
+    const container = document.createElement('div');
+    const select = document.createElement('select');
 
-export { createCheckboxes ,createDualSelect, addParagraphToDiv, createButton, createDiv, addHeaderToDiv, createInput, createMultiSelect, createDateInputWithSubmit };
+    if (className) {
+        select.className = className;
+    }
+
+    options.forEach(function(option) {
+        let optionElement = document.createElement('option');
+        optionElement.value = option;
+        optionElement.textContent = option;
+        select.appendChild(optionElement);
+    });
+
+    container.appendChild(select);
+
+    const submitButton = document.createElement('button');
+    submitButton.textContent = 'Submit';
+
+    submitButton.addEventListener('click', function() {
+        // Get the selected option
+        const selectedOption = select.value;
+        // Call the submit handler with the selected option
+        if (submitHandler && typeof submitHandler === 'function') {
+            submitHandler(selectedOption);
+        }
+    });
+
+    container.appendChild(submitButton);
+
+    // Return the container div
+    return container;
+}
+
+function createNumberInput(step, className, submitHandler) {
+    const container = document.createElement('div');
+
+    // Create the number input
+    const numberInput = document.createElement('input');
+    numberInput.type = 'number';
+    numberInput.step = step;
+
+    if (className) {
+        numberInput.className = className;
+    }
+
+    container.appendChild(numberInput);
+
+    // Create the submit button
+    const submitButton = document.createElement('button');
+    submitButton.textContent = 'Submit';
+
+    submitButton.addEventListener('click', function() {
+        // Get the selected number
+        const selectedNumber = parseFloat(numberInput.value);
+        // Call the submit handler with the selected number
+        if (submitHandler && typeof submitHandler === 'function') {
+            submitHandler(selectedNumber);
+        }
+    });
+
+    container.appendChild(submitButton);
+
+    // Return the container div
+    return container;
+}
+
+export { createNumberInput ,createSingleSelect ,createCheckboxes ,createDualSelect, addParagraphToDiv, createButton, createDiv, addHeaderToDiv, createInput, createMultiSelect, createDateInputWithSubmit };

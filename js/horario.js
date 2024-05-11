@@ -1,10 +1,10 @@
 import { TabulatorFull as Tabulator } from 'tabulator-tables';
-import { dataParseHorario, dataParseSalas, extractAttributes, extractNomeSalas } from './utils';
+import { dataParseHorario, dataParseSalas, extractAttributes, extractNomeSalas, getCursos, getTurmas, getUCs } from './utils';
 import { generateFilterExpression, customFilter, formatString } from './filters';
 
 
-import { addHeaderToDiv, addParagraphToDiv, createButton, createCheckboxes, createDateInputWithSubmit, createDiv, createDualSelect, createInput, createMultiSelect } from './htmlelems';
-import { datasLength, generateClassDuration, generateSubClasses, generateTimeStamps, horasInicioLength, removeDuplicatesTimestamps, removeSalasFromList, removeSelectedWeekdaysFromMap, setAulaforSub, setDatas, setDatasBasedOnSub, setSalas, setSalasByType, setSingleDay, setWeekDays, timestampToMilliseconds } from './suggestion';
+import { addHeaderToDiv, addParagraphToDiv, createButton, createCheckboxes, createDateInputWithSubmit, createDiv, createDualSelect, createInput, createMultiSelect, createNumberInput, createSingleSelect } from './htmlelems';
+import { datasLength, generateClassDuration, generateSubClasses, generateTimeStamps, horasInicioLength, removeDuplicatesTimestamps, removeSalasFromList, removeSelectedWeekdaysFromMap, setAulaforSub, setDatas, setDatasBasedOnSub, setSalas, setSalasByType, setSingleDay, setWeekDays, timestampToMilliseconds, setSemestre, setCursos, setAulas, setTamanhoAula, getNumAulas, getAulaforSub } from './suggestion';
 import dateCraft from 'date-craft';
 import { turnToDate } from './calcSemanas';
 
@@ -22,6 +22,8 @@ var divMain;
 var dataSalas;
 var nomeSalas = [];
 var tipoSalas = [];
+var UCs = [];
+var isUCAllocation = false;
 
 tablefinal = new Tabulator("#example-table", {
     pagination: "local",
@@ -62,9 +64,12 @@ function tableOptionsStartup() {
         clearDiv(divMain);
     }
     const buttonSub = createButton('Substituir Aula', '', handleSubAula);
+    const buttonAulaNew = createButton('Alocar Novas Aulas', '', handleAlocarAulas);
     addHeaderToDiv(1, "Opções", divMain);
     divMain.appendChild(buttonSub);
+    divMain.appendChild(buttonAulaNew);
 }
+
 
 function clearDiv(div) {
     while (div.firstChild) {
@@ -73,6 +78,7 @@ function clearDiv(div) {
 }
 
 function handleSubAula() {
+    setAulas(1);
     if (!tabledata) {
         alert('Horário não gerado');
     } else {
@@ -137,7 +143,7 @@ function salasButtonsSetter() {
     divMain.appendChild(allsalas);
 }
 
-function handleAllSalas(){
+function handleAllSalas() {
     setSalas(nomeSalas);
     setAllocationOptions();
 }
@@ -191,16 +197,21 @@ function handleExcludeTipo(options) {
 }
 
 function setAllocationOptions() {
-    clearDiv(divMain);
-    addHeaderToDiv(1, 'Opções de Alocação', divMain);
-    const sameDay = createButton('Mesmo Dia', '', handleSameDay);
-    const sameWeek = createButton('Mesma Semana', '', handleSameWeek);
-    const betweenDates = createButton('Entre Datas', '', handleBetweenDates);
-    const excludeOptions = createButton('Opções de Exclusão', '', handleExlusionOptions);
-    divMain.appendChild(sameDay);
-    divMain.appendChild(sameWeek);
-    divMain.appendChild(betweenDates);
-    divMain.appendChild(excludeOptions);
+    if(isUCAllocation){
+        isUCAllocation = false;
+        handleExlusionOptions();
+    } else {
+        clearDiv(divMain);
+        addHeaderToDiv(1, 'Opções de Alocação', divMain);
+        const sameDay = createButton('Mesmo Dia', '', handleSameDay);
+        const sameWeek = createButton('Mesma Semana', '', handleSameWeek);
+        const betweenDates = createButton('Entre Datas', '', handleBetweenDates);
+        const excludeOptions = createButton('Opções de Exclusão', '', handleExlusionOptions);
+        divMain.appendChild(sameDay);
+        divMain.appendChild(sameWeek);
+        divMain.appendChild(betweenDates);
+        divMain.appendChild(excludeOptions);
+    }
 }
 
 function handleSameDay() {
@@ -327,7 +338,7 @@ function handleEntreHorasSelection(horaIni, horaEnd) {
     }
 }
 
-function callSetDays(){
+function callSetDays() {
     generateTimeStamps();
     if (datasLength() === 1) {
         setWeekDays();
@@ -387,25 +398,131 @@ function createTableSuggestion() {
             const novaAula = tableS.getSelectedData();
             if (novaAula.length == 0) {
                 alert('Nenhuma aula selecionada');
+            } else if(novaAula.length > getNumAulas()){
+                alert('Número Máximo de aulas ultrapassado');
             } else {
-                tablefinal.addRow(novaAula[0], true);
-                const row = tablefinal.getSelectedRows();
-                row[0].delete();
-                //clearDiv(divMain);
-                //divMain.remove();
-                tableOptionsStartup();
+                if(getAulaforSub()["Turno"] == "---"){
+                    setAulas(getNumAulas() - novaAula.length);
+                    novaAula.forEach(function(row){
+                        tablefinal.addRow(row,true);
+                    });
+                    tableS.getSelectedRows().forEach(row =>{
+                        row.delete();
+                    })
+                    console.log(getNumAulas());
+                    if(getNumAulas() == 0){
+                        tableOptionsStartup();
+                    }
+                    
+                } else {
+                    tablefinal.addRow(novaAula[0], true);
+                    const row = tablefinal.getSelectedRows();
+                    row[0].delete();
+                    //clearDiv(divMain);
+                    //divMain.remove();
+                    tableOptionsStartup();
+                }
             }
         }
-        function reset(){
+        function reset() {
             tableOptionsStartup();
         }
-        button2.removeEventListener('click',reset);
-        button2.addEventListener('click',reset);
+        button2.removeEventListener('click', reset);
+        button2.addEventListener('click', reset);
         buttonSub.removeEventListener('click', handleClick);
         buttonSub.addEventListener('click', handleClick);
     });
 }
 
+function handleAlocarAulas() {
+    if (!tabledata) {
+        alert('Horário não gerado');
+    } else {
+        isUCAllocation = true;
+        secondSalaSubmission(4, 3);
+    }
+}
+
+function handleAlocarAulasSettings(content) {
+    clearDiv(divMain);
+    addParagraphToDiv('Escolher UC', divMain);
+    UCs = getUCs(tablefinal);
+    dataSalas = dataParseSalas(content);
+    nomeSalas = extractNomeSalas(dataSalas);
+    tipoSalas = extractAttributes(dataSalas);
+    const select = createSingleSelect(UCs, '', handleUCsSelect);
+    divMain.appendChild(select);
+}
+
+function handleUCsSelect(options) {
+    setAulaforSub({ "Curso": "LIGE, LIGE-PL", "Unidade Curricular": options, "Turno": "---", "Turma": "IGE-PL-C2, IGE-PL-C1", "Inscritos no turno": "-", "Dia da semana": "Ter", "Hora início da aula": "18:00:00", "Hora fim da aula": "19:30:00", "Data da aula": "00/00/0000", "Semana do Ano": 43 });
+    clearDiv(divMain);
+    addParagraphToDiv('Escolher Semestre', divMain);
+    const stSemestre = createButton('1º Semestre', '', handleStSemestre);
+    const ndSemestre = createButton('2º Semestre', '', handlendSemestre);
+    divMain.appendChild(stSemestre);
+    divMain.appendChild(ndSemestre);
+}
+
+function handleStSemestre() {
+    setSemestre(1);
+    clearDiv(divMain);
+    addParagraphToDiv('Escolher Cursos', divMain);
+    const select = createMultiSelect(getCursos(tablefinal), '', handleCursosSelect);
+    divMain.appendChild(select);
+}
+function handlendSemestre() {
+    setSemestre(2);
+    clearDiv(divMain);
+    addParagraphToDiv('Escolher Cursos', divMain);
+    const select = createMultiSelect(getCursos(tablefinal), '', handleCursosSelect);
+    divMain.appendChild(select);
+}
+
+function handleCursosSelect(options) {
+    if (options.length === 0) {
+        alert('Escolher pelo menos um curso');
+    } else {
+        setCursos(options);
+        clearDiv(divMain);
+        addParagraphToDiv('Escolher Turmas', divMain);
+        const select = createMultiSelect(getTurmas(tablefinal), '', handleTurmasSelect);
+        divMain.appendChild(select);
+    }
+}
+
+function handleTurmasSelect(options){
+    if(options.length === 0){
+        alert('Escolher pelo menos uma turma');
+    } else {
+        clearDiv(divMain);
+        addParagraphToDiv('Escolher número de aulas', divMain);
+        const num = createNumberInput(1,'', handleAulasNum);
+        divMain.appendChild(num);
+    }
+}
+
+function handleAulasNum(option){
+    if(option === 0){
+        alert('Escolher pelo menos uma aula');
+    } else {
+        console.log(option);
+        setAulas(option);
+        clearDiv(divMain);
+        addParagraphToDiv('Escolher duração das aulas', divMain);
+        const num = createNumberInput(30,'', handleAulasDuration);
+        divMain.appendChild(num);
+    }
+}
+
+function handleAulasDuration(option){
+    if(option === 0){
+        alert('Escolher duração de aula');
+    } else {
+        setTamanhoAula(option);
+        salasButtonsSetter();
+    }
+}
 
 function gitHubCSVSalas(number, githubLink) {
     //numbers: 1 -> tabela Salas; 2->Substituir aula
@@ -426,6 +543,9 @@ function gitHubCSVSalas(number, githubLink) {
                     subAulaInfoSetter(csvDataSalas);
                     salasButtonsSetter();
                     //console.log(dataParseSalas(csvDataSalas));
+                    break;
+                case 3:
+                    handleAlocarAulasSettings(csvDataSalas);
                     break;
             }
         })
@@ -472,6 +592,9 @@ function readLocalFile(event, number) {
                         subAulaInfoSetter(fileContent);
                         salasButtonsSetter();
                         //console.log(dataParseSalas(fileContent));
+                        break;
+                    case 4:
+                        handleAlocarAulasSettings(fileContent);
                         break;
                 }
 
