@@ -433,4 +433,19 @@ function createNumberInput(step, className, submitHandler) {
     return container;
 }
 
-export { createNumberInput ,createSingleSelect ,createCheckboxes ,createDualSelect, addParagraphToDiv, createButton, createDiv, addHeaderToDiv, createInput, createMultiSelect, createDateInputWithSubmit };
+
+function createDivWAttributes(className, id, height) {
+    const div = document.createElement('div');
+    if (className) {
+        div.className = className;
+    }
+    if (id) {
+        div.id = id;
+    }
+    if (height) {
+        div.style.height = height;
+    }
+    return div;
+}
+
+export { createDivWAttributes ,createNumberInput ,createSingleSelect ,createCheckboxes ,createDualSelect, addParagraphToDiv, createButton, createDiv, addHeaderToDiv, createInput, createMultiSelect, createDateInputWithSubmit };

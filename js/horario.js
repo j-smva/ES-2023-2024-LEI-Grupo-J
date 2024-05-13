@@ -3,10 +3,11 @@ import { dataParseHorario, dataParseSalas, extractAttributes, extractNomeSalas, 
 import { generateFilterExpression, customFilter, formatString } from './filters';
 
 
-import { addHeaderToDiv, addParagraphToDiv, createButton, createCheckboxes, createDateInputWithSubmit, createDiv, createDualSelect, createInput, createMultiSelect, createNumberInput, createSingleSelect } from './htmlelems';
+import { addHeaderToDiv, addParagraphToDiv, createButton, createCheckboxes, createDateInputWithSubmit, createDiv, createDivWAttributes, createDualSelect, createInput, createMultiSelect, createNumberInput, createSingleSelect } from './htmlelems';
 import { datasLength, generateClassDuration, generateSubClasses, generateTimeStamps, horasInicioLength, removeDuplicatesTimestamps, removeSalasFromList, removeSelectedWeekdaysFromMap, setAulaforSub, setDatas, setDatasBasedOnSub, setSalas, setSalasByType, setSingleDay, setWeekDays, timestampToMilliseconds, setSemestre, setCursos, setAulas, setTamanhoAula, getNumAulas, getAulaforSub } from './suggestion';
 import dateCraft from 'date-craft';
 import { turnToDate } from './calcSemanas';
+import { generateHeatMap, heatMapNull, setDatasHeatmap, setHeatMapData, setSalasByCapacidade, setSalasByNumCaract, setSalasHeatmap } from './mapandchart';
 
 
 var tablefinal; //tabela geral
@@ -57,6 +58,7 @@ document.addEventListener('DOMContentLoaded', function () {
  * Função que inicializa os botões relativos a substituir aula ou Alocar aulas de uma UC
  */
 function tableOptionsStartup() {
+    heatMapNull();
     if (!divMain) {
         divMain = createDiv('Sub');
         //divMain.style.display = "block";
@@ -68,9 +70,11 @@ function tableOptionsStartup() {
     }
     const buttonSub = createButton('Substituir Aula', '', handleSubAula);
     const buttonAulaNew = createButton('Alocar Novas Aulas', '', handleAlocarAulas);
+    const heatmapButton = createButton('Gerar HeatMap de Ocupação', '', handleHeatMapSelection);
     addHeaderToDiv(1, "Opções", divMain);
     divMain.appendChild(buttonSub);
     divMain.appendChild(buttonAulaNew);
+    divMain.appendChild(heatmapButton);
 }
 
 /**
@@ -118,13 +122,13 @@ function secondSalaSubmission(numberLocal, numberGitHub) {
     const textInput = createInput('url', 'Enter Raw Link', '', null);
     divMain.appendChild(textInput);
     textInput.addEventListener('change', function () {
-        
+
         gitHubCSVSalas(numberGitHub, textInput.value);
     });
     const fileInput = createInput('file', 'Enter File', '', null);
     divMain.appendChild(fileInput);
     fileInput.addEventListener('change', function (event) {
-        
+
         readLocalFile(event, numberLocal);
     });
 }
@@ -246,7 +250,7 @@ function handleExcludeTipo(options) {
  * Função que define os botões para seleção de opções de alocação
  */
 function setAllocationOptions() {
-    if(isUCAllocation){
+    if (isUCAllocation) {
         isUCAllocation = false;
         handleExlusionOptions();
     } else {
@@ -433,7 +437,7 @@ function callSetDays() {
         setDaysOfWeek();
     }
 }
- 
+
 /**
  * Função que gera as checkboxes necessárias para a escolha de dias da semana para exclusão
  */
@@ -470,7 +474,7 @@ function readyToShowSuggestion() {
 function createTableSuggestion() {
     clearDiv(divMain);
     const message = createDiv('message')
-    addHeaderToDiv(1,"Alocar " + getNumAulas() + " aulas",message);
+    addHeaderToDiv(1, "Alocar " + getNumAulas() + " aulas", message);
     divMain.appendChild(message)
     const suggestion = createDiv('tabulator');
     suggestion.id = 'suggestion'
@@ -480,15 +484,15 @@ function createTableSuggestion() {
         data: novatabledata, // Your data array here,
         layout: "fitColumns", // Adjust table layout as needed
         autoColumns: true,
-        autoColumnsDefinitions:function(definitions){
+        autoColumnsDefinitions: function (definitions) {
             //definitions - array of column definition objects
-    
+
             definitions.forEach((column) => {
                 column.headerFilter = true; // add header filter to every column
             });
-    
+
             return definitions;
-        },    
+        },
         pagination: "local",
         paginationSize: 10,
         paginationSizeSelector: [5, 10, 20, 40],
@@ -509,24 +513,24 @@ function createTableSuggestion() {
             const novaAula = tableS.getSelectedData();
             if (novaAula.length == 0) {
                 alert('Nenhuma aula selecionada');
-            } else if(novaAula.length > getNumAulas()){
+            } else if (novaAula.length > getNumAulas()) {
                 alert('Número Máximo de aulas ultrapassado');
             } else {
-                if(getAulaforSub()["Turno"] == "---"){
+                if (getAulaforSub()["Turno"] == "---") {
                     setAulas(getNumAulas() - novaAula.length);
-                    novaAula.forEach(function(row){
-                        tablefinal.addRow(row,true);
+                    novaAula.forEach(function (row) {
+                        tablefinal.addRow(row, true);
                     });
-                    tableS.getSelectedRows().forEach(row =>{
+                    tableS.getSelectedRows().forEach(row => {
                         row.delete();
                     })
                     console.log(getNumAulas());
-                    if(getNumAulas() == 0){
+                    if (getNumAulas() == 0) {
                         tableOptionsStartup();
                     }
                     clearDiv(message);
-                    addHeaderToDiv(1,"Alocar " + getNumAulas() + " aulas",message);
-                    
+                    addHeaderToDiv(1, "Alocar " + getNumAulas() + " aulas", message);
+
                 } else {
                     tablefinal.addRow(novaAula[0], true);
                     const row = tablefinal.getSelectedRows();
@@ -630,13 +634,13 @@ function handleCursosSelect(options) {
  * Função que dá handle às turmas escolhidas
  * @param {Array<String>} options - Turmas escolhidas
  */
-function handleTurmasSelect(options){
-    if(options.length === 0){
+function handleTurmasSelect(options) {
+    if (options.length === 0) {
         alert('Escolher pelo menos uma turma');
     } else {
         clearDiv(divMain);
         addParagraphToDiv('Escolher número de aulas', divMain);
-        const num = createNumberInput(1,'', handleAulasNum);
+        const num = createNumberInput(1, '', handleAulasNum);
         divMain.appendChild(num);
     }
 }
@@ -645,15 +649,15 @@ function handleTurmasSelect(options){
  * Função que dá handle ao número de aulas pretendido
  * @param {Number} option - número de aulas
  */
-function handleAulasNum(option){
-    if(option === 0){
+function handleAulasNum(option) {
+    if (option === 0) {
         alert('Escolher pelo menos uma aula');
     } else {
         console.log(option);
         setAulas(option);
         clearDiv(divMain);
         addParagraphToDiv('Escolher duração das aulas', divMain);
-        const num = createNumberInput(30,'', handleAulasDuration);
+        const num = createNumberInput(30, '', handleAulasDuration);
         divMain.appendChild(num);
     }
 }
@@ -662,13 +666,112 @@ function handleAulasNum(option){
  * Função que dá handle à duração de aulas pretendida
  * @param {Number} option - duração das aulas
  */
-function handleAulasDuration(option){
-    if(option === 0){
+function handleAulasDuration(option) {
+    if (option === 0) {
         alert('Escolher duração de aula');
     } else {
         setTamanhoAula(option);
         salasButtonsSetter();
     }
+}
+
+
+
+function handleHeatMapSelection() {
+    secondSalaSubmission(5, 4);
+}
+
+function generateHeatMapFilters() {
+    clearDiv(divMain);
+    addHeaderToDiv(1, 'Filtros HeatMap', divMain);
+    const buttonTiposSala = createButton('Filtrar por tipo de sala', '', handleHeatMapTipoSala);
+    const capacidade = createButton('Filtrar por capacidade', '', handleHeatMapCapacidade);
+    const numCarac = createButton('Filtrar por número de características', '', handleHeatMapNumCarac);
+
+    divMain.appendChild(buttonTiposSala);
+    divMain.appendChild(capacidade);
+    divMain.appendChild(numCarac);
+}
+
+function handleHeatMapTipoSala() {
+    clearDiv(divMain);
+    addParagraphToDiv('Escolher Tipo de Sala a filtrar', divMain);
+    tipoSalas = extractAttributes(dataSalas);
+    const selec = createMultiSelect(tipoSalas, '', handleHeatMapTipoSalaSelection);
+    divMain.appendChild(selec);
+
+}
+
+function handleHeatMapTipoSalaSelection(options) {
+    setSalasHeatmap(setSalasByType(dataSalas, options));
+    handleHeatMapDateFrame();
+}
+
+function handleHeatMapCapacidade() {
+    clearDiv(divMain);
+    addParagraphToDiv('Escolher Capacidade das salas', divMain);
+    const select = createNumberInput(1, '', handleHeatMapCapacidadeSelection);
+    divMain.appendChild(select);
+
+}
+
+function handleHeatMapCapacidadeSelection(option) {
+    if (option == 0 || option < 0) {
+        alert('Tem de ser selecionado um número positivo');
+    } else {
+        setSalasHeatmap(setSalasByCapacidade(dataSalas, option));
+        handleHeatMapDateFrame();
+    }
+}
+
+function handleHeatMapNumCarac() {
+    clearDiv(divMain);
+    addParagraphToDiv('Escolher Número de Características das salas', divMain);
+    const select = createNumberInput(1, '', handleHeatMapNumCaracSelection);
+    divMain.appendChild(select);
+}
+
+function handleHeatMapNumCaracSelection(option) {
+    if (option == 0 || option < 0) {
+        alert('Tem de ser selecionado um número positivo');
+    } else {
+        setSalasHeatmap(setSalasByNumCaract(dataSalas, option));
+        handleHeatMapDateFrame();
+    }
+}
+
+function handleHeatMapDateFrame() {
+    clearDiv(divMain);
+    addParagraphToDiv('Escolher Período para análise', divMain);
+    const datas = createDateInputWithSubmit('', handleHeatMapDateFrameSelection);
+    divMain.appendChild(datas);
+}
+
+function handleHeatMapDateFrameSelection(inicio, fim) {
+    if (inicio && fim) {
+        const ini = new Date(inicio);
+        const end = new Date(fim);
+        if (end > ini) {
+            setDatasHeatmap(ini, end);
+            finalizeHeatMap();
+
+        } else {
+            alert('Data de Inicio maior que Data de fim');
+        }
+    } else {
+        alert('Submeter ambas as datas');
+    }
+}
+
+function finalizeHeatMap(){
+    clearDiv(divMain);
+    const heatmap = createDivWAttributes('','heatmap','600px');
+    divMain.appendChild(heatmap);
+    setHeatMapData(tabledata);
+    generateHeatMap();
+
+    const reset = createButton('Reset', '', tableOptionsStartup);
+    divMain.appendChild(reset);
 }
 
 /**
@@ -698,6 +801,10 @@ function gitHubCSVSalas(number, githubLink) {
                     break;
                 case 3:
                     handleAlocarAulasSettings(csvDataSalas);
+                    break;
+                case 4:
+                    dataSalas = dataParseSalas(csvDataSalas);
+                    generateHeatMapFilters();
                     break;
             }
         })
@@ -755,6 +862,10 @@ function readLocalFile(event, number) {
                         break;
                     case 4:
                         handleAlocarAulasSettings(fileContent);
+                        break;
+                    case 5:
+                        dataSalas = dataParseSalas(fileContent);
+                        generateHeatMapFilters();
                         break;
                 }
 

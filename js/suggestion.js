@@ -306,7 +306,7 @@ function generateClassDuration(startTimestamp, endTimestamp) {
         //Passar a próxima timestamp ao adicionar 30 minutos
         currentMilliseconds += 1800000; // 30 minutos em milisegundos
     }
-    console.log(timestamps);
+    //console.log(timestamps);
     return timestamps;
 }
 
