@@ -9,13 +9,11 @@ html{
 
 body{
     float:center;
-    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
     background-color: #ffffff8c;
     justify-content:center;
     color: #142131;
     padding: 50px;
-    padding-top: 100px;
-    padding-bottom:100px;
+    margin: 120px 50px 50px 50px;
     border-radius: 30px;
     vertical-align: middle;
 }
@@ -27,27 +25,83 @@ h1{
     color: #698cbb;
     
 }
+.Sub h1{
+    position:relative;
+    text-align: center;
+    vertical-align: middle;
+    font-size: 25px;
+    color: #698cbb;
+    padding: 5px;
+    margin:5px;
+    border-radius:10px;
+    background: var(--tabulator-color-light);
+}
+.top-bar{
+    background-color: var(--page-header-color);
+    position:fixed;
+    padding:15px;
+    top:0;
+    left:0;
+    width:100%;
+    display: flex;
+    justify-content:center;
+    align-items: center;
+    z-index:999;
+    text-align:center;
+    font-size:40px;
+    color:var(--header-font-color);
+    box-shadow: 0 14px 60px rgba(var(--color-shadow-blue), 0.1), 0 30px 100px rgba(var(--color-shadow-blue), 0.04);
+}
+.header-wrap{
+    display:flex;
+    align-items:center;
+    height:100%;
+    margin-left:50px;
+    margin-right:50px;
+    width:100%;
+}
+.logo{
+    display: inline-flex;
+    align-items: center;
+    height: 55px;
+    justify-content: center;
+    width: 65px;
+}
+.logo img{
+    height:100px;
+    width:auto;
+}
+.banner{
+    display:inline-flex;
+    align-items:center;
+    justify-content: center;
+    width:100%;
+    font-size:28px;
+    font-weight:800;
+}
 h2{
     font-size:17px;
 }
 button{
+    margin:5px;
+    padding:5px;
     background-color: #dee7f3;
-    border-radius: 5px;
-    border-color:#c3d8f3;
+    border-radius: 10px;
+    border-color:var(--tabulator-color-light);
     border-style: solid;
+    box-shadow: 0 14px 60px rgba(var(--color-shadow-blue), 0.1), 0 30px 100px rgba(var(--color-shadow-blue), 0.04);
 }
 input{
     background-color: #dee7f3;
     border-radius: 5px;
-    border-color: #c3d8f3;
+    border-color: var(--tabulator-color-light);
     margin:2px;
     border-style: solid;
 }
-
 .container{
     height: auto;
     width:100%;
-    background-color:#c3d8f3;
+    background-color:var(--tabulator-color-light);
     border-top-left-radius:15px;
     border-top-right-radius:15px;
     background-position:center;
@@ -69,7 +123,7 @@ input{
     
 }
 #Filter{
-    background-color: #c3d8f3;
+    background-color: var(--tabulator-color-light);
     border-radius: 4px;
     position: relative;
     float:right;
@@ -123,10 +177,6 @@ input{
     background-color: white;
     transition: transform .4s;
 }
-input[type="checkbox"] {
-    display: none;
-}
-
 input[type="checkbox"] + .slider:before {
     content: "";
     position: absolute;
@@ -140,7 +190,7 @@ input[type="checkbox"] + .slider:before {
 }
 
 input[type="checkbox"]:checked + .slider {
-    background-color: #8aacd8;
+    background-color: var(--tabulator-color-header);
 }
 
 input[type="checkbox"]:checked + .slider:before {
@@ -148,7 +198,7 @@ input[type="checkbox"]:checked + .slider:before {
 }
 
 input:checked + .slider {
-    background-color: #8aacd8;
+    background-color: var(--tabulator-color-header);
 }
 
 input:focus + .slider {
@@ -181,7 +231,8 @@ input:checked + .slider:before {
     -moz-transform:translateZ(0);
     -ms-transform:translateZ(0);
     -o-transform:translateZ(0);
-    transform:translateZ(0)
+    transform:translateZ(0);
+    box-shadow: 0 14px 60px rgba(var(--color-shadow-blue), 0.1), 0 30px 100px rgba(var(--color-shadow-blue), 0.04);
 }
 .tabulator-col:last-child{
     border-right: none;
@@ -196,7 +247,7 @@ input:checked + .slider:before {
     user-select:none
 }
 .tabulator .tabulator-header{
-    background-color:#8aacd8;
+    background-color:var(--tabulator-color-header);
     border-bottom:none;
     box-sizing:border-box;
     color:#142131;
@@ -222,7 +273,7 @@ input:checked + .slider:before {
     display:inline-block
 }
 .tabulator .tabulator-header .tabulator-col{
-    background-color:#c3d8f3;
+    background-color:var(--tabulator-color-light);
     border-right:none;
     box-sizing:border-box;
     display:inline-flex;
@@ -405,7 +456,7 @@ input:checked + .slider:before {
     z-index:11
 }
 .tabulator .tabulator-header .tabulator-frozen.tabulator-frozen-left{
-    border-right:2px solid #aaa
+    border-right:none;
 }
 .tabulator .tabulator-header .tabulator-frozen.tabulator-frozen-right{
     border-left:2px solid #aaa
@@ -457,6 +508,7 @@ input:checked + .slider:before {
     font-weight:600;
     padding:10px;
     text-align:center;
+    background-color: var(--tabulator-color-light);
     white-space:normal
 }
 .tabulator .tabulator-tableholder .tabulator-table{
@@ -505,7 +557,7 @@ input:checked + .slider:before {
 }
 .tabulator .tabulator-footer{
     border-top: none;
-    background-color:#c3d8f3;
+    background-color:var(--tabulator-color-light);
     color:#142131;
     font-weight:700;
     user-select:none;
@@ -591,7 +643,7 @@ input:checked + .slider:before {
 }
 .tabulator .tabulator-footer .tabulator-page{
     background:#d2e2f5;
-    border:1px solid #c3d8f3;
+    border:1px solid var(--tabulator-color-light);
     border-radius:3px;
     display:inline-block;
     margin:0 2px;
@@ -771,8 +823,8 @@ input:checked + .slider:before {
 
 .tabulator-row .tabulator-cell.tabulator-row-header{
     background:#e6e6e6;
-    border-bottom:1px solid #aaa;
-    border-right:1px solid #999
+    border-bottom:none;
+    border-right:none
 }
 .tabulator-row .tabulator-cell.tabulator-frozen{
     background-color:inherit;
@@ -782,7 +834,7 @@ input:checked + .slider:before {
     z-index:11
 }
 .tabulator-row .tabulator-cell.tabulator-frozen.tabulator-frozen-left{
-    border-right:2px solid #aaa
+    border-right:none;
 }
 .tabulator-row .tabulator-cell.tabulator-frozen.tabulator-frozen-right{
     border-left:2px solid #aaa
@@ -1294,4 +1346,9 @@ body.tabulator-print-fullscreen-hide>:not(.tabulator-print-fullscreen){
     position:absolute;
     top:3px;
     width:7px
+}
+@media (max-width:693px) {
+    .header-wrap{
+        flex-direction: column;
+    }
 }
