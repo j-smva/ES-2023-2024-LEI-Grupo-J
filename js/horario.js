@@ -469,6 +469,9 @@ function readyToShowSuggestion() {
  */
 function createTableSuggestion() {
     clearDiv(divMain);
+    const message = createDiv('message')
+    addHeaderToDiv(1,"Alocar " + getNumAulas() + " aulas",message);
+    divMain.appendChild(message)
     const suggestion = createDiv('tabulator');
     suggestion.id = 'suggestion'
     divMain.appendChild(suggestion);
@@ -521,6 +524,8 @@ function createTableSuggestion() {
                     if(getNumAulas() == 0){
                         tableOptionsStartup();
                     }
+                    clearDiv(message);
+                    addHeaderToDiv(1,"Alocar " + getNumAulas() + " aulas",message);
                     
                 } else {
                     tablefinal.addRow(novaAula[0], true);
