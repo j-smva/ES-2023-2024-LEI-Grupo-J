@@ -11,6 +11,14 @@ var datasHeatmap = [];
 var heatmapData = [];
 var chart;
 
+var aulas = [];
+var nodes = [];
+var edges = [];
+// var cursosGraph = [];
+// var ucsGraph = [];
+var graph;
+
+
 function setSalasHeatmap(salas) {
     salasHeatmap = salas;
     console.log(salasHeatmap);
@@ -109,10 +117,70 @@ function generateHeatMap() {
     chart.draw();
 }
 
-function heatMapNull(){
-    if(chart){
+function heatMapNull() {
+    if (chart) {
         chart.dispose();
     }
+}
+
+function getAulaByCurso(tabledata, curso) {
+    const aulas = new Set();
+    const data = JSON.parse(tabledata);
+    data.forEach(obj => {
+        if (obj["Curso"] == curso) {
+            aulas.add(obj);
+        }
+    });
+    return Array.from(salasOfType);
+}
+
+function getAulaByUc(tabledata, uc) {
+    const aulas = new Set();
+    const data = JSON.parse(tabledata);
+    data.forEach(obj => {
+        if (obj["Unidade Curricular"] == uc) {
+            aulas.add(obj);
+        }
+    });
+    return Array.from(salasOfType);
+}
+
+function generateData(aulas) {
+    nodes = [];
+    edges = [];
+
+    for (let i = 0; i != aulas.length; i++) {
+        const aux = aulas.slice(i + 1);
+        const first = aulas[i];
+
+        nodes.push({ id: first })
+
+        for (let j = 0; j != aux.length; j++)
+            if (sameTime(first, aux[j]) && sameSala(first, aux[j]) && sameDate(first, aux[j]))
+                edges.push({ from: first, to: aux[j] });
+    }
+}
+
+function sameDate(aula1, aula2) {
+    return (aula1["Data da aula"] === aula2["Data da aula"]);
+}
+
+function sameSala(aula1, aula2) {
+    return (aula1["Sala atribuída à aula"] === aula2["Sala atribuída à aula"]);
+}
+
+function sameTime(aula1, aula2) {
+    return (aula1["Hora início da aula"] >= aula2["Hora início da aula"] && aula2["Hora início da aula"] < aula2["Hora fim da aula"]) ||
+        (aula1["Hora fim da aula"] > aula2["Hora início da aula"] && aula1["Hora fim da aula"] <= aula2["Hora fim da aula"]);
+}
+
+function generateGraphDiagram() {
+    const graphData = { nodes: nodes, edges: edges};
+
+    graph = anychart.graph(graphData);
+    graph.title("Gráfico de Colisões de Aulas");
+    graph.container("graphdiagram");
+    graph.draw();
 }
 
 
@@ -122,4 +190,4 @@ function heatMapNull(){
 
 
 
-export { heatMapNull ,generateHeatMap, setHeatMapData, setDatasHeatmap, setSalasHeatmap, setSalasByCapacidade, setSalasByNumCaract, getSalasHeatMapLength };
+export { heatMapNull, generateHeatMap, setHeatMapData, setDatasHeatmap, setSalasHeatmap, setSalasByCapacidade, setSalasByNumCaract, getSalasHeatMapLength };
