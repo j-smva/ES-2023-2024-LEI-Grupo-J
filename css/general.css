@@ -1,0 +1,13 @@
+:root{
+    --page-header-color:#608ac0;
+    --header-font-color: #d3d5f3;
+    --tabulator-color-header: #8aacd8;
+    --tabulator-color-light: #c3d8f3;
+    --color-shadow-blue: 103,132,187;
+}
+*{
+    margin:0;
+    padding:0;
+    box-sizing: border-box;
+    font-family:Overpass, -apple-system, BlinkMacSystemFont, Segoe UI, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  }
