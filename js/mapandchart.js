@@ -119,6 +119,7 @@ function generateHeatMap() {
     chart.xZoom().setToPointsCount(8);
     chart.yScroller().enabled(true);
     chart.yZoom().setToPointsCount(8);
+    chart.title("Mapa de ocupação de salas de aula.");
     chart.draw();
 }
 
@@ -173,12 +174,12 @@ function generateData() {
     for (let i = 0; i != aulas.length; i++) {
         const aux = aulas.slice(i + 1);
         const first = aulas[i];
-        const firstkey = first["Data da aula"]+first["Sala atribuída à aula"]+first["Hora início da aula"];
+        const firstkey = first["Data da aula"]+"  "+first["Sala atribuída à aula"]+"  "+first["Hora início da aula"];
         nodes.push({ id: firstkey });
 
         for (let j = 0; j != aux.length; j++)
             if (sameTime(first, aux[j]) && sameSala(first, aux[j]) && sameDate(first, aux[j])){
-                const auxkey = aux[j]["Data da aula"]+aux[j]["Sala atribuída à aula"]+aux[j]["Hora início da aula"];
+                const auxkey = aux[j]["Data da aula"]+"  "+aux[j]["Sala atribuída à aula"]+"  "+aux[j]["Hora início da aula"];
                 edges.push({ from: firstkey, to: auxkey });
             }
     }

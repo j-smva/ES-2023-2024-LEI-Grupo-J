@@ -3,10 +3,10 @@ import { dataParseHorario, dataParseSalas, extractAttributeValues, extractAttrib
 import { generateFilterExpression, customFilter, formatString } from './filters';
 
 
-import { addHeaderToDiv, addParagraphToDiv, createButton, createCheckboxes, createDateInputWithSubmit, createDiv, createDivWAttributes, createDualSelect, createInput, createMultiSelect, createNumberInput, createSingleSelect } from './htmlelems';
+import { addHeaderToDiv, addParagraphToDiv, createButton, createCheckboxes, createDateInputWithSubmit, createDiv, createDivWAttributes, createDualSelect, createInput, createMultiSelect, createNumberInput, createSingleDateInputWithSubmit, createSingleSelect } from './htmlelems';
 import { datasLength, generateClassDuration, generateSubClasses, generateTimeStamps, horasInicioLength, removeDuplicatesTimestamps, removeSalasFromList, removeSelectedWeekdaysFromMap, setAulaforSub, setDatas, setDatasBasedOnSub, setSalas, setSalasByType, setSingleDay, setWeekDays, timestampToMilliseconds, setSemestre, setCursos, setAulas, setTamanhoAula, getNumAulas, getAulaforSub } from './suggestion';
 import dateCraft from 'date-craft';
-import { getArrayDatesBetween, turnToDate } from './calcSemanas';
+import { getArrayDatesBetween, giveSemanaAno, giveSemanaSemestre, turnToDate } from './calcSemanas';
 import { filterAulasByDates, generateData, generateGraphDiagram, generateHeatMap, getAulaByCurso, getAulaByUc, heatMapNull, setAulasGraph, setDatasHeatmap, setHeatMapData, setSalasByCapacidade, setSalasByNumCaract, setSalasHeatmap } from './mapandchart';
 
 
@@ -25,6 +25,21 @@ var nomeSalas = []; //nomes das salas
 var tipoSalas = []; //tipos de salas
 var UCs = []; //todas as UCs existentes
 var isUCAllocation = false; //variavel que distingue se estamos a utilizar a funcionalidade de substituição de aulas ou de alocação de aulas de uma uc
+var aulamanual = {
+    "Curso": "ME",
+    "Unidade Curricular": "Teoria dos Jogos e dos Contratos",
+    "Turno": "01789TP01",
+    "Turma": "MEA1",
+    "Inscritos no turno": "30",
+    "Dia da semana": "Sex",
+    "Hora início da aula": "13:00:00",
+    "Hora fim da aula": "14:30:00",
+    "Data da aula": "02/12/2022",
+    "Características da sala pedida para a aula": "Sala Aulas Mestrado",
+    "Sala atribuída à aula": "AA2.25",
+    "Semana do Ano": 48,
+    "Semana do Semestre": 13
+}
 
 tablefinal = new Tabulator("#example-table", {
     pagination: "local",
@@ -72,11 +87,13 @@ function tableOptionsStartup() {
     const buttonAulaNew = createButton('Alocar Novas Aulas', '', handleAlocarAulas);
     const heatmapButton = createButton('Gerar HeatMap de Ocupação', '', handleHeatMapSelection);
     const graphdiagramButton = createButton('Gerar gráfico de conflitualidade', '', handleGraphSelection);
+    const addManual = createButton('Introduzir Aula Manualmente', '', handleManual);
     addHeaderToDiv(1, "Opções", divMain);
     divMain.appendChild(buttonSub);
     divMain.appendChild(buttonAulaNew);
     divMain.appendChild(heatmapButton);
     divMain.appendChild(graphdiagramButton);
+    divMain.appendChild(addManual);
 }
 
 /**
@@ -690,12 +707,21 @@ function generateHeatMapFilters() {
     const buttonTiposSala = createButton('Filtrar por tipo de sala', '', handleHeatMapTipoSala);
     const capacidade = createButton('Filtrar por capacidade', '', handleHeatMapCapacidade);
     const numCarac = createButton('Filtrar por número de características', '', handleHeatMapNumCarac);
+    const allRooms = createButton('Todas as salas', '', handleAllRoomSelection);
 
     divMain.appendChild(buttonTiposSala);
     divMain.appendChild(capacidade);
     divMain.appendChild(numCarac);
+    divMain.appendChild(allRooms);
 }
 
+function handleAllRoomSelection() {
+    clearDiv(divMain);
+    addParagraphToDiv('Escolher Tipo de Sala a filtrar', divMain);
+    tipoSalas = extractNomeSalas(dataSalas);
+    setSalasHeatmap(tipoSalas);
+    handleHeatMapDateFrame();
+}
 function handleHeatMapTipoSala() {
     clearDiv(divMain);
     addParagraphToDiv('Escolher Tipo de Sala a filtrar', divMain);
@@ -848,6 +874,127 @@ function finalizeGraph(){
 
     const reset = createButton('Reset', '', tableOptionsStartup);
     divMain.appendChild(reset);
+}
+
+function handleManual(){
+    clearDiv(divMain);
+    addParagraphToDiv('Escolher Curso', divMain);
+    const cursos = getCursos(tablefinal.getData());
+    const cursosSelect = createSingleSelect(cursos, '', handleManualCursosSelection);
+    divMain.appendChild(cursosSelect);
+}
+
+function handleManualCursosSelection(option){
+    aulamanual["Curso"] = option;
+    console.log(aulamanual);
+    clearDiv(divMain);
+    addParagraphToDiv('Escolher Unidade Curricular', divMain);
+    const uc = getUCs(tablefinal.getData());
+    const ucSelect = createSingleSelect (uc, '', handleManualUcSelection);
+    divMain.appendChild(ucSelect);
+}
+
+function handleManualUcSelection(option){
+    aulamanual["Unidade Curricular"] = option;
+    console.log(aulamanual);
+    clearDiv(divMain);
+    addParagraphToDiv('Escolher Unidade Turno', divMain);
+    const turno = extractAttributeValues(tabledata,"Turno");
+    const turnoSelect = createSingleSelect (turno, '', handleManualTurnoSelection);
+    divMain.appendChild(turnoSelect);
+}
+
+function handleManualTurnoSelection(option){
+    aulamanual["Turno"] = option;
+    console.log(aulamanual);
+    clearDiv(divMain);
+    addParagraphToDiv('Escolher Turma', divMain);
+    const turma = getTurmas(tablefinal.getData());
+    const turmaSelect = createSingleSelect (turma, '', handleManualTurmaSelection);
+    divMain.appendChild(turmaSelect);
+}
+
+function handleManualTurmaSelection(option){
+    aulamanual["Turma"] = option;
+    console.log(aulamanual);
+    clearDiv(divMain);
+    addParagraphToDiv('Definir número de inscritos', divMain);
+    const inscritos = createNumberInput(1,'', handleManualInscritosSelection);
+    divMain.appendChild(inscritos);
+}
+
+function handleManualInscritosSelection(option){
+    if(option < 0){
+        alert('número de inscritos inválido');
+    } else {
+        aulamanual["Inscritos no turno"] = option;
+        console.log(aulamanual);
+        clearDiv(divMain);
+        addParagraphToDiv('Escolher hora de início e fim', divMain);
+        const container = createDualSelect(generateClassDuration("08:00:00", "21:30:00"), '', handleManualHorasSelection);
+        divMain.appendChild(container);
+    }
+}
+
+function handleManualHorasSelection(horaIni,horaEnd){
+    if (timestampToMilliseconds(horaIni) > timestampToMilliseconds(horaEnd)) {
+        alert('Hora de fim maior do que hora de início');
+    } else {
+        aulamanual["Hora início da aula"] = horaIni;
+        aulamanual["Hora fim da aula"] = horaEnd;
+        console.log(aulamanual);
+        clearDiv(divMain);
+        addParagraphToDiv('Escolher data da aula', divMain);
+        const date = createSingleDateInputWithSubmit('',handleManualDateSelection);
+        divMain.appendChild(date);
+    }
+}
+
+function handleManualDateSelection(option){
+    aulamanual["Data da aula"] = dateCraft.formatDate(option).format('DD/MM/YYYY');
+    console.log(aulamanual);
+    aulamanual["Semana do Ano"] = giveSemanaAno(aulamanual["Data da aula"]);
+    aulamanual["Semana do Semestre"] = giveSemanaSemestre(aulamanual["Data da aula"]);
+    const day = turnToDate(aulamanual["Data da aula"]).getDay();
+    switch(day){
+        case 1:
+            aulamanual["Dia da semana"] = 'Seg'
+            break;
+        case 2:
+            aulamanual["Dia da semana"] = 'Ter'
+            break;
+        case 3:
+            aulamanual["Dia da semana"] = 'Qua'
+            break;
+        case 4:
+            aulamanual["Dia da semana"] = 'Qui'
+            break;
+        case 5:
+            aulamanual["Dia da semana"] = 'Sex'
+            break;
+    }
+    clearDiv(divMain);
+    console.log(aulamanual);
+    addParagraphToDiv('Escolher Característica da sala pedida para a aula', divMain);
+    const carac = extractAttributeValues(tabledata,"Características da sala pedida para a aula");
+    const caracSelect = createSingleSelect (carac, '', handleManualCaracSelection);
+    divMain.appendChild(caracSelect);
+}
+ 
+function handleManualCaracSelection(option){
+    aulamanual["Características da sala pedida para a aula"] = option;
+    console.log(aulamanual);
+    clearDiv(divMain);
+    addParagraphToDiv('Escolher Sala de aula', divMain);
+    const sala = extractAttributeValues(tabledata,"Sala atribuída à aula");
+    const salaSelect = createSingleSelect (sala, '', handleManualSalaSelection);
+    divMain.appendChild(salaSelect);
+}
+
+function handleManualSalaSelection(option){
+    aulamanual["Sala atribuída à aula"] = option
+    tablefinal.addRow(aulamanual, true);
+    tableOptionsStartup();
 }
 
 

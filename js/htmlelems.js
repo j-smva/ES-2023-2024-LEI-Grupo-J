@@ -235,6 +235,49 @@ function createDateInputWithSubmit(className, submitHandler) {
     return container;
 }
 
+function createSingleDateInputWithSubmit(className, submitHandler) {
+    // Create the container div
+    const container = document.createElement('div');
+    container.style.display = 'block';
+
+    // Create the label for the date input
+    const dateLabel = document.createElement('label');
+    dateLabel.textContent = 'Select Date: ';
+    dateLabel.setAttribute('for', 'date-input');
+
+    // Create the date input element
+    const dateInput = document.createElement('input');
+    dateInput.type = 'date';
+    dateInput.id = 'date-input';
+
+    // Set the class name of the input element
+    if (className) {
+        dateInput.className = className;
+    }
+
+    // Create the submit button
+    const submitButton = document.createElement('button');
+    submitButton.textContent = 'Submit';
+
+    // Add event listener to the submit button
+    submitButton.addEventListener('click', function() {
+        // Get the value of the date input
+        const selectedDate = dateInput.value;
+        // Call the submit handler function with the selected date
+        if (submitHandler && typeof submitHandler === 'function') {
+            submitHandler(selectedDate);
+        }
+    });
+
+    // Append elements to the container div
+    container.appendChild(dateLabel);
+    container.appendChild(dateInput);
+    container.appendChild(document.createElement('br')); // Add a line break
+    container.appendChild(submitButton);
+
+    return container;
+}
+
 /**
  * Função genérica que cria dois selects com as mesmas opções e um botão para submeter as escolhas
  * @param {Array} options - Opções a serem mostradas nos selects
@@ -448,4 +491,4 @@ function createDivWAttributes(className, id, height) {
     return div;
 }
 
-export { createDivWAttributes ,createNumberInput ,createSingleSelect ,createCheckboxes ,createDualSelect, addParagraphToDiv, createButton, createDiv, addHeaderToDiv, createInput, createMultiSelect, createDateInputWithSubmit };
+export { createSingleDateInputWithSubmit ,createDivWAttributes ,createNumberInput ,createSingleSelect ,createCheckboxes ,createDualSelect, addParagraphToDiv, createButton, createDiv, addHeaderToDiv, createInput, createMultiSelect, createDateInputWithSubmit };
