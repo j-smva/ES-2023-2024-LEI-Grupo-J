@@ -50,7 +50,7 @@ function setWeekDays(){
         4: "Qui",
         5: "Sex"
       };
-    console.log(weekDays);
+    //console.log(weekDays);
 };
 
 /**
@@ -111,7 +111,7 @@ function setTamanhoAula(num){
  * @returns {JSON} - Aula a ser considerada
  */
 function getAulaforSub(){
-    console.log(aulaForSub);
+    //console.log(aulaForSub);
     return aulaForSub;
 }
 
@@ -141,7 +141,7 @@ function removeSelectedWeekdaysFromMap(selectedWeekdays) {
     selectedWeekdays.forEach(function(day) {
         delete weekDays[day];
     });
-    console.log(weekDays);
+    //console.log(weekDays);
 }
 
 
@@ -152,7 +152,7 @@ function removeSelectedWeekdaysFromMap(selectedWeekdays) {
 function setAulaforSub(dataAula){
     aulaForSub = dataAula;
     //console.log(typeof aulaForSub);
-    console.log(aulaForSub);
+    //console.log(aulaForSub);
 }
 
 /**
@@ -161,7 +161,7 @@ function setAulaforSub(dataAula){
  */
 function setSalas(salas){
     salasAula = salas;
-    console.log(salasAula);
+    //console.log(salasAula);
 }
 
 /**
@@ -183,7 +183,7 @@ function setDatasBasedOnSub(){
         datas = getArrayDatesBetween(semestreTwoBeg,semestreTwoEnd);
     }
     //}
-    console.log(datas);
+    //console.log(datas);
     
 }
 
@@ -195,7 +195,7 @@ function setDatasBasedOnSub(){
 function setDatas(start, end){
     datas = [];
     datas = getArrayDatesBetween(start,end);
-    console.log(datas);
+    //console.log(datas);
 }
 
 /**
@@ -206,7 +206,7 @@ function removeSalasFromList(salasToRemove) {
     salasToRemove.forEach(sala => {
         salasAula = salasAula.filter(salaAula => salaAula !== sala);
     });
-    console.log(salasAula);
+    //console.log(salasAula);
 }
 
 /**
@@ -240,7 +240,7 @@ function generateTimeStamps() {
             timeStamps.push(`${formattedHour}:${formattedMinute}:00`);
         }
     }
-    console.log(timeStamps);
+    //console.log(timeStamps);
     horasInicio = timeStamps;
 }
 
@@ -253,7 +253,7 @@ function removeDuplicatesTimestamps(TimesToRemove) {
     TimesToRemove.forEach(time => {
         horasInicio = horasInicio.filter(hora => hora !== time);
     });
-    console.log(horasInicio);
+    //console.log(horasInicio);
 }
 
 /**
@@ -262,7 +262,7 @@ function removeDuplicatesTimestamps(TimesToRemove) {
 function setSingleDay(){
     datas = [];
     datas.push(aulaForSub["Data da aula"]);
-    console.log(datas);
+    //console.log(datas);
 }
 
 /**

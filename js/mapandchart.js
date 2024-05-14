@@ -24,7 +24,7 @@ var graph;
 function setAulasGraph(aulasselected){
     aulas = [];
     aulas = aulasselected;
-    console.log(aulas);
+    //console.log(aulas);
 }
 
 /**
@@ -33,7 +33,7 @@ function setAulasGraph(aulasselected){
  */
 function setSalasHeatmap(salas) {
     salasHeatmap = salas;
-    console.log(salasHeatmap);
+    //console.log(salasHeatmap);
 }
 
 /**
@@ -59,7 +59,7 @@ function setHorasHeatmap() {
 function setDatasHeatmap(start, end) {
     datasHeatmap = [];
     datasHeatmap = getArrayDatesBetween(start, end);
-    console.log(datasHeatmap);
+    //console.log(datasHeatmap);
 }
 
 /**
@@ -124,11 +124,11 @@ function setHeatMapData(tabledata) {
             let ocupadas = 0;
             salasHeatmap.forEach(sala => {
                 const key2 = data + sala;
-                console.log(key2);
+                //console.log(key2);
                 if (dictionaryOriginal.hasOwnProperty(key2)) {
-                    console.log('Checking key2:', key2);
-                    console.log('Hora:', hora);
-                    console.log('Items in dictionary:', dictionaryOriginal[key2]);
+                    //console.log('Checking key2:', key2);
+                    //console.log('Hora:', hora);
+                    //console.log('Items in dictionary:', dictionaryOriginal[key2]);
                     if (dictionaryOriginal[key2].some(item => item.includes(hora))) {
                         //console.log('olá entrei aqui');
                         ocupadas++;
@@ -136,11 +136,11 @@ function setHeatMapData(tabledata) {
                 }
             })
             heatmapData.push({ x: data, y: hora, heat: ocupadas });
-            console.log(heatmapData);
+            //console.log(heatmapData);
         })
     })
 
-    console.log(heatmapData);
+    //console.log(heatmapData);
 }
 
 /**
@@ -236,8 +236,8 @@ function generateData() {
             }
     }
 
-    console.log(nodes);
-    console.log(edges);
+    //console.log(nodes);
+    //console.log(edges);
 }
 
 /**
@@ -276,7 +276,7 @@ function sameTime(aula1, aula2) {
  */
 function generateGraphDiagram() {
     const graphData = { nodes: nodes, edges: edges};
-    console.log(graphData);
+    //console.log(graphData);
     graph = anychart.graph(graphData);
     graph.title("Gráfico de Colisões de Aulas");
     graph.container("graphdiagram");

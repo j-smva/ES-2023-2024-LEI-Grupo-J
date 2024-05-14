@@ -192,7 +192,7 @@ function getUCs(tabledata) {
     });
 
     const uniqueEntries = Object.keys(uniqueValues);
-    console.log(uniqueEntries);
+    //console.log(uniqueEntries);
     return uniqueEntries;
 }
 
@@ -213,7 +213,7 @@ function getCursos(tabledata) {
     });
 
     const uniqueEntries = Object.keys(uniqueValues);
-    console.log(uniqueEntries);
+    //console.log(uniqueEntries);
     return uniqueEntries;
 }
 

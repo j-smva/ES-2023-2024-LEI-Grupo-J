@@ -426,10 +426,10 @@ function handleEntreHoras() {
  * @param {String} horaEnd  - timestamp final
  */
 function handleEntreHorasSelection(horaIni, horaEnd) {
-    console.log(horaIni);
+    /*console.log(horaIni);
     console.log(horaEnd);
     console.log(timestampToMilliseconds(horaIni));
-    console.log(timestampToMilliseconds(horaEnd));
+    console.log(timestampToMilliseconds(horaEnd)); */
     if (timestampToMilliseconds(horaIni) > timestampToMilliseconds(horaEnd)) {
         alert('Hora de fim maior do que hora de início');
     } else {
@@ -472,7 +472,7 @@ function setDaysOfWeek() {
  * @param {Array<Number>} selectedWeekDays - Números associados aos dias da semana selecionados: 1-segunda; 5-sexta
  */
 function handleDaysOfWeekSelect(selectedWeekDays) {
-    console.log(selectedWeekDays);
+    //console.log(selectedWeekDays);
     setWeekDays();
     removeSelectedWeekdaysFromMap(selectedWeekDays);
     readyToShowSuggestion();
@@ -543,7 +543,7 @@ function createTableSuggestion() {
                     tableS.getSelectedRows().forEach(row => {
                         row.delete();
                     })
-                    console.log(getNumAulas());
+                    //console.log(getNumAulas());
                     if (getNumAulas() == 0) {
                         tableOptionsStartup();
                     }
@@ -672,7 +672,7 @@ function handleAulasNum(option) {
     if (option === 0) {
         alert('Escolher pelo menos uma aula');
     } else {
-        console.log(option);
+        //console.log(option);
         setAulas(option);
         clearDiv(divMain);
         addParagraphToDiv('Escolher duração das aulas', divMain);
@@ -861,7 +861,7 @@ function handleGraphSelection(){
 function handleGraphCurso(){
     clearDiv(divMain);
     const cursos = extractAttributeValues(tabledata,"Curso");
-    console.log(cursos);
+    //console.log(cursos);
     const cursosSelect = createSingleSelect(cursos, '', handleGraphCursoSelection); 
     divMain.appendChild(cursosSelect);
 
@@ -883,7 +883,7 @@ function handleGraphCursoSelection(option){
 function handleGraphUC(){
     clearDiv(divMain);
     const ucs = extractAttributeValues(tabledata,"Unidade Curricular");
-    console.log(ucs);
+    //console.log(ucs);
     const ucsSelect = createSingleSelect(ucs, '', handleGraphUCSelection); 
     divMain.appendChild(ucsSelect);
 }
@@ -961,7 +961,7 @@ function handleManual(){
  */
 function handleManualCursosSelection(option){
     aulamanual["Curso"] = option;
-    console.log(aulamanual);
+    //console.log(aulamanual);
     clearDiv(divMain);
     addParagraphToDiv('Escolher Unidade Curricular', divMain);
     const uc = getUCs(tablefinal.getData());
@@ -975,7 +975,7 @@ function handleManualCursosSelection(option){
  */
 function handleManualUcSelection(option){
     aulamanual["Unidade Curricular"] = option;
-    console.log(aulamanual);
+    //console.log(aulamanual);
     clearDiv(divMain);
     addParagraphToDiv('Escolher Unidade Turno', divMain);
     const turno = extractAttributeValues(tabledata,"Turno");
@@ -989,7 +989,7 @@ function handleManualUcSelection(option){
  */
 function handleManualTurnoSelection(option){
     aulamanual["Turno"] = option;
-    console.log(aulamanual);
+    //console.log(aulamanual);
     clearDiv(divMain);
     addParagraphToDiv('Escolher Turma', divMain);
     const turma = getTurmas(tablefinal.getData());
@@ -1003,7 +1003,7 @@ function handleManualTurnoSelection(option){
  */
 function handleManualTurmaSelection(option){
     aulamanual["Turma"] = option;
-    console.log(aulamanual);
+    //console.log(aulamanual);
     clearDiv(divMain);
     addParagraphToDiv('Definir número de inscritos', divMain);
     const inscritos = createNumberInput(1,'', handleManualInscritosSelection);
@@ -1019,7 +1019,7 @@ function handleManualInscritosSelection(option){
         alert('número de inscritos inválido');
     } else {
         aulamanual["Inscritos no turno"] = option;
-        console.log(aulamanual);
+        //console.log(aulamanual);
         clearDiv(divMain);
         addParagraphToDiv('Escolher hora de início e fim', divMain);
         const container = createDualSelect(generateClassDuration("08:00:00", "21:30:00"), '', handleManualHorasSelection);
@@ -1038,7 +1038,7 @@ function handleManualHorasSelection(horaIni,horaEnd){
     } else {
         aulamanual["Hora início da aula"] = horaIni;
         aulamanual["Hora fim da aula"] = horaEnd;
-        console.log(aulamanual);
+        //console.log(aulamanual);
         clearDiv(divMain);
         addParagraphToDiv('Escolher data da aula', divMain);
         const date = createSingleDateInputWithSubmit('',handleManualDateSelection);
@@ -1052,7 +1052,7 @@ function handleManualHorasSelection(horaIni,horaEnd){
  */
 function handleManualDateSelection(option){
     aulamanual["Data da aula"] = dateCraft.formatDate(option).format('DD/MM/YYYY');
-    console.log(aulamanual);
+    //console.log(aulamanual);
     aulamanual["Semana do Ano"] = giveSemanaAno(aulamanual["Data da aula"]);
     aulamanual["Semana do Semestre"] = giveSemanaSemestre(aulamanual["Data da aula"]);
     const day = turnToDate(aulamanual["Data da aula"]).getDay();
@@ -1074,7 +1074,7 @@ function handleManualDateSelection(option){
             break;
     }
     clearDiv(divMain);
-    console.log(aulamanual);
+    //(aulamanual);
     addParagraphToDiv('Escolher Característica da sala pedida para a aula', divMain);
     const carac = extractAttributeValues(tabledata,"Características da sala pedida para a aula");
     const caracSelect = createSingleSelect (carac, '', handleManualCaracSelection);
@@ -1087,7 +1087,7 @@ function handleManualDateSelection(option){
  */
 function handleManualCaracSelection(option){
     aulamanual["Características da sala pedida para a aula"] = option;
-    console.log(aulamanual);
+    //console.log(aulamanual);
     clearDiv(divMain);
     addParagraphToDiv('Escolher Sala de aula', divMain);
     const sala = extractAttributeValues(tabledata,"Sala atribuída à aula");
