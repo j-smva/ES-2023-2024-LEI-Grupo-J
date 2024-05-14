@@ -18,6 +18,11 @@ var edges = [];
 // var ucsGraph = [];
 var graph;
 
+function setAulasGraph(aulasselected){
+    aulas = [];
+    aulas = aulasselected;
+    console.log(aulas);
+}
 
 function setSalasHeatmap(salas) {
     salasHeatmap = salas;
@@ -125,8 +130,8 @@ function heatMapNull() {
 
 function getAulaByCurso(tabledata, curso) {
     const aulas = new Set();
-    const data = JSON.parse(tabledata);
-    data.forEach(obj => {
+    //const data = JSON.parse(tabledata);
+    tabledata.forEach(obj => {
         if (obj["Curso"] == curso) {
             aulas.add(obj);
         }
@@ -136,8 +141,8 @@ function getAulaByCurso(tabledata, curso) {
 
 function getAulaByUc(tabledata, uc) {
     const aulas = new Set();
-    const data = JSON.parse(tabledata);
-    data.forEach(obj => {
+    //const data = JSON.parse(tabledata);
+    tabledata.forEach(obj => {
         if (obj["Unidade Curricular"] == uc) {
             aulas.add(obj);
         }
@@ -145,20 +150,41 @@ function getAulaByUc(tabledata, uc) {
     return Array.from(aulas);
 }
 
-function generateData(aulas) {
+function filterAulasByDates(datesArray) {
+    // Convert datesArray to a Set for faster lookup
+    const datesSet = new Set(datesArray);
+
+    // Filter aulas array to keep only the elements with dates not present in datesArray
+    const filteredAulas = aulas.filter(aula => {
+        // Extract the "Data da aula" field from the aula object
+        const aulaDate = aula["Data da aula"];
+
+        // Check if the aulaDate is not in datesSet
+        return datesSet.has(aulaDate);
+    });
+
+    return filteredAulas;
+}
+
+function generateData() {
     nodes = [];
     edges = [];
 
     for (let i = 0; i != aulas.length; i++) {
         const aux = aulas.slice(i + 1);
         const first = aulas[i];
-
-        nodes.push({ id: first })
+        const firstkey = first["Data da aula"]+first["Sala atribuída à aula"]+first["Hora início da aula"];
+        nodes.push({ id: firstkey });
 
         for (let j = 0; j != aux.length; j++)
-            if (sameTime(first, aux[j]) && sameSala(first, aux[j]) && sameDate(first, aux[j]))
-                edges.push({ from: first, to: aux[j] });
+            if (sameTime(first, aux[j]) && sameSala(first, aux[j]) && sameDate(first, aux[j])){
+                const auxkey = aux[j]["Data da aula"]+aux[j]["Sala atribuída à aula"]+aux[j]["Hora início da aula"];
+                edges.push({ from: firstkey, to: auxkey });
+            }
     }
+
+    console.log(nodes);
+    console.log(edges);
 }
 
 function sameDate(aula1, aula2) {
@@ -176,7 +202,7 @@ function sameTime(aula1, aula2) {
 
 function generateGraphDiagram() {
     const graphData = { nodes: nodes, edges: edges};
-
+    console.log(graphData);
     graph = anychart.graph(graphData);
     graph.title("Gráfico de Colisões de Aulas");
     graph.container("graphdiagram");
@@ -188,4 +214,4 @@ function generateGraphDiagram() {
 
 
 
-export { heatMapNull, generateHeatMap, setHeatMapData, setDatasHeatmap, setSalasHeatmap, setSalasByCapacidade, setSalasByNumCaract, getSalasHeatMapLength, generateGraphDiagram, sameTime, sameSala, sameDate, generateData, getAulaByUc, getAulaByCurso };
+export { filterAulasByDates,setAulasGraph ,heatMapNull, generateHeatMap, setHeatMapData, setDatasHeatmap, setSalasHeatmap, setSalasByCapacidade, setSalasByNumCaract, getSalasHeatMapLength, generateGraphDiagram, sameTime, sameSala, sameDate, generateData, getAulaByUc, getAulaByCurso };
