@@ -121,6 +121,7 @@ function handleSubAula() {
  */
 function secondSalaSubmission(numberLocal, numberGitHub) {
     clearDiv(divMain);
+    addParagraphToDiv('Submeter ficheiro com informação sobre as salas', divMain);
     const textInput = createInput('url', 'Enter Raw Link', '', null);
     divMain.appendChild(textInput);
     textInput.addEventListener('change', function () {
@@ -351,7 +352,7 @@ function setExclusionOptions() {
  */
 function handleSetPeriods() {
     clearDiv(divMain);
-    addHeaderToDiv(1, 'Períodos Predefinidos para Horas de Início', divMain);
+    addHeaderToDiv(1, 'Períodos Predefinidos para Exclusão de Horas de Início', divMain);
     addParagraphToDiv('Manhã: 08:00:00 - 12:30:00', divMain);
     addParagraphToDiv('Tarde: 13:00:00 - 18:30:00', divMain);
     addParagraphToDiv('Noite: 19:00:00 - 21:30:00', divMain);
