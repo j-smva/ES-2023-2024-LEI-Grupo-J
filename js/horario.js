@@ -25,7 +25,7 @@ var nomeSalas = []; //nomes das salas
 var tipoSalas = []; //tipos de salas
 var UCs = []; //todas as UCs existentes
 var isUCAllocation = false; //variavel que distingue se estamos a utilizar a funcionalidade de substituição de aulas ou de alocação de aulas de uma uc
-var aulamanual = {
+var aulamanual = { //variavel que incializa um objeto aula para usar como base quando queremos inserir manualmente uma aula no horário
     "Curso": "ME",
     "Unidade Curricular": "Teoria dos Jogos e dos Contratos",
     "Turno": "01789TP01",
@@ -70,13 +70,12 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 /**
- * Função que inicializa os botões relativos a substituir aula ou Alocar aulas de uma UC
+ * Função que inicializa os botões relativos a substituir aula ou Alocar aulas de uma UC, criar um heatmap ou gráfico de conflitualidade, ou Introduzir uma aula manualmente
  */
 function tableOptionsStartup() {
     heatMapNull();
     if (!divMain) {
         divMain = createDiv('Sub');
-        //divMain.style.display = "block";
         divMain.style.display = "flex";
         divMain.style.flexDirection = "column";
         document.body.appendChild(divMain);
@@ -226,7 +225,7 @@ function handleAllocateTipo(options) {
 
 /**
  * Função que dá handle ao cenário de escolha de salas específicas
- * @param {Array<String>} options 
+ * @param {Array<String>} options - Salas selecionadas
  */
 function handleAllocateSalas(options) {
     if (options.length === 0) {
@@ -239,7 +238,7 @@ function handleAllocateSalas(options) {
 
 /**
  * Função que dá handle ao cenário de exclusão de salas específicas
- * @param {Array<String>} options 
+ * @param {Array<String>} options - salas selecionadas para exclusão
  */
 function handleExcludeSalas(options) {
     if (options.length === 0) {
@@ -254,7 +253,7 @@ function handleExcludeSalas(options) {
 
 /**
  * Função que dá handle ao cenário de exclusão de salas por tipo
- * @param {Array<String>} options 
+ * @param {Array<String>} options - tipos de sala selecionados para exclusão
  */
 function handleExcludeTipo(options) {
     if (options.length === 0) {
@@ -696,11 +695,16 @@ function handleAulasDuration(option) {
 }
 
 
-
+/**
+ * Submete o ficheiro das salas para os cenários apropriados
+ */
 function handleHeatMapSelection() {
     secondSalaSubmission(5, 4);
 }
 
+/**
+ * Gera os primeiros botões para a definição de filtros do heatmap, relativamente às salas que irão ser consideradas
+ */
 function generateHeatMapFilters() {
     clearDiv(divMain);
     addHeaderToDiv(1, 'Filtros HeatMap', divMain);
@@ -715,6 +719,9 @@ function generateHeatMapFilters() {
     divMain.appendChild(allRooms);
 }
 
+/**
+ * Função que lida com o cenário de seleção de todas as salas
+ */
 function handleAllRoomSelection() {
     clearDiv(divMain);
     addParagraphToDiv('Escolher Tipo de Sala a filtrar', divMain);
@@ -722,6 +729,10 @@ function handleAllRoomSelection() {
     setSalasHeatmap(tipoSalas);
     handleHeatMapDateFrame();
 }
+
+/**
+ * Função que lida com o cenário de seleção de sala por tipo
+ */
 function handleHeatMapTipoSala() {
     clearDiv(divMain);
     addParagraphToDiv('Escolher Tipo de Sala a filtrar', divMain);
@@ -731,11 +742,18 @@ function handleHeatMapTipoSala() {
 
 }
 
+/**
+ * Função que lida com a submissão dos tipos de sala
+ * @param {String} options - tipo de sala selecionados
+ */
 function handleHeatMapTipoSalaSelection(options) {
     setSalasHeatmap(setSalasByType(dataSalas, options));
     handleHeatMapDateFrame();
 }
 
+/**
+ * Função que lida com o cenário de seleção de sala por capacidade
+ */
 function handleHeatMapCapacidade() {
     clearDiv(divMain);
     addParagraphToDiv('Escolher Capacidade das salas', divMain);
@@ -744,6 +762,10 @@ function handleHeatMapCapacidade() {
 
 }
 
+/**
+ * Função que lida com a submissão da capacidade de sala para filtrar
+ * @param {Number} option - capacidade submetida
+ */
 function handleHeatMapCapacidadeSelection(option) {
     if (option == 0 || option < 0) {
         alert('Tem de ser selecionado um número positivo');
@@ -753,6 +775,9 @@ function handleHeatMapCapacidadeSelection(option) {
     }
 }
 
+/**
+ * Função que lida com o cenário de seleção de sala por número de características
+ */
 function handleHeatMapNumCarac() {
     clearDiv(divMain);
     addParagraphToDiv('Escolher Número de Características das salas', divMain);
@@ -760,6 +785,10 @@ function handleHeatMapNumCarac() {
     divMain.appendChild(select);
 }
 
+/**
+ * Função que lida com a submissão da capacidade de sala para filtrar
+ * @param {Number} option - Número de características submetido
+ */
 function handleHeatMapNumCaracSelection(option) {
     if (option == 0 || option < 0) {
         alert('Tem de ser selecionado um número positivo');
@@ -769,6 +798,9 @@ function handleHeatMapNumCaracSelection(option) {
     }
 }
 
+/**
+ * Função que cria os inputs de data para selecionar que período de tempo será displayed pelo heatMap
+ */
 function handleHeatMapDateFrame() {
     clearDiv(divMain);
     addParagraphToDiv('Escolher Período para análise', divMain);
@@ -776,6 +808,11 @@ function handleHeatMapDateFrame() {
     divMain.appendChild(datas);
 }
 
+/**
+ * Função que lida com a submissão das datas para o heatmap
+ * @param {String} inicio - data inicial
+ * @param {String} fim - data final 
+ */
 function handleHeatMapDateFrameSelection(inicio, fim) {
     if (inicio && fim) {
         const ini = new Date(inicio);
@@ -792,6 +829,9 @@ function handleHeatMapDateFrameSelection(inicio, fim) {
     }
 }
 
+/**
+ * Função que inicializa os dados do heatmap e o próprio heatmap
+ */
 function finalizeHeatMap(){
     clearDiv(divMain);
     const heatmap = createDivWAttributes('','heatmap','600px');
@@ -803,6 +843,9 @@ function finalizeHeatMap(){
     divMain.appendChild(reset);
 }
 
+/**
+ * Função que trata do cenário de seleção do Gráfico de conflitualidade
+ */
 function handleGraphSelection(){
     clearDiv(divMain);
     addHeaderToDiv(1,'Escolher aulas para visualizar',divMain);
@@ -812,6 +855,9 @@ function handleGraphSelection(){
     divMain.appendChild(UC);
 }
 
+/**
+ * Função que trata do cenário de seleção de filtro por curso
+ */
 function handleGraphCurso(){
     clearDiv(divMain);
     const cursos = extractAttributeValues(tabledata,"Curso");
@@ -821,12 +867,19 @@ function handleGraphCurso(){
 
 }
 
+/**
+ * Função que trata da submissão do curso para filtrar
+ * @param {String} option - curso selecionado
+ */
 function handleGraphCursoSelection(option){
     const aulas = getAulaByCurso(tablefinal.getData(),option);
     setAulasGraph(aulas);
     handleGraphDateFrame()
 }
 
+/**
+ * Função que trata do cenário de seleção de filtro por unidade curricular
+ */
 function handleGraphUC(){
     clearDiv(divMain);
     const ucs = extractAttributeValues(tabledata,"Unidade Curricular");
@@ -835,12 +888,19 @@ function handleGraphUC(){
     divMain.appendChild(ucsSelect);
 }
 
+/**
+ * Função que trata da submissão da unidade curricular para filtrar
+ * @param {String} option - Unidade Curricular
+ */
 function handleGraphUCSelection(option){
     const aulas = getAulaByUc(tablefinal.getData(),option);
     setAulasGraph(aulas);
     handleGraphDateFrame()
 }
 
+/**
+ * Função que gera os inputs de data para seleção do período a analisar
+ */
 function handleGraphDateFrame() {
     clearDiv(divMain);
     addParagraphToDiv('Escolher Período para análise', divMain);
@@ -848,6 +908,11 @@ function handleGraphDateFrame() {
     divMain.appendChild(datas);
 }
 
+/**
+ * Função que trata da submissão das datas para o gráfico de conflitualidade
+ * @param {String} inicio - data inicial
+ * @param {String} fim - data final
+ */
 function handleGraphDateFrameSelection(inicio, fim) {
     if (inicio && fim) {
         const ini = new Date(inicio);
@@ -865,6 +930,9 @@ function handleGraphDateFrameSelection(inicio, fim) {
     }
 }
 
+/**
+ * Função que gera o gráfico de conflitualidade
+ */
 function finalizeGraph(){
     clearDiv(divMain);
     const graph = createDivWAttributes('','graphdiagram','400px');
@@ -876,6 +944,9 @@ function finalizeGraph(){
     divMain.appendChild(reset);
 }
 
+/**
+ * Função que trata do cenário de seleção da opção de introdução manual de uma aula
+ */
 function handleManual(){
     clearDiv(divMain);
     addParagraphToDiv('Escolher Curso', divMain);
@@ -884,6 +955,10 @@ function handleManual(){
     divMain.appendChild(cursosSelect);
 }
 
+/**
+ * Função que trata da seleção do curso
+ * @param {String} option - Curso selecionado
+ */
 function handleManualCursosSelection(option){
     aulamanual["Curso"] = option;
     console.log(aulamanual);
@@ -894,6 +969,10 @@ function handleManualCursosSelection(option){
     divMain.appendChild(ucSelect);
 }
 
+/**
+ * Função que trata da seleção da unidade curricular
+ * @param {String} option - Unidade Curricular Selecionada
+ */
 function handleManualUcSelection(option){
     aulamanual["Unidade Curricular"] = option;
     console.log(aulamanual);
@@ -904,6 +983,10 @@ function handleManualUcSelection(option){
     divMain.appendChild(turnoSelect);
 }
 
+/**
+ * Função que trata da seleção do turno
+ * @param {String} option - Turno Selecionada
+ */
 function handleManualTurnoSelection(option){
     aulamanual["Turno"] = option;
     console.log(aulamanual);
@@ -914,6 +997,10 @@ function handleManualTurnoSelection(option){
     divMain.appendChild(turmaSelect);
 }
 
+/**
+ * Função que trata da seleção da turma
+ * @param {String} option - Turma Selecionada
+ */
 function handleManualTurmaSelection(option){
     aulamanual["Turma"] = option;
     console.log(aulamanual);
@@ -923,6 +1010,10 @@ function handleManualTurmaSelection(option){
     divMain.appendChild(inscritos);
 }
 
+/**
+ * Função que trata da seleção do número de inscritos
+ * @param {Number} option - Número de inscritos Selecionada
+ */
 function handleManualInscritosSelection(option){
     if(option < 0){
         alert('número de inscritos inválido');
@@ -936,6 +1027,11 @@ function handleManualInscritosSelection(option){
     }
 }
 
+/**
+ * Função que trata da submissão das horas de inicio e fim da aula
+ * @param {String} horaIni - timestamp inicial
+ * @param {String} horaEnd - timestamp final
+ */
 function handleManualHorasSelection(horaIni,horaEnd){
     if (timestampToMilliseconds(horaIni) > timestampToMilliseconds(horaEnd)) {
         alert('Hora de fim maior do que hora de início');
@@ -950,6 +1046,10 @@ function handleManualHorasSelection(horaIni,horaEnd){
     }
 }
 
+/**
+ * Função que trata da submissão da data da aula
+ * @param {String} option - data da aula
+ */
 function handleManualDateSelection(option){
     aulamanual["Data da aula"] = dateCraft.formatDate(option).format('DD/MM/YYYY');
     console.log(aulamanual);
@@ -981,6 +1081,10 @@ function handleManualDateSelection(option){
     divMain.appendChild(caracSelect);
 }
  
+/**
+ * Função que lida com a seleção das caracteristicas pedidas para a sala de aula
+ * @param {String} option 
+ */
 function handleManualCaracSelection(option){
     aulamanual["Características da sala pedida para a aula"] = option;
     console.log(aulamanual);
@@ -991,6 +1095,10 @@ function handleManualCaracSelection(option){
     divMain.appendChild(salaSelect);
 }
 
+/**
+ * Função que lida com a seleção da sala de aula e submete a aula criada manualmente para a tabela de horário
+ * @param {String} option 
+ */
 function handleManualSalaSelection(option){
     aulamanual["Sala atribuída à aula"] = option
     tablefinal.addRow(aulamanual, true);

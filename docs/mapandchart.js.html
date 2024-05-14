@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: calcSemanas.js</title>
+    <title>JSDoc: Source: mapandchart.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: calcSemanas.js</h1>
+    <h1 class="page-title">Source: mapandchart.js</h1>
 
     
 
@@ -26,123 +26,296 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>import dateCraft from 'date-craft';
+            <pre class="prettyprint source linenums"><code>import anychart from 'anychart';
+import { generateClassDuration } from './suggestion';
+import { getArrayDatesBetween } from './calcSemanas';
 
+
+
+
+var horasHeatmap = [];
+var salasHeatmap = [];
+var datasHeatmap = [];
+var heatmapData = [];
+var chart;
+
+var aulas = [];
+var nodes = [];
+var edges = [];
+var graph;
 
 /**
- * Função utiliada para calcular o número da semana do ano correspondente a uma determinada data.
- * @param {Date} date - Data onde ocorre uma aula
- * @returns {number} - Número da semana do ano da data onde ocorre a aula
+ * Função que define as aulas a serem consideradas para o gráfico de conflitualidade
+ * @param {Array} aulasselected - Array com aulas 
  */
-function currentWeekNumber(date){
-    var instance;
-
-  if (typeof date === 'string' &amp;&amp; date.length) {
-    instance = new Date(date);
-  } else if (date instanceof Date) {
-    instance = date;
-  } else {
-    instance = new Date();
-  }
-
-  // Create a copy of this date object
-  var target = new Date(instance.valueOf());
-
-  // ISO week date weeks start on monday
-  // so correct the day number
-  var dayNr = (instance.getDay() + 6) % 7;
-
-  // ISO 8601 states that week 1 is the week
-  // with the first thursday of that year.
-  // Set the target date to the thursday in the target week
-  target.setDate(target.getDate() - dayNr + 3);
-
-  // Store the millisecond value of the target date
-  var firstThursday = target.valueOf();
-
-  // Set the target to the first thursday of the year
-  // First set the target to january first
-  target.setMonth(0, 1);
-  // Not a thursday? Correct the date to the next thursday
-  if (target.getDay() !== 4) {
-    target.setMonth(0, 1 + ((4 - target.getDay()) + 7) % 7);
-  }
-
-  // The weeknumber is the number of weeks between the
-  // first thursday of the year and the thursday in the target week
-  var weekNumber = 1 + Math.ceil((firstThursday - target) / 604800000);
-  return weekNumber;
+function setAulasGraph(aulasselected){
+    aulas = [];
+    aulas = aulasselected;
+    console.log(aulas);
 }
 
 /**
- * Função utilizada para transformar uma string no formato dd/mm/yyy num objeto Date no formato yyyy/mm/dd.
- * @param {String} dateStr - String para ser convertida num objeto Date
- * @returns {Date} - Objeto Date formado a partir da String dada
+ * Função que define as salas a serem consideradas pelo heatmap
+ * @param {Array} salas - Array com salas
  */
-function turnToDate(dateStr){
-    const dateParts = dateStr.split('/');
-    const day = parseInt(dateParts[0], 10);
-    const month = parseInt(dateParts[1], 10) - 1; // Month is 0-indexed
-    const year = parseInt(dateParts[2], 10);
-    const date = new Date(year, month, day);
-    return date;
+function setSalasHeatmap(salas) {
+    salasHeatmap = salas;
+    console.log(salasHeatmap);
 }
 
 /**
- * Função utilizada para calcular a semana do semestre em que acontece uma determinada aula.
- * @param {String} date - String data onde ocorre uma aula
- * @returns {number} - Número da semana do semestre da data onde ocorre a aula
+ * Função que retorna o tamanho do vetor salas
+ * @returns {Number} - Número de elementos no vetor salas
  */
-function giveSemanaSemestre(date){
-    const semestreOneBeg = new Date('2022/09/01');
-    const semestreOneEnd = new Date('2022/12/17');
-    const semestreTwoBeg = new Date('2023/01/30');
-    const semestreTwoEnd = new Date('2023/05/27');
-    const actualDate = turnToDate(date);
-    if(semestreOneBeg &lt;= actualDate &amp;&amp; actualDate &lt;= semestreOneEnd){
-        const semanaSemestre = Math.floor((actualDate - semestreOneBeg) / (7 * 24 * 60 * 60 * 1000));
-        return semanaSemestre;
-    } else if((semestreTwoBeg &lt;= actualDate &amp;&amp; actualDate &lt;= semestreTwoEnd)){
-        const semanaSemestre = Math.floor((actualDate - semestreTwoBeg) / (7 * 24 * 60 * 60 * 1000));
-        return semanaSemestre;
-    } else {
-        return "Período de avaliações";
+function getSalasHeatMapLength() {
+    return salasHeatmap.length;
+}
+
+/**
+ * Função que define as horas a serem consideradas pelo heatmap
+ */
+function setHorasHeatmap() {
+    horasHeatmap = generateClassDuration('08:00:00', '21:30:00');
+}
+
+/**
+ * Função que define o período de tempo a ser considerado pelo heatmap
+ * @param {String} start - Data inicial
+ * @param {String} end - Data final
+ */
+function setDatasHeatmap(start, end) {
+    datasHeatmap = [];
+    datasHeatmap = getArrayDatesBetween(start, end);
+    console.log(datasHeatmap);
+}
+
+/**
+ * Função que retorna as salas com capacidade definida
+ * @param {String} dataSalas - String com informação sobre as salas
+ * @param {Number} capacidade - capacidade da sala 
+ * @returns {Array} - Salas com a capacidade dada pelo argumento
+ */
+function setSalasByCapacidade(dataSalas, capacidade) {
+    const salasOfType = new Set();
+    const data = JSON.parse(dataSalas);
+    data.forEach(obj => {
+        if (obj["Capacidade Normal"] == capacidade) {
+            salasOfType.add(obj["Nome sala"]);
+        }
+    });
+    return Array.from(salasOfType);
+}
+
+/**
+ * Função que retorna as salas com número de características definida
+ * @param {String} dataSalas - String com informação sobre as salas
+ * @param {Number} numCarac - Número de características da sala
+ * @returns {Array} - salas com número de características definido
+ */
+function setSalasByNumCaract(dataSalas, numCarac) {
+    const salasOfType = new Set();
+    const data = JSON.parse(dataSalas);
+    data.forEach(obj => {
+        if (obj["Nº características"] == numCarac) {
+            salasOfType.add(obj["Nome sala"]);
+        }
+    });
+    return Array.from(salasOfType);
+}
+
+/**
+ * Função que define a estrutura de dados lida pelo heatmap
+ * @param {String} tabledata - String de dados da tabela
+ */
+function setHeatMapData(tabledata) {
+    heatmapData = [];
+    setHorasHeatmap();
+    const dictionaryOriginal = {};
+    const parsedTableData = JSON.parse(tabledata);
+    parsedTableData.forEach(aula => {
+        const key = aula["Data da aula"] + aula["Sala atribuída à aula"];
+        const value = generateClassDuration(aula["Hora início da aula"], aula["Hora fim da aula"]);
+        if (!(key in dictionaryOriginal)) {
+            dictionaryOriginal[key] = [];
+        }
+
+        dictionaryOriginal[key].push(value);
+    })
+    //console.log(dictionaryOriginal);
+    //console.log(datasHeatmap);
+    //console.log(horasHeatmap);
+    //console.log(salasHeatmap);
+
+    datasHeatmap.forEach(data => {
+        horasHeatmap.forEach(hora => {
+            let ocupadas = 0;
+            salasHeatmap.forEach(sala => {
+                const key2 = data + sala;
+                console.log(key2);
+                if (dictionaryOriginal.hasOwnProperty(key2)) {
+                    console.log('Checking key2:', key2);
+                    console.log('Hora:', hora);
+                    console.log('Items in dictionary:', dictionaryOriginal[key2]);
+                    if (dictionaryOriginal[key2].some(item => item.includes(hora))) {
+                        //console.log('olá entrei aqui');
+                        ocupadas++;
+                    }
+                }
+            })
+            heatmapData.push({ x: data, y: hora, heat: ocupadas });
+            console.log(heatmapData);
+        })
+    })
+
+    console.log(heatmapData);
+}
+
+/**
+ * Função que desenha o heatmap
+ */
+function generateHeatMap() {
+    chart = anychart.heatMap(heatmapData);
+    chart.container('heatmap');
+    chart.xScroller().enabled(true);
+    chart.xZoom().setToPointsCount(8);
+    chart.yScroller().enabled(true);
+    chart.yZoom().setToPointsCount(8);
+    chart.title("Mapa de ocupação de salas de aula.");
+    chart.draw();
+}
+
+/**
+ * Função que limpa o conteudo do heatmap
+ */
+function heatMapNull() {
+    if (chart) {
+        chart.dispose();
+    }
+}
+
+/**
+ * Função que devolve as aulas com determinado curso
+ * @param {Array} tabledata - Array com aulas
+ * @param {String} curso - Curso Escolhido
+ * @returns {Array} - Aulas com curso selecionado
+ */
+function getAulaByCurso(tabledata, curso) {
+    const aulas = new Set();
+    //const data = JSON.parse(tabledata);
+    tabledata.forEach(obj => {
+        if (obj["Curso"] == curso) {
+            aulas.add(obj);
+        }
+    });
+    return Array.from(aulas);
+}
+
+/**
+ * Função que devolve as aulas de determinada aula curricular
+ * @param {Array} tabledata - Array com aulas
+ * @param {String} uc - Unidade curricular escolhida
+ * @returns {Array} - aulas com unidade curricular selecionada
+ */
+function getAulaByUc(tabledata, uc) {
+    const aulas = new Set();
+    //const data = JSON.parse(tabledata);
+    tabledata.forEach(obj => {
+        if (obj["Unidade Curricular"] == uc) {
+            aulas.add(obj);
+        }
+    });
+    return Array.from(aulas);
+}
+
+/**
+ * Função que dado um array com datas remove todas as outras datas do array datasHeatMap
+ * @param {Array} datesArray - Array com datas a filtrar
+ * @returns {Array} - Datas Corretas
+ */
+function filterAulasByDates(datesArray) {
+    const datesSet = new Set(datesArray);
+
+    const filteredAulas = aulas.filter(aula => {
+        const aulaDate = aula["Data da aula"];
+        return datesSet.has(aulaDate);
+    });
+
+    return filteredAulas;
+}
+
+/**
+ * Função que gera os dados para serem lidos pelo graph
+ */
+function generateData() {
+    nodes = [];
+    edges = [];
+
+    for (let i = 0; i != aulas.length; i++) {
+        const aux = aulas.slice(i + 1);
+        const first = aulas[i];
+        const firstkey = first["Data da aula"]+"  "+first["Sala atribuída à aula"]+"  "+first["Hora início da aula"];
+        nodes.push({ id: firstkey });
+
+        for (let j = 0; j != aux.length; j++)
+            if (sameTime(first, aux[j]) &amp;&amp; sameSala(first, aux[j]) &amp;&amp; sameDate(first, aux[j])){
+                const auxkey = aux[j]["Data da aula"]+"  "+aux[j]["Sala atribuída à aula"]+"  "+aux[j]["Hora início da aula"];
+                edges.push({ from: firstkey, to: auxkey });
+            }
     }
 
+    console.log(nodes);
+    console.log(edges);
 }
 
 /**
- * Chama as funções Turn to Date e CurrentWeekNumber para returnar a semana do ano em que ocorre determinada aula.
- * @param {String} date - String Data onde ocorre uma aula
- * @returns {number} - Número da semana do ano da data onde ocorre a aula
+ * Função que retorna se duas aulas têm a mesma data
+ * @param {Object} aula1 - aula para ser comparada
+ * @param {Object} aula2 - aula para ser comparada
+ * @returns {boolean}
  */
-function giveSemanaAno(date){
-    const week = currentWeekNumber(turnToDate(date));
-    return week;
+function sameDate(aula1, aula2) {
+    return (aula1["Data da aula"] === aula2["Data da aula"]);
 }
 
 /**
- * Função utilizada para obter todos os dias utéis entre duais quaisquer datas.
- * @param {Date} start - Data inicial no formato yyyy/mm/dd
- * @param {Date} end - Data final no formato yyyy/mm/dd
- * @returns {Array&lt;String>} - Array com todas as datas excluindo sábados e domingos que se encontrem entre start e end
+ * Função que retorna se duas aulas têm a mesma sala
+ * @param {Object} aula1 - aula para ser comparada
+ * @param {Object} aula2 - aula para ser comparada
+ * @returns {boolean}
  */
-function getArrayDatesBetween(start, end){
-  const allDates = [];
-  let currentDate = start;
-  while(dateCraft.isSameOrBeforeDate(currentDate, end)){
-    const day = currentDate.getDay();
-    if(day !== 0 &amp;&amp; day !==6){
-      allDates.push(dateCraft.formatDate(currentDate).format('DD/MM/YYYY'));
-    }
-    currentDate = dateCraft.addDays(currentDate, 1);
-  }
-  return allDates;
+function sameSala(aula1, aula2) {
+    return (aula1["Sala atribuída à aula"] === aula2["Sala atribuída à aula"]);
 }
 
-//module.exports = currentWeekNumber, giveSemanaAno, giveSemanaSemestre, turnToDate
-export {currentWeekNumber, giveSemanaAno, giveSemanaSemestre, turnToDate, getArrayDatesBetween};
-</code></pre>
+/**
+ * Função que retorna se duas aulas ocorrem no mesmo intervalo de tempo
+ * @param {Object} aula1 - aula para ser comparada
+ * @param {Object} aula2 - aula para ser comparada
+ * @returns {boolean}
+ */
+function sameTime(aula1, aula2) {
+    return (aula1["Hora início da aula"] >= aula2["Hora início da aula"] &amp;&amp; aula2["Hora início da aula"] &lt; aula2["Hora fim da aula"]) ||
+        (aula1["Hora fim da aula"] > aula2["Hora início da aula"] &amp;&amp; aula1["Hora fim da aula"] &lt;= aula2["Hora fim da aula"]);
+}
+
+/**
+ * Função que gera o graph com todos os nodes e ligações
+ */
+function generateGraphDiagram() {
+    const graphData = { nodes: nodes, edges: edges};
+    console.log(graphData);
+    graph = anychart.graph(graphData);
+    graph.title("Gráfico de Colisões de Aulas");
+    graph.container("graphdiagram");
+    graph.draw();
+}
+
+
+
+
+
+
+export { filterAulasByDates,setAulasGraph ,heatMapNull, generateHeatMap, setHeatMapData, setDatasHeatmap, setSalasHeatmap, setSalasByCapacidade, setSalasByNumCaract, getSalasHeatMapLength, generateGraphDiagram, sameTime, sameSala, sameDate, generateData, getAulaByUc, getAulaByCurso };</code></pre>
         </article>
     </section>
 

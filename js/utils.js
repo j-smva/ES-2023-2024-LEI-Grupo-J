@@ -142,7 +142,12 @@ function extractNomeSalas(jsonString) {
     return nomeSalasArray;
 }
 
-
+/**
+ * Função que filtra certas chaves do horário ou cadastro de salas
+ * @param {String} jsonString - dados do horário ou salas
+ * @param {String} attributeName - nome da chave a filtrar
+ * @returns {Array} - Atributos desejados
+ */
 function extractAttributeValues(jsonString, attributeName) {
     // Parse the JSON string into a JavaScript object
     let jsonData = [];
@@ -176,7 +181,7 @@ function extractAttributeValues(jsonString, attributeName) {
 
 /**
  * Função que extrai o nome de todos as unidade curriculares presentes na tabela
- * @param {Tabulator} table - tabela do tabulator de onde serão extraidos os nomes das UCs
+ * @param {Array} tabledata - dados da tabela de onde serão extraidos os nomes das UCs
  * @returns {Map} - Mapa com os nomes de todas as UCs
  */
 function getUCs(tabledata) {
@@ -195,7 +200,7 @@ function getUCs(tabledata) {
 
 /**
  * Função que extrai o nome de todos os cursos presentes na tabela
- * @param {Tabulator} table - tabela de onde serão extraídos os nomes dos Cursos
+ * @param {Array} tabledata - dados da tabela de onde serão extraídos os nomes dos Cursos
  * @returns {Map} - Mapa com os nomes de todos os Cursos
  */
 function getCursos(tabledata) {
@@ -216,7 +221,7 @@ function getCursos(tabledata) {
 
 /**
  * Função que extrai o nome de todas as turmas presentes na tabela
- * @param {Tabulator} table - tabela de onde serão extraidos os nomes das turmas
+ * @param {Array} tabledata - dados da tabela de onde serão extraidos os nomes das turmas
  * @returns {Map} - Mapa com os nomes de todas as turmas
  */
 function getTurmas(tabledata) {
