@@ -131,7 +131,7 @@ function getAulaByCurso(tabledata, curso) {
             aulas.add(obj);
         }
     });
-    return Array.from(salasOfType);
+    return Array.from(aulas);
 }
 
 function getAulaByUc(tabledata, uc) {
@@ -142,7 +142,7 @@ function getAulaByUc(tabledata, uc) {
             aulas.add(obj);
         }
     });
-    return Array.from(salasOfType);
+    return Array.from(aulas);
 }
 
 function generateData(aulas) {
