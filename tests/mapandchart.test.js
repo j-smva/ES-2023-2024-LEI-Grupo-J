@@ -76,7 +76,7 @@ describe('Graph Diagram filtering: Date', () => {
 })
 
 describe('Graph Diagram filtering: UC', () => {
-    const aulaJson = '[{"Curso":"ME","Unidade Curricular":"Teoria dos Jogos e dos Contratos","Turno":"01789TP01","Turma":"MEA1","Inscritos no turno":"30","Dia da semana":"Sex","Hora início da aula":"13:00:00","Hora fim da aula":"14:30:00","Data da aula":"02/12/2022","Semana do Ano":48,"Semana do Semestre":13,"Características da sala pedida para a aula":"Sala Aulas Mestrado","Sala atribuída à aula":"AA2.25"}]';
+    const aulaJson = [{"Curso":"ME","Unidade Curricular":"Teoria dos Jogos e dos Contratos","Turno":"01789TP01","Turma":"MEA1","Inscritos no turno":"30","Dia da semana":"Sex","Hora início da aula":"13:00:00","Hora fim da aula":"14:30:00","Data da aula":"02/12/2022","Semana do Ano":48,"Semana do Semestre":13,"Características da sala pedida para a aula":"Sala Aulas Mestrado","Sala atribuída à aula":"AA2.25"}];
     const result = {"Curso":"ME","Unidade Curricular":"Teoria dos Jogos e dos Contratos","Turno":"01789TP01","Turma":"MEA1","Inscritos no turno":"30","Dia da semana":"Sex","Hora início da aula":"13:00:00","Hora fim da aula":"14:30:00","Data da aula":"02/12/2022","Semana do Ano":48,"Semana do Semestre":13,"Características da sala pedida para a aula":"Sala Aulas Mestrado","Sala atribuída à aula":"AA2.25"};
     
     it('Should return array with aula.', () => {
@@ -89,7 +89,7 @@ describe('Graph Diagram filtering: UC', () => {
 })
 
 describe('Graph Diagram filtering: Curso', () => {
-    const aulaJson = '[{"Curso":"ME","Unidade Curricular":"Teoria dos Jogos e dos Contratos","Turno":"01789TP01","Turma":"MEA1","Inscritos no turno":"30","Dia da semana":"Sex","Hora início da aula":"13:00:00","Hora fim da aula":"14:30:00","Data da aula":"02/12/2022","Semana do Ano":48,"Semana do Semestre":13,"Características da sala pedida para a aula":"Sala Aulas Mestrado","Sala atribuída à aula":"AA2.25"}]';
+    const aulaJson = [{"Curso":"ME","Unidade Curricular":"Teoria dos Jogos e dos Contratos","Turno":"01789TP01","Turma":"MEA1","Inscritos no turno":"30","Dia da semana":"Sex","Hora início da aula":"13:00:00","Hora fim da aula":"14:30:00","Data da aula":"02/12/2022","Semana do Ano":48,"Semana do Semestre":13,"Características da sala pedida para a aula":"Sala Aulas Mestrado","Sala atribuída à aula":"AA2.25"}];
     const result = {"Curso":"ME","Unidade Curricular":"Teoria dos Jogos e dos Contratos","Turno":"01789TP01","Turma":"MEA1","Inscritos no turno":"30","Dia da semana":"Sex","Hora início da aula":"13:00:00","Hora fim da aula":"14:30:00","Data da aula":"02/12/2022","Semana do Ano":48,"Semana do Semestre":13,"Características da sala pedida para a aula":"Sala Aulas Mestrado","Sala atribuída à aula":"AA2.25"};
     
     it('Should return array with aula.', () => {

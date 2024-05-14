@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { dataParseHorario, dataParseSalas, fixTextLocal, extractNomeSalas, getUCs, getCursos, getTurmas, extractAttributes } from "../js/utils";
+import { dataParseHorario, dataParseSalas, fixTextLocal, extractNomeSalas, extractAttributeValues, getUCs, getCursos, getTurmas, extractAttributes } from "../js/utils";
 
 
 describe('Data Parse: Horário', () => {
@@ -61,11 +61,59 @@ describe('Extract Nomes das Salas', () => {
 describe('Extract Atributos das Salas', () => {
 
     const salasJson = '[{"Edifício":"Ala Autónoma (ISCTE-IUL)","Nome sala":"Auditório Afonso de Barros","Capacidade Normal":"80","Capacidade Exame":"39","Nº características":"4","Anfiteatro aulas":"","Apoio técnico eventos":"","Arq 1":"","Arq 2":"","Arq 3":"","Arq 4":"","Arq 5":"","Arq 6":"","Arq 9":"","BYOD (Bring Your Own Device)":"","Focus Group":"","Horário sala visível portal público":"X","Laboratório de Arquitectura de Computadores I":"","Laboratório de Arquitectura de Computadores II":"","Laboratório de Bases de Engenharia":"","Laboratório de Electrónica":"","Laboratório de Informática":"","Laboratório de Jornalismo":"","Laboratório de Redes de Computadores I":"","Laboratório de Redes de Computadores II":"","Laboratório de Telecomunicações":"","Sala Aulas Mestrado":"X","Sala Aulas Mestrado Plus":"X","Sala NEE":"","Sala Provas":"","Sala Reunião":"","Sala de Arquitectura":"","Sala de Aulas normal":"X","videoconferência":"","átrio":""}]';
-    it('Should all columns names.', () => {
+    it('Should return all columns names.', () => {
         expect(extractAttributes(salasJson)).toStrictEqual(['Anfiteatro aulas','Apoio técnico eventos','Arq 1','Arq 2','Arq 3','Arq 4','Arq 5','Arq 6','Arq 9','BYOD (Bring Your Own Device)','Focus Group','Horário sala visível portal público','Laboratório de Arquitectura de Computadores I','Laboratório de Arquitectura de Computadores II','Laboratório de Bases de Engenharia','Laboratório de Electrónica','Laboratório de Informática','Laboratório de Jornalismo','Laboratório de Redes de Computadores I','Laboratório de Redes de Computadores II','Laboratório de Telecomunicações','Sala Aulas Mestrado','Sala Aulas Mestrado Plus','Sala NEE','Sala Provas','Sala Reunião','Sala de Arquitectura','Sala de Aulas normal','videoconferência','átrio']);
     })
 
     it('Should return nothing.', () => {
         expect(extractAttributes("a")).toStrictEqual([]);
+    })
+})
+
+describe('Extract Specific Atributos das Salas', () => {
+    const salasJson = '[{"Edifício":"Ala Autónoma (ISCTE-IUL)","Nome sala":"Auditório Afonso de Barros","Capacidade Normal":"80","Capacidade Exame":"39","Nº características":"4","Anfiteatro aulas":"","Apoio técnico eventos":"","Arq 1":"","Arq 2":"","Arq 3":"","Arq 4":"","Arq 5":"","Arq 6":"","Arq 9":"","BYOD (Bring Your Own Device)":"","Focus Group":"","Horário sala visível portal público":"X","Laboratório de Arquitectura de Computadores I":"","Laboratório de Arquitectura de Computadores II":"","Laboratório de Bases de Engenharia":"","Laboratório de Electrónica":"","Laboratório de Informática":"","Laboratório de Jornalismo":"","Laboratório de Redes de Computadores I":"","Laboratório de Redes de Computadores II":"","Laboratório de Telecomunicações":"","Sala Aulas Mestrado":"X","Sala Aulas Mestrado Plus":"X","Sala NEE":"","Sala Provas":"","Sala Reunião":"","Sala de Arquitectura":"","Sala de Aulas normal":"X","videoconferência":"","átrio":""}]';
+    
+    it('Should return all column value.', () => {
+        expect(extractAttributeValues(salasJson, "Nome sala")).toStrictEqual(["Auditório Afonso de Barros"]);
+    })
+
+    it('Should return nothing.', () => {
+        expect(extractAttributeValues("a", "Nome sala")).toStrictEqual([]);
+    })
+})
+
+describe('Get from aula: UC', () => {
+    const aulaJson = [{"Unidade Curricular":"Teoria dos Jogos e dos Contratos"}, {"Unidade Curricular":"Teoria dos Computadores"}];
+    
+    it('Should all Ucs names.', () => {
+        expect(getUCs(aulaJson)).toStrictEqual(["Teoria dos Jogos e dos Contratos", "Teoria dos Computadores"]);
+    })
+
+    it('Should return nothing.', () => {
+        expect(getUCs([{"Unidade Curricular":""}])).toStrictEqual([""]);
+    })
+})
+
+describe('Get from aula: Curso', () => {
+    const aulaJson = [{"Curso":"ME"}, {"Curso":"MB"}];
+    
+    it('Should return all Cursos names.', () => {
+        expect(getCursos(aulaJson)).toStrictEqual(["ME", "MB"]);
+    })
+
+    it('Should return nothing.', () => {
+        expect(getCursos([{"Curso":""}])).toStrictEqual([""]);
+    })
+})
+
+describe('Get from aula: Turma', () => {
+    const aulaJson = [{"Turma":"MEA1"}, {"Turma":"MEA2"}];
+    
+    it('Should return all Turmas names.', () => {
+        expect(getTurmas(aulaJson)).toStrictEqual(["MEA1", "MEA2"]);
+    })
+
+    it('Should return nothing.', () => {
+        expect(getTurmas([{"Turma":""}])).toStrictEqual([""]);
     })
 })
