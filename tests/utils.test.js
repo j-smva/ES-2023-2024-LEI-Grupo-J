@@ -54,7 +54,7 @@ describe('Extract Nomes das Salas', () => {
     })
 
     it('Should return nothing.', () => {
-        expect(extractNomeSalas("a")).toStrictEqual([]);
+        expect(extractNomeSalas('[{"ab":"aa"}]')).toStrictEqual([]);
     })
 })
 
@@ -66,7 +66,7 @@ describe('Extract Atributos das Salas', () => {
     })
 
     it('Should return nothing.', () => {
-        expect(extractAttributes("a")).toStrictEqual([]);
+        expect(extractAttributes('[{"ab":"aa"}]')).toStrictEqual([]);
     })
 })
 
@@ -78,7 +78,7 @@ describe('Extract Specific Atributos das Salas', () => {
     })
 
     it('Should return nothing.', () => {
-        expect(extractAttributeValues("a", "Nome sala")).toStrictEqual([]);
+        expect(extractAttributeValues('[{"ab":"aa"}]', "Nome sala")).toStrictEqual([]);
     })
 })
 
