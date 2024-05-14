@@ -7,12 +7,13 @@
   - Miguel Miranda, nº104601, GitHub name: Miguel-iscteiul;
   - Tomás Pereira, nº104824, GitHub name: FeroWar/Trcvp;
   - Vicente Laia, nº103961, GitHub name: Vicente/vicentelaia.
-É de notar que, para o projeto funcionar corretamente, é necessário rodar os seguintes comandos:
+ <p>É de notar que, para o projeto funcionar corretamente, é necessário rodar os seguintes comandos:</p>
   -npm install (atualizar as dependências)
   -npm run dev (rodar o projeto)
-Outros comandos úteis:
+ <p> Outros comandos úteis:</p>
   -npm run test (correr os testes)
   -npm run coverage (mostrar a coverage dos testes)
   -npm run doc (atualizar a documentação)
-A documentação do código encontra-se na pasta "docs" e deve ser acedida a partir do ficheiro "index.html", para abrir este ficheiro recomendamos a extensão "live server" do visual studio code.
-A qualidade do software é assegurada pela biblioteca "ESlint" disponível a partir do comando npm install. é também necessária a extensão "ESlint" do visual studio code.
+  <p></p>
+ <p>A documentação do código encontra-se na pasta "docs" e deve ser acedida a partir do ficheiro "index.html", para abrir este ficheiro recomendamos a extensão "live server" do visual studio code.</p>
+ <p>A qualidade do software é assegurada pela biblioteca "ESlint" disponível a partir do comando npm install. é também necessária a extensão "ESlint" do visual studio code.</p>
