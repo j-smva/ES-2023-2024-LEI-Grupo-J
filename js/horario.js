@@ -572,7 +572,7 @@ function handleAlocarAulas() {
 function handleAlocarAulasSettings(content) {
     clearDiv(divMain);
     addParagraphToDiv('Escolher UC', divMain);
-    UCs = getUCs(tablefinal);
+    UCs = getUCs(tablefinal.getData());
     dataSalas = dataParseSalas(content);
     nomeSalas = extractNomeSalas(dataSalas);
     tipoSalas = extractAttributes(dataSalas);
@@ -601,7 +601,7 @@ function handleStSemestre() {
     setSemestre(1);
     clearDiv(divMain);
     addParagraphToDiv('Escolher Cursos', divMain);
-    const select = createMultiSelect(getCursos(tablefinal), '', handleCursosSelect);
+    const select = createMultiSelect(getCursos(tablefinal.getData()), '', handleCursosSelect);
     divMain.appendChild(select);
 }
 
@@ -612,7 +612,7 @@ function handlendSemestre() {
     setSemestre(2);
     clearDiv(divMain);
     addParagraphToDiv('Escolher Cursos', divMain);
-    const select = createMultiSelect(getCursos(tablefinal), '', handleCursosSelect);
+    const select = createMultiSelect(getCursos(tablefinal.getData()), '', handleCursosSelect);
     divMain.appendChild(select);
 }
 
@@ -627,7 +627,7 @@ function handleCursosSelect(options) {
         setCursos(options);
         clearDiv(divMain);
         addParagraphToDiv('Escolher Turmas', divMain);
-        const select = createMultiSelect(getTurmas(tablefinal), '', handleTurmasSelect);
+        const select = createMultiSelect(getTurmas(tablefinal.getData()), '', handleTurmasSelect);
         divMain.appendChild(select);
     }
 }

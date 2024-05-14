@@ -82,10 +82,10 @@ function setHeatMapData(tabledata) {
 
         dictionaryOriginal[key].push(value);
     })
-    console.log(dictionaryOriginal);
-    console.log(datasHeatmap);
-    console.log(horasHeatmap);
-    console.log(salasHeatmap);
+    //console.log(dictionaryOriginal);
+    //console.log(datasHeatmap);
+    //console.log(horasHeatmap);
+    //console.log(salasHeatmap);
 
     datasHeatmap.forEach(data => {
         horasHeatmap.forEach(hora => {
@@ -98,7 +98,7 @@ function setHeatMapData(tabledata) {
                     console.log('Hora:', hora);
                     console.log('Items in dictionary:', dictionaryOriginal[key2]);
                     if (dictionaryOriginal[key2].some(item => item.includes(hora))) {
-                        console.log('olá entrei aqui');
+                        //console.log('olá entrei aqui');
                         ocupadas++;
                     }
                 }

@@ -179,9 +179,9 @@ function extractAttributeValues(jsonString, attributeName) {
  * @param {Tabulator} table - tabela do tabulator de onde serão extraidos os nomes das UCs
  * @returns {Map} - Mapa com os nomes de todas as UCs
  */
-function getUCs(table) {
+function getUCs(tabledata) {
     const uniqueValues = {};
-    table.getData().forEach(function(row) {
+    tabledata.forEach(function(row) {
         const columnValue = row["Unidade Curricular"];
         if (!uniqueValues[columnValue]) {
             uniqueValues[columnValue] = true;
@@ -198,9 +198,9 @@ function getUCs(table) {
  * @param {Tabulator} table - tabela de onde serão extraídos os nomes dos Cursos
  * @returns {Map} - Mapa com os nomes de todos os Cursos
  */
-function getCursos(table) {
+function getCursos(tabledata) {
     const uniqueValues = {};
-    table.getData().forEach(function(row) {
+    tabledata.forEach(function(row) {
         const columnValue = row["Curso"].split(', ');
         columnValue.forEach(function(entrie){
             if (!uniqueValues[entrie]) {
@@ -219,9 +219,9 @@ function getCursos(table) {
  * @param {Tabulator} table - tabela de onde serão extraidos os nomes das turmas
  * @returns {Map} - Mapa com os nomes de todas as turmas
  */
-function getTurmas(table) {
+function getTurmas(tabledata) {
     const uniqueValues = {};
-    table.getData().forEach(function(row) {
+    tabledata.forEach(function(row) {
         const columnValue = row["Turma"].split(', ');
         columnValue.forEach(function(entrie){
             if (!uniqueValues[entrie]) {
