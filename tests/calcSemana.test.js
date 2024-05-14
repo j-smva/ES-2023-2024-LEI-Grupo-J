@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { currentWeekNumber, giveSemanaAno, giveSemanaSemestre, turnToDate } from "../js/calcSemanas";
+import { currentWeekNumber, giveSemanaAno, giveSemanaSemestre, turnToDate, getArrayDatesBetween } from "../js/calcSemanas";
 
 describe('currentWeekNumber', () => {
     it('Should return week number 1.', () => {
@@ -55,5 +55,29 @@ describe('giveSemanaSemestre', () => {
         const result = giveSemanaSemestre("11/19/2024");
 
         expect(result).toBe("Período de avaliações");
+    })
+})
+
+describe('getArrayDatesBetween', () => {
+
+    const date1 = new Date("11/14/2022")
+    const date2 = new Date("11/18/2022")
+
+    it('Should return Array of days between.', () => {
+        const result = getArrayDatesBetween(date1, date2);
+
+        expect(result).toStrictEqual(["14/11/2022","15/11/2022","16/11/2022","17/11/2022","18/11/2022"]);
+    })
+
+    it('Should return array with only date1.', () => {
+        const result = getArrayDatesBetween(date1, date1);
+
+        expect(result).toStrictEqual(["14/11/2022"]);
+    })
+
+    it('Should return empty array.', () => {
+        const result = getArrayDatesBetween(date2, date1);
+
+        expect(result).toStrictEqual([]);
     })
 })

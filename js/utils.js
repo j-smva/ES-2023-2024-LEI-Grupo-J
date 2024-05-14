@@ -142,6 +142,38 @@ function extractNomeSalas(jsonString) {
     return nomeSalasArray;
 }
 
+
+function extractAttributeValues(jsonString, attributeName) {
+    // Parse the JSON string into a JavaScript object
+    let jsonData = [];
+    try {
+        jsonData = JSON.parse(jsonString);
+    } catch (error) {
+        console.error("Error parsing JSON:", error);
+        return []; // Return an empty array if parsing fails
+    }
+
+    // Initialize an empty Set to store unique attribute values
+    const attributeValuesSet = new Set();
+
+    // Check if the jsonData is an array
+    if (Array.isArray(jsonData)) {
+        // Loop through each entry in the JSON data
+        jsonData.forEach(function(entry) {
+            // Check if the current entry has the specified attribute
+            if (entry && entry[attributeName]) {
+                // Add the attribute value to the Set
+                attributeValuesSet.add(entry[attributeName]);
+            }
+        });
+    } else {
+        console.error("Input data is not an array.");
+    }
+
+    // Convert the Set to an array and return
+    return Array.from(attributeValuesSet);
+}
+
 /**
  * Função que extrai o nome de todos as unidade curriculares presentes na tabela
  * @param {Tabulator} table - tabela do tabulator de onde serão extraidos os nomes das UCs
@@ -273,4 +305,4 @@ function extractAttributes(jsonString) {
     }
 }
 
-export { dataParseHorario, dataParseSalas, fixTextLocal, extractNomeSalas, extractAttributes, getUCs, getCursos, getTurmas};
+export { extractAttributeValues,dataParseHorario, dataParseSalas, fixTextLocal, extractNomeSalas, extractAttributes, getUCs, getCursos, getTurmas};

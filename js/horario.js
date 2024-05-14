@@ -1,13 +1,13 @@
 import { TabulatorFull as Tabulator } from 'tabulator-tables';
-import { dataParseHorario, dataParseSalas, extractAttributes, extractNomeSalas, getCursos, getTurmas, getUCs } from './utils';
+import { dataParseHorario, dataParseSalas, extractAttributeValues, extractAttributes, extractNomeSalas, getCursos, getTurmas, getUCs } from './utils';
 import { generateFilterExpression, customFilter, formatString } from './filters';
 
 
 import { addHeaderToDiv, addParagraphToDiv, createButton, createCheckboxes, createDateInputWithSubmit, createDiv, createDivWAttributes, createDualSelect, createInput, createMultiSelect, createNumberInput, createSingleSelect } from './htmlelems';
 import { datasLength, generateClassDuration, generateSubClasses, generateTimeStamps, horasInicioLength, removeDuplicatesTimestamps, removeSalasFromList, removeSelectedWeekdaysFromMap, setAulaforSub, setDatas, setDatasBasedOnSub, setSalas, setSalasByType, setSingleDay, setWeekDays, timestampToMilliseconds, setSemestre, setCursos, setAulas, setTamanhoAula, getNumAulas, getAulaforSub } from './suggestion';
 import dateCraft from 'date-craft';
-import { turnToDate } from './calcSemanas';
-import { generateHeatMap, heatMapNull, setDatasHeatmap, setHeatMapData, setSalasByCapacidade, setSalasByNumCaract, setSalasHeatmap } from './mapandchart';
+import { getArrayDatesBetween, turnToDate } from './calcSemanas';
+import { filterAulasByDates, generateData, generateGraphDiagram, generateHeatMap, getAulaByCurso, getAulaByUc, heatMapNull, setAulasGraph, setDatasHeatmap, setHeatMapData, setSalasByCapacidade, setSalasByNumCaract, setSalasHeatmap } from './mapandchart';
 
 
 var tablefinal; //tabela geral
@@ -71,10 +71,12 @@ function tableOptionsStartup() {
     const buttonSub = createButton('Substituir Aula', '', handleSubAula);
     const buttonAulaNew = createButton('Alocar Novas Aulas', '', handleAlocarAulas);
     const heatmapButton = createButton('Gerar HeatMap de Ocupação', '', handleHeatMapSelection);
+    const graphdiagramButton = createButton('Gerar gráfico de conflitualidade', '', handleGraphSelection);
     addHeaderToDiv(1, "Opções", divMain);
     divMain.appendChild(buttonSub);
     divMain.appendChild(buttonAulaNew);
     divMain.appendChild(heatmapButton);
+    divMain.appendChild(graphdiagramButton);
 }
 
 /**
@@ -773,6 +775,81 @@ function finalizeHeatMap(){
     const reset = createButton('Reset', '', tableOptionsStartup);
     divMain.appendChild(reset);
 }
+
+function handleGraphSelection(){
+    clearDiv(divMain);
+    addHeaderToDiv(1,'Escolher aulas para visualizar',divMain);
+    const cursos = createButton('Escolher aulas por curso', '', handleGraphCurso);
+    const UC = createButton('Escolher aulas por Unidade Curricular', '', handleGraphUC);
+    divMain.appendChild(cursos);
+    divMain.appendChild(UC);
+}
+
+function handleGraphCurso(){
+    clearDiv(divMain);
+    const cursos = extractAttributeValues(tabledata,"Curso");
+    console.log(cursos);
+    const cursosSelect = createSingleSelect(cursos, '', handleGraphCursoSelection); 
+    divMain.appendChild(cursosSelect);
+
+}
+
+function handleGraphCursoSelection(option){
+    const aulas = getAulaByCurso(tablefinal.getData(),option);
+    setAulasGraph(aulas);
+    handleGraphDateFrame()
+}
+
+function handleGraphUC(){
+    clearDiv(divMain);
+    const ucs = extractAttributeValues(tabledata,"Unidade Curricular");
+    console.log(ucs);
+    const ucsSelect = createSingleSelect(ucs, '', handleGraphUCSelection); 
+    divMain.appendChild(ucsSelect);
+}
+
+function handleGraphUCSelection(option){
+    const aulas = getAulaByUc(tablefinal.getData(),option);
+    setAulasGraph(aulas);
+    handleGraphDateFrame()
+}
+
+function handleGraphDateFrame() {
+    clearDiv(divMain);
+    addParagraphToDiv('Escolher Período para análise', divMain);
+    const datas = createDateInputWithSubmit('', handleGraphDateFrameSelection);
+    divMain.appendChild(datas);
+}
+
+function handleGraphDateFrameSelection(inicio, fim) {
+    if (inicio && fim) {
+        const ini = new Date(inicio);
+        const end = new Date(fim);
+        if (end > ini) {
+            const datas = getArrayDatesBetween(ini,end);
+            setAulasGraph(filterAulasByDates(datas));
+            finalizeGraph();
+
+        } else {
+            alert('Data de Inicio maior que Data de fim');
+        }
+    } else {
+        alert('Submeter ambas as datas');
+    }
+}
+
+function finalizeGraph(){
+    clearDiv(divMain);
+    const graph = createDivWAttributes('','graphdiagram','400px');
+    divMain.appendChild(graph);
+    generateData();
+    generateGraphDiagram();
+
+    const reset = createButton('Reset', '', tableOptionsStartup);
+    divMain.appendChild(reset);
+}
+
+
 
 /**
  * Função que obtém o ficheiro através do link vindo do gitHub relativo às salas
