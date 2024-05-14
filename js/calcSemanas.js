@@ -62,7 +62,7 @@ function turnToDate(dateStr){
 
 /**
  * Função utilizada para calcular a semana do semestre em que acontece uma determinada aula.
- * @param {Date} date - Data onde ocorre uma aula
+ * @param {String} date - String data onde ocorre uma aula
  * @returns {number} - Número da semana do semestre da data onde ocorre a aula
  */
 function giveSemanaSemestre(date){
@@ -85,7 +85,7 @@ function giveSemanaSemestre(date){
 
 /**
  * Chama as funções Turn to Date e CurrentWeekNumber para returnar a semana do ano em que ocorre determinada aula.
- * @param {Date} date - Data onde ocorre uma aula
+ * @param {String} date - String Data onde ocorre uma aula
  * @returns {number} - Número da semana do ano da data onde ocorre a aula
  */
 function giveSemanaAno(date){

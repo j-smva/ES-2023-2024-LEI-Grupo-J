@@ -14,37 +14,59 @@ var chart;
 var aulas = [];
 var nodes = [];
 var edges = [];
-// var cursosGraph = [];
-// var ucsGraph = [];
 var graph;
 
+/**
+ * Função que define as aulas a serem consideradas para o gráfico de conflitualidade
+ * @param {Array} aulasselected - Array com aulas 
+ */
 function setAulasGraph(aulasselected){
     aulas = [];
     aulas = aulasselected;
     console.log(aulas);
 }
 
+/**
+ * Função que define as salas a serem consideradas pelo heatmap
+ * @param {Array} salas - Array com salas
+ */
 function setSalasHeatmap(salas) {
     salasHeatmap = salas;
     console.log(salasHeatmap);
 }
 
-
+/**
+ * Função que retorna o tamanho do vetor salas
+ * @returns {Number} - Número de elementos no vetor salas
+ */
 function getSalasHeatMapLength() {
     return salasHeatmap.length;
 }
 
+/**
+ * Função que define as horas a serem consideradas pelo heatmap
+ */
 function setHorasHeatmap() {
     horasHeatmap = generateClassDuration('08:00:00', '21:30:00');
 }
 
+/**
+ * Função que define o período de tempo a ser considerado pelo heatmap
+ * @param {String} start - Data inicial
+ * @param {String} end - Data final
+ */
 function setDatasHeatmap(start, end) {
     datasHeatmap = [];
     datasHeatmap = getArrayDatesBetween(start, end);
     console.log(datasHeatmap);
 }
 
-
+/**
+ * Função que retorna as salas com capacidade definida
+ * @param {String} dataSalas - String com informação sobre as salas
+ * @param {Number} capacidade - capacidade da sala 
+ * @returns {Array} - Salas com a capacidade dada pelo argumento
+ */
 function setSalasByCapacidade(dataSalas, capacidade) {
     const salasOfType = new Set();
     const data = JSON.parse(dataSalas);
@@ -56,6 +78,12 @@ function setSalasByCapacidade(dataSalas, capacidade) {
     return Array.from(salasOfType);
 }
 
+/**
+ * Função que retorna as salas com número de características definida
+ * @param {String} dataSalas - String com informação sobre as salas
+ * @param {Number} numCarac - Número de características da sala
+ * @returns {Array} - salas com número de características definido
+ */
 function setSalasByNumCaract(dataSalas, numCarac) {
     const salasOfType = new Set();
     const data = JSON.parse(dataSalas);
@@ -67,7 +95,10 @@ function setSalasByNumCaract(dataSalas, numCarac) {
     return Array.from(salasOfType);
 }
 
-
+/**
+ * Função que define a estrutura de dados lida pelo heatmap
+ * @param {String} tabledata - String de dados da tabela
+ */
 function setHeatMapData(tabledata) {
     heatmapData = [];
     setHorasHeatmap();
@@ -111,7 +142,9 @@ function setHeatMapData(tabledata) {
     console.log(heatmapData);
 }
 
-
+/**
+ * Função que desenha o heatmap
+ */
 function generateHeatMap() {
     chart = anychart.heatMap(heatmapData);
     chart.container('heatmap');
@@ -123,12 +156,21 @@ function generateHeatMap() {
     chart.draw();
 }
 
+/**
+ * Função que limpa o conteudo do heatmap
+ */
 function heatMapNull() {
     if (chart) {
         chart.dispose();
     }
 }
 
+/**
+ * Função que devolve as aulas com determinado curso
+ * @param {Array} tabledata - Array com aulas
+ * @param {String} curso - Curso Escolhido
+ * @returns {Array} - Aulas com curso selecionado
+ */
 function getAulaByCurso(tabledata, curso) {
     const aulas = new Set();
     //const data = JSON.parse(tabledata);
@@ -140,6 +182,12 @@ function getAulaByCurso(tabledata, curso) {
     return Array.from(aulas);
 }
 
+/**
+ * Função que devolve as aulas de determinada aula curricular
+ * @param {Array} tabledata - Array com aulas
+ * @param {String} uc - Unidade curricular escolhida
+ * @returns {Array} - aulas com unidade curricular selecionada
+ */
 function getAulaByUc(tabledata, uc) {
     const aulas = new Set();
     //const data = JSON.parse(tabledata);
@@ -151,22 +199,25 @@ function getAulaByUc(tabledata, uc) {
     return Array.from(aulas);
 }
 
+/**
+ * Função que dado um array com datas remove todas as outras datas do array datasHeatMap
+ * @param {Array} datesArray - Array com datas a filtrar
+ * @returns {Array} - Datas Corretas
+ */
 function filterAulasByDates(datesArray) {
-    // Convert datesArray to a Set for faster lookup
     const datesSet = new Set(datesArray);
 
-    // Filter aulas array to keep only the elements with dates not present in datesArray
     const filteredAulas = aulas.filter(aula => {
-        // Extract the "Data da aula" field from the aula object
         const aulaDate = aula["Data da aula"];
-
-        // Check if the aulaDate is not in datesSet
         return datesSet.has(aulaDate);
     });
 
     return filteredAulas;
 }
 
+/**
+ * Função que gera os dados para serem lidos pelo graph
+ */
 function generateData() {
     nodes = [];
     edges = [];
@@ -188,19 +239,40 @@ function generateData() {
     console.log(edges);
 }
 
+/**
+ * Função que retorna se duas aulas têm a mesma data
+ * @param {Object} aula1 - aula para ser comparada
+ * @param {Object} aula2 - aula para ser comparada
+ * @returns {boolean}
+ */
 function sameDate(aula1, aula2) {
     return (aula1["Data da aula"] === aula2["Data da aula"]);
 }
 
+/**
+ * Função que retorna se duas aulas têm a mesma sala
+ * @param {Object} aula1 - aula para ser comparada
+ * @param {Object} aula2 - aula para ser comparada
+ * @returns {boolean}
+ */
 function sameSala(aula1, aula2) {
     return (aula1["Sala atribuída à aula"] === aula2["Sala atribuída à aula"]);
 }
 
+/**
+ * Função que retorna se duas aulas ocorrem no mesmo intervalo de tempo
+ * @param {Object} aula1 - aula para ser comparada
+ * @param {Object} aula2 - aula para ser comparada
+ * @returns {boolean}
+ */
 function sameTime(aula1, aula2) {
     return (aula1["Hora início da aula"] >= aula2["Hora início da aula"] && aula2["Hora início da aula"] < aula2["Hora fim da aula"]) ||
         (aula1["Hora fim da aula"] > aula2["Hora início da aula"] && aula1["Hora fim da aula"] <= aula2["Hora fim da aula"]);
 }
 
+/**
+ * Função que gera o graph com todos os nodes e ligações
+ */
 function generateGraphDiagram() {
     const graphData = { nodes: nodes, edges: edges};
     console.log(graphData);

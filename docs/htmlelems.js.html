@@ -26,8 +26,7 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>import { HtmlTableImportModule } from "tabulator-tables";
-
+            <pre class="prettyprint source linenums"><code>
 /**
  * Função genérica que cria botões html em javaScript.
  * @param {String} text - Texto a ser mostrado no botão
@@ -161,19 +160,19 @@ function createInput(type, placeholder, className, changeHandler, args) {
  * @param {Function} submitHandler - Função que tratará do resultado da escolha das opções
  * @returns {HTMLElement} - Elemento html do tipo div que contém o select e o botão criados
  */
-function createMultiSelect(options, className, submitHandler){
+function createMultiSelect(options, className, submitHandler) {
     //Cria os elementos do tipo div e select
     const container = document.createElement('div');
     const select = document.createElement('select');
     select.multiple = true;
 
     //Define a classe do elemento select
-    if(className) {
+    if (className) {
         select.className = className;
     }
 
     //Define as opções a serem mostradas no select
-    options.forEach(function(option) {
+    options.forEach(function (option) {
         let optionElement = document.createElement('option');
         optionElement.value = option;
         optionElement.textContent = option;
@@ -185,7 +184,7 @@ function createMultiSelect(options, className, submitHandler){
     const submitButton = document.createElement('button');
     submitButton.textContent = 'Submit';
 
-    submitButton.addEventListener('click', function() {
+    submitButton.addEventListener('click', function () {
         //Define as opções que foram selecionadas
         const selectedOptions = Array.from(select.selectedOptions).map(option => option.value);
         //Chama a função de handling e passa como argumento as opções selecionadas
@@ -241,7 +240,7 @@ function createDateInputWithSubmit(className, submitHandler) {
     submitButton.textContent = 'Submit';
 
     //Adiciona o event listener ao button
-    submitButton.addEventListener('click', function() {
+    submitButton.addEventListener('click', function () {
         //Valores submetidos em ambos os inputs
         const startDate = startDateInput.value;
         const endDate = endDateInput.value;
@@ -264,6 +263,55 @@ function createDateInputWithSubmit(className, submitHandler) {
 }
 
 /**
+ * Função genérica que cria um input do tipo date e um botão para submeter a data escolhida.
+ * @param {String} className - Nome da classe do elemento
+ * @param {Function} submitHandler - Função que trata das datas escolhidas
+ * @returns {HTMLElement} - Elemento html do tipo div que contém o date input e o botão criado
+ */
+function createSingleDateInputWithSubmit(className, submitHandler) {
+    // Create the container div
+    const container = document.createElement('div');
+    container.style.display = 'block';
+
+    // Create the label for the date input
+    const dateLabel = document.createElement('label');
+    dateLabel.textContent = 'Select Date: ';
+    dateLabel.setAttribute('for', 'date-input');
+
+    // Create the date input element
+    const dateInput = document.createElement('input');
+    dateInput.type = 'date';
+    dateInput.id = 'date-input';
+
+    // Set the class name of the input element
+    if (className) {
+        dateInput.className = className;
+    }
+
+    // Create the submit button
+    const submitButton = document.createElement('button');
+    submitButton.textContent = 'Submit';
+
+    // Add event listener to the submit button
+    submitButton.addEventListener('click', function () {
+        // Get the value of the date input
+        const selectedDate = dateInput.value;
+        // Call the submit handler function with the selected date
+        if (submitHandler &amp;&amp; typeof submitHandler === 'function') {
+            submitHandler(selectedDate);
+        }
+    });
+
+    // Append elements to the container div
+    container.appendChild(dateLabel);
+    container.appendChild(dateInput);
+    container.appendChild(document.createElement('br')); // Add a line break
+    container.appendChild(submitButton);
+
+    return container;
+}
+
+/**
  * Função genérica que cria dois selects com as mesmas opções e um botão para submeter as escolhas
  * @param {Array} options - Opções a serem mostradas nos selects
  * @param {String} className - Nome da classe do elemento
@@ -280,7 +328,7 @@ function createDualSelect(options, className, submitHandler) {
     }
 
     //Adiciona as opções ao select
-    options.forEach(function(option) {
+    options.forEach(function (option) {
         let optionElement = document.createElement('option');
         optionElement.value = option;
         optionElement.textContent = option;
@@ -295,7 +343,7 @@ function createDualSelect(options, className, submitHandler) {
     }
 
     //Adiciona as opções ao segundo select
-    options.forEach(function(option) {
+    options.forEach(function (option) {
         let optionElement = document.createElement('option');
         optionElement.value = option;
         optionElement.textContent = option;
@@ -308,7 +356,7 @@ function createDualSelect(options, className, submitHandler) {
     submitButton.textContent = 'Submit';
 
     //Adiciona o event listener ao botão
-    submitButton.addEventListener('click', function() {
+    submitButton.addEventListener('click', function () {
         //Obtém as opções selecionadas
         const selectedOption1 = select1.value;
         const selectedOption2 = select2.value;
@@ -334,7 +382,7 @@ function createCheckboxes(options, className, submitHandler) {
     const container = document.createElement('div');
 
     //Cria as checkboxes para cada opção
-    options.forEach(function(option, index) {
+    options.forEach(function (option, index) {
         const checkbox = document.createElement('input');
         checkbox.type = 'checkbox';
         checkbox.value = index + 1; //Associa os valores com o idex (a começar de index 1)
@@ -352,10 +400,10 @@ function createCheckboxes(options, className, submitHandler) {
     submitButton.textContent = 'Submit';
 
     //Adiciona event litener ao button criado
-    submitButton.addEventListener('click', function() {
+    submitButton.addEventListener('click', function () {
         //Obtém os valores das checkboxes selecionadas
         const selectedOptions = [];
-        options.forEach(function(option, index) {
+        options.forEach(function (option, index) {
             const checkbox = container.querySelector('input[type="checkbox"][value="' + (index + 1) + '"]');
             if (checkbox.checked) {
                 selectedOptions.push(checkbox.value);
@@ -394,7 +442,7 @@ function createSingleSelect(options, className, submitHandler) {
     }
 
     //coloca as opções dentro do select
-    options.forEach(function(option) {
+    options.forEach(function (option) {
         let optionElement = document.createElement('option');
         optionElement.value = option;
         optionElement.textContent = option;
@@ -407,7 +455,7 @@ function createSingleSelect(options, className, submitHandler) {
     const submitButton = document.createElement('button');
     submitButton.textContent = 'Submit';
 
-    submitButton.addEventListener('click', function() {
+    submitButton.addEventListener('click', function () {
         //Óbtem as opções selecionadas
         const selectedOption = select.value;
         //Chama a função de handle com as opções selecionadas
@@ -447,7 +495,7 @@ function createNumberInput(step, className, submitHandler) {
     const submitButton = document.createElement('button');
     submitButton.textContent = 'Submit';
 
-    submitButton.addEventListener('click', function() {
+    submitButton.addEventListener('click', function () {
         //Óbtem o número selecionado
         const selectedNumber = parseFloat(numberInput.value);
         //Chama a função que dá handle ao número selecionado
@@ -457,11 +505,32 @@ function createNumberInput(step, className, submitHandler) {
     });
 
     container.appendChild(submitButton);
-    
+
     return container;
 }
 
-export { createNumberInput ,createSingleSelect ,createCheckboxes ,createDualSelect, addParagraphToDiv, createButton, createDiv, addHeaderToDiv, createInput, createMultiSelect, createDateInputWithSubmit };</code></pre>
+/**
+ * Função genérica que cria elementos html do tipo div com uma altura específica
+ * @param {String} className - Nome da classe do elemento
+ * @param {String} id - Identificador da div
+ * @param {String} height - Por exemplo '200px' define a altura da div
+ * @returns {HTMLElement} - div creada
+ */
+function createDivWAttributes(className, id, height) {
+    const div = document.createElement('div');
+    if (className) {
+        div.className = className;
+    }
+    if (id) {
+        div.id = id;
+    }
+    if (height) {
+        div.style.height = height;
+    }
+    return div;
+}
+
+export { createSingleDateInputWithSubmit, createDivWAttributes, createNumberInput, createSingleSelect, createCheckboxes, createDualSelect, addParagraphToDiv, createButton, createDiv, addHeaderToDiv, createInput, createMultiSelect, createDateInputWithSubmit };</code></pre>
         </article>
     </section>
 
@@ -471,13 +540,13 @@ export { createNumberInput ,createSingleSelect ,createCheckboxes ,createDualSele
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#addEventListeners">addEventListeners</a></li><li><a href="global.html#addHeaderToDiv">addHeaderToDiv</a></li><li><a href="global.html#addParagraphToDiv">addParagraphToDiv</a></li><li><a href="global.html#aulaForSub">aulaForSub</a></li><li><a href="global.html#aulas">aulas</a></li><li><a href="global.html#callSetDays">callSetDays</a></li><li><a href="global.html#clearDiv">clearDiv</a></li><li><a href="global.html#createButton">createButton</a></li><li><a href="global.html#createCheckboxes">createCheckboxes</a></li><li><a href="global.html#createDateInputWithSubmit">createDateInputWithSubmit</a></li><li><a href="global.html#createDiv">createDiv</a></li><li><a href="global.html#createDualSelect">createDualSelect</a></li><li><a href="global.html#createInput">createInput</a></li><li><a href="global.html#createMultiSelect">createMultiSelect</a></li><li><a href="global.html#createNumberInput">createNumberInput</a></li><li><a href="global.html#createOptionsAndBackButton">createOptionsAndBackButton</a></li><li><a href="global.html#createSingleSelect">createSingleSelect</a></li><li><a href="global.html#createTableHorario">createTableHorario</a></li><li><a href="global.html#createTableSalas">createTableSalas</a></li><li><a href="global.html#createTableSuggestion">createTableSuggestion</a></li><li><a href="global.html#currentWeekNumber">currentWeekNumber</a></li><li><a href="global.html#customFilter">customFilter</a></li><li><a href="global.html#dataParseHorario">dataParseHorario</a></li><li><a href="global.html#dataParseSalas">dataParseSalas</a></li><li><a href="global.html#datas">datas</a></li><li><a href="global.html#datasLength">datasLength</a></li><li><a href="global.html#downloadCSV">downloadCSV</a></li><li><a href="global.html#downloadJSON">downloadJSON</a></li><li><a href="global.html#extractAttributes">extractAttributes</a></li><li><a href="global.html#extractNomeSalas">extractNomeSalas</a></li><li><a href="global.html#fixTextLocal">fixTextLocal</a></li><li><a href="global.html#formatString">formatString</a></li><li><a href="global.html#generateClassDuration">generateClassDuration</a></li><li><a href="global.html#generateFilterExpression">generateFilterExpression</a></li><li><a href="global.html#generateSubClasses">generateSubClasses</a></li><li><a href="global.html#generateTimeStamps">generateTimeStamps</a></li><li><a href="global.html#getArrayDatesBetween">getArrayDatesBetween</a></li><li><a href="global.html#getAulaforSub">getAulaforSub</a></li><li><a href="global.html#getCursos">getCursos</a></li><li><a href="global.html#getNumAulas">getNumAulas</a></li><li><a href="global.html#getTurmas">getTurmas</a></li><li><a href="global.html#getUCs">getUCs</a></li><li><a href="global.html#gitHubCSVHorario">gitHubCSVHorario</a></li><li><a href="global.html#gitHubCSVSalas">gitHubCSVSalas</a></li><li><a href="global.html#giveSemanaAno">giveSemanaAno</a></li><li><a href="global.html#giveSemanaSemestre">giveSemanaSemestre</a></li><li><a href="global.html#handleAllSalas">handleAllSalas</a></li><li><a href="global.html#handleAllocateSalas">handleAllocateSalas</a></li><li><a href="global.html#handleAllocateTipo">handleAllocateTipo</a></li><li><a href="global.html#handleAlocarAulas">handleAlocarAulas</a></li><li><a href="global.html#handleAlocarAulasSettings">handleAlocarAulasSettings</a></li><li><a href="global.html#handleAulasDuration">handleAulasDuration</a></li><li><a href="global.html#handleAulasNum">handleAulasNum</a></li><li><a href="global.html#handleBetweenDates">handleBetweenDates</a></li><li><a href="global.html#handleBetweenDatesInput">handleBetweenDatesInput</a></li><li><a href="global.html#handleCursosSelect">handleCursosSelect</a></li><li><a href="global.html#handleDaysOfWeekSelect">handleDaysOfWeekSelect</a></li><li><a href="global.html#handleEntreHoras">handleEntreHoras</a></li><li><a href="global.html#handleEntreHorasSelection">handleEntreHorasSelection</a></li><li><a href="global.html#handleExcludeSalas">handleExcludeSalas</a></li><li><a href="global.html#handleExcludeTipo">handleExcludeTipo</a></li><li><a href="global.html#handleExlusionOptions">handleExlusionOptions</a></li><li><a href="global.html#handleSameDay">handleSameDay</a></li><li><a href="global.html#handleSameWeek">handleSameWeek</a></li><li><a href="global.html#handleSetPeriods">handleSetPeriods</a></li><li><a href="global.html#handleSetPeriodsSelect">handleSetPeriodsSelect</a></li><li><a href="global.html#handleStSemestre">handleStSemestre</a></li><li><a href="global.html#handleSubAula">handleSubAula</a></li><li><a href="global.html#handleTurmasSelect">handleTurmasSelect</a></li><li><a href="global.html#handleUCsSelect">handleUCsSelect</a></li><li><a href="global.html#handlendSemestre">handlendSemestre</a></li><li><a href="global.html#headerMenu">headerMenu</a></li><li><a href="global.html#horasInicio">horasInicio</a></li><li><a href="global.html#horasInicioLength">horasInicioLength</a></li><li><a href="global.html#millisecondsToTimestamp">millisecondsToTimestamp</a></li><li><a href="global.html#readLocalFile">readLocalFile</a></li><li><a href="global.html#readyToShowSuggestion">readyToShowSuggestion</a></li><li><a href="global.html#removeDuplicatesTimestamps">removeDuplicatesTimestamps</a></li><li><a href="global.html#removeSalasFromList">removeSalasFromList</a></li><li><a href="global.html#removeSelectedWeekdaysFromMap">removeSelectedWeekdaysFromMap</a></li><li><a href="global.html#resetFilters">resetFilters</a></li><li><a href="global.html#salasAula">salasAula</a></li><li><a href="global.html#salasButtonsSetter">salasButtonsSetter</a></li><li><a href="global.html#secondSalaSubmission">secondSalaSubmission</a></li><li><a href="global.html#setAllocationOptions">setAllocationOptions</a></li><li><a href="global.html#setAulaforSub">setAulaforSub</a></li><li><a href="global.html#setAulas">setAulas</a></li><li><a href="global.html#setCursos">setCursos</a></li><li><a href="global.html#setDatas">setDatas</a></li><li><a href="global.html#setDatasBasedOnSub">setDatasBasedOnSub</a></li><li><a href="global.html#setDaysOfWeek">setDaysOfWeek</a></li><li><a href="global.html#setExclusionOptions">setExclusionOptions</a></li><li><a href="global.html#setSalas">setSalas</a></li><li><a href="global.html#setSalasByType">setSalasByType</a></li><li><a href="global.html#setSemestre">setSemestre</a></li><li><a href="global.html#setSingleDay">setSingleDay</a></li><li><a href="global.html#setTamanhoAula">setTamanhoAula</a></li><li><a href="global.html#setTurmas">setTurmas</a></li><li><a href="global.html#setWeekDays">setWeekDays</a></li><li><a href="global.html#subAulaInfoSetter">subAulaInfoSetter</a></li><li><a href="global.html#tableOptionsStartup">tableOptionsStartup</a></li><li><a href="global.html#timestampToMilliseconds">timestampToMilliseconds</a></li><li><a href="global.html#toggleFilter">toggleFilter</a></li><li><a href="global.html#turnToDate">turnToDate</a></li><li><a href="global.html#weekDays">weekDays</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#addEventListeners">addEventListeners</a></li><li><a href="global.html#addHeaderToDiv">addHeaderToDiv</a></li><li><a href="global.html#addParagraphToDiv">addParagraphToDiv</a></li><li><a href="global.html#aulaForSub">aulaForSub</a></li><li><a href="global.html#aulas">aulas</a></li><li><a href="global.html#callSetDays">callSetDays</a></li><li><a href="global.html#clearDiv">clearDiv</a></li><li><a href="global.html#createButton">createButton</a></li><li><a href="global.html#createCheckboxes">createCheckboxes</a></li><li><a href="global.html#createDateInputWithSubmit">createDateInputWithSubmit</a></li><li><a href="global.html#createDiv">createDiv</a></li><li><a href="global.html#createDivWAttributes">createDivWAttributes</a></li><li><a href="global.html#createDualSelect">createDualSelect</a></li><li><a href="global.html#createInput">createInput</a></li><li><a href="global.html#createMultiSelect">createMultiSelect</a></li><li><a href="global.html#createNumberInput">createNumberInput</a></li><li><a href="global.html#createOptionsAndBackButton">createOptionsAndBackButton</a></li><li><a href="global.html#createSingleDateInputWithSubmit">createSingleDateInputWithSubmit</a></li><li><a href="global.html#createSingleSelect">createSingleSelect</a></li><li><a href="global.html#createTableHorario">createTableHorario</a></li><li><a href="global.html#createTableSalas">createTableSalas</a></li><li><a href="global.html#createTableSuggestion">createTableSuggestion</a></li><li><a href="global.html#currentWeekNumber">currentWeekNumber</a></li><li><a href="global.html#customFilter">customFilter</a></li><li><a href="global.html#dataParseHorario">dataParseHorario</a></li><li><a href="global.html#dataParseSalas">dataParseSalas</a></li><li><a href="global.html#datas">datas</a></li><li><a href="global.html#datasLength">datasLength</a></li><li><a href="global.html#downloadCSV">downloadCSV</a></li><li><a href="global.html#downloadJSON">downloadJSON</a></li><li><a href="global.html#extractAttributeValues">extractAttributeValues</a></li><li><a href="global.html#extractAttributes">extractAttributes</a></li><li><a href="global.html#extractNomeSalas">extractNomeSalas</a></li><li><a href="global.html#filterAulasByDates">filterAulasByDates</a></li><li><a href="global.html#finalizeGraph">finalizeGraph</a></li><li><a href="global.html#finalizeHeatMap">finalizeHeatMap</a></li><li><a href="global.html#fixTextLocal">fixTextLocal</a></li><li><a href="global.html#formatString">formatString</a></li><li><a href="global.html#generateClassDuration">generateClassDuration</a></li><li><a href="global.html#generateData">generateData</a></li><li><a href="global.html#generateFilterExpression">generateFilterExpression</a></li><li><a href="global.html#generateGraphDiagram">generateGraphDiagram</a></li><li><a href="global.html#generateHeatMap">generateHeatMap</a></li><li><a href="global.html#generateHeatMapFilters">generateHeatMapFilters</a></li><li><a href="global.html#generateSubClasses">generateSubClasses</a></li><li><a href="global.html#generateTimeStamps">generateTimeStamps</a></li><li><a href="global.html#getArrayDatesBetween">getArrayDatesBetween</a></li><li><a href="global.html#getAulaByCurso">getAulaByCurso</a></li><li><a href="global.html#getAulaByUc">getAulaByUc</a></li><li><a href="global.html#getAulaforSub">getAulaforSub</a></li><li><a href="global.html#getCursos">getCursos</a></li><li><a href="global.html#getNumAulas">getNumAulas</a></li><li><a href="global.html#getSalasHeatMapLength">getSalasHeatMapLength</a></li><li><a href="global.html#getTurmas">getTurmas</a></li><li><a href="global.html#getUCs">getUCs</a></li><li><a href="global.html#gitHubCSVHorario">gitHubCSVHorario</a></li><li><a href="global.html#gitHubCSVSalas">gitHubCSVSalas</a></li><li><a href="global.html#giveSemanaAno">giveSemanaAno</a></li><li><a href="global.html#giveSemanaSemestre">giveSemanaSemestre</a></li><li><a href="global.html#handleAllRoomSelection">handleAllRoomSelection</a></li><li><a href="global.html#handleAllSalas">handleAllSalas</a></li><li><a href="global.html#handleAllocateSalas">handleAllocateSalas</a></li><li><a href="global.html#handleAllocateTipo">handleAllocateTipo</a></li><li><a href="global.html#handleAlocarAulas">handleAlocarAulas</a></li><li><a href="global.html#handleAlocarAulasSettings">handleAlocarAulasSettings</a></li><li><a href="global.html#handleAulasDuration">handleAulasDuration</a></li><li><a href="global.html#handleAulasNum">handleAulasNum</a></li><li><a href="global.html#handleBetweenDates">handleBetweenDates</a></li><li><a href="global.html#handleBetweenDatesInput">handleBetweenDatesInput</a></li><li><a href="global.html#handleCursosSelect">handleCursosSelect</a></li><li><a href="global.html#handleDaysOfWeekSelect">handleDaysOfWeekSelect</a></li><li><a href="global.html#handleEntreHoras">handleEntreHoras</a></li><li><a href="global.html#handleEntreHorasSelection">handleEntreHorasSelection</a></li><li><a href="global.html#handleExcludeSalas">handleExcludeSalas</a></li><li><a href="global.html#handleExcludeTipo">handleExcludeTipo</a></li><li><a href="global.html#handleExlusionOptions">handleExlusionOptions</a></li><li><a href="global.html#handleGraphCurso">handleGraphCurso</a></li><li><a href="global.html#handleGraphCursoSelection">handleGraphCursoSelection</a></li><li><a href="global.html#handleGraphDateFrame">handleGraphDateFrame</a></li><li><a href="global.html#handleGraphDateFrameSelection">handleGraphDateFrameSelection</a></li><li><a href="global.html#handleGraphSelection">handleGraphSelection</a></li><li><a href="global.html#handleGraphUC">handleGraphUC</a></li><li><a href="global.html#handleGraphUCSelection">handleGraphUCSelection</a></li><li><a href="global.html#handleHeatMapCapacidade">handleHeatMapCapacidade</a></li><li><a href="global.html#handleHeatMapCapacidadeSelection">handleHeatMapCapacidadeSelection</a></li><li><a href="global.html#handleHeatMapDateFrame">handleHeatMapDateFrame</a></li><li><a href="global.html#handleHeatMapDateFrameSelection">handleHeatMapDateFrameSelection</a></li><li><a href="global.html#handleHeatMapNumCarac">handleHeatMapNumCarac</a></li><li><a href="global.html#handleHeatMapNumCaracSelection">handleHeatMapNumCaracSelection</a></li><li><a href="global.html#handleHeatMapSelection">handleHeatMapSelection</a></li><li><a href="global.html#handleHeatMapTipoSala">handleHeatMapTipoSala</a></li><li><a href="global.html#handleHeatMapTipoSalaSelection">handleHeatMapTipoSalaSelection</a></li><li><a href="global.html#handleManual">handleManual</a></li><li><a href="global.html#handleManualCaracSelection">handleManualCaracSelection</a></li><li><a href="global.html#handleManualCursosSelection">handleManualCursosSelection</a></li><li><a href="global.html#handleManualDateSelection">handleManualDateSelection</a></li><li><a href="global.html#handleManualHorasSelection">handleManualHorasSelection</a></li><li><a href="global.html#handleManualInscritosSelection">handleManualInscritosSelection</a></li><li><a href="global.html#handleManualSalaSelection">handleManualSalaSelection</a></li><li><a href="global.html#handleManualTurmaSelection">handleManualTurmaSelection</a></li><li><a href="global.html#handleManualTurnoSelection">handleManualTurnoSelection</a></li><li><a href="global.html#handleManualUcSelection">handleManualUcSelection</a></li><li><a href="global.html#handleSameDay">handleSameDay</a></li><li><a href="global.html#handleSameWeek">handleSameWeek</a></li><li><a href="global.html#handleSetPeriods">handleSetPeriods</a></li><li><a href="global.html#handleSetPeriodsSelect">handleSetPeriodsSelect</a></li><li><a href="global.html#handleStSemestre">handleStSemestre</a></li><li><a href="global.html#handleSubAula">handleSubAula</a></li><li><a href="global.html#handleTurmasSelect">handleTurmasSelect</a></li><li><a href="global.html#handleUCsSelect">handleUCsSelect</a></li><li><a href="global.html#handlendSemestre">handlendSemestre</a></li><li><a href="global.html#headerMenu">headerMenu</a></li><li><a href="global.html#heatMapNull">heatMapNull</a></li><li><a href="global.html#horasInicio">horasInicio</a></li><li><a href="global.html#horasInicioLength">horasInicioLength</a></li><li><a href="global.html#millisecondsToTimestamp">millisecondsToTimestamp</a></li><li><a href="global.html#readLocalFile">readLocalFile</a></li><li><a href="global.html#readyToShowSuggestion">readyToShowSuggestion</a></li><li><a href="global.html#removeDuplicatesTimestamps">removeDuplicatesTimestamps</a></li><li><a href="global.html#removeSalasFromList">removeSalasFromList</a></li><li><a href="global.html#removeSelectedWeekdaysFromMap">removeSelectedWeekdaysFromMap</a></li><li><a href="global.html#resetFilters">resetFilters</a></li><li><a href="global.html#salasAula">salasAula</a></li><li><a href="global.html#salasButtonsSetter">salasButtonsSetter</a></li><li><a href="global.html#sameDate">sameDate</a></li><li><a href="global.html#sameSala">sameSala</a></li><li><a href="global.html#sameTime">sameTime</a></li><li><a href="global.html#secondSalaSubmission">secondSalaSubmission</a></li><li><a href="global.html#setAllocationOptions">setAllocationOptions</a></li><li><a href="global.html#setAulaforSub">setAulaforSub</a></li><li><a href="global.html#setAulas">setAulas</a></li><li><a href="global.html#setAulasGraph">setAulasGraph</a></li><li><a href="global.html#setCursos">setCursos</a></li><li><a href="global.html#setDatas">setDatas</a></li><li><a href="global.html#setDatasBasedOnSub">setDatasBasedOnSub</a></li><li><a href="global.html#setDatasHeatmap">setDatasHeatmap</a></li><li><a href="global.html#setDaysOfWeek">setDaysOfWeek</a></li><li><a href="global.html#setExclusionOptions">setExclusionOptions</a></li><li><a href="global.html#setHeatMapData">setHeatMapData</a></li><li><a href="global.html#setHorasHeatmap">setHorasHeatmap</a></li><li><a href="global.html#setSalas">setSalas</a></li><li><a href="global.html#setSalasByCapacidade">setSalasByCapacidade</a></li><li><a href="global.html#setSalasByNumCaract">setSalasByNumCaract</a></li><li><a href="global.html#setSalasByType">setSalasByType</a></li><li><a href="global.html#setSalasHeatmap">setSalasHeatmap</a></li><li><a href="global.html#setSemestre">setSemestre</a></li><li><a href="global.html#setSingleDay">setSingleDay</a></li><li><a href="global.html#setTamanhoAula">setTamanhoAula</a></li><li><a href="global.html#setTurmas">setTurmas</a></li><li><a href="global.html#setWeekDays">setWeekDays</a></li><li><a href="global.html#subAulaInfoSetter">subAulaInfoSetter</a></li><li><a href="global.html#tableOptionsStartup">tableOptionsStartup</a></li><li><a href="global.html#timestampToMilliseconds">timestampToMilliseconds</a></li><li><a href="global.html#toggleFilter">toggleFilter</a></li><li><a href="global.html#turnToDate">turnToDate</a></li><li><a href="global.html#weekDays">weekDays</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Sat May 11 2024 18:37:26 GMT+0100 (Hora de verão da Europa Ocidental)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Tue May 14 2024 16:41:57 GMT+0100 (Hora de verão da Europa Ocidental)
 </footer>
 
 <script> prettyPrint(); </script>

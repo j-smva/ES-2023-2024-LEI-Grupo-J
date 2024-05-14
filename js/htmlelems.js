@@ -1,4 +1,3 @@
-import { HtmlTableImportModule } from "tabulator-tables";
 
 /**
  * Função genérica que cria botões html em javaScript.
@@ -133,19 +132,19 @@ function createInput(type, placeholder, className, changeHandler, args) {
  * @param {Function} submitHandler - Função que tratará do resultado da escolha das opções
  * @returns {HTMLElement} - Elemento html do tipo div que contém o select e o botão criados
  */
-function createMultiSelect(options, className, submitHandler){
+function createMultiSelect(options, className, submitHandler) {
     //Cria os elementos do tipo div e select
     const container = document.createElement('div');
     const select = document.createElement('select');
     select.multiple = true;
 
     //Define a classe do elemento select
-    if(className) {
+    if (className) {
         select.className = className;
     }
 
     //Define as opções a serem mostradas no select
-    options.forEach(function(option) {
+    options.forEach(function (option) {
         let optionElement = document.createElement('option');
         optionElement.value = option;
         optionElement.textContent = option;
@@ -157,7 +156,7 @@ function createMultiSelect(options, className, submitHandler){
     const submitButton = document.createElement('button');
     submitButton.textContent = 'Submit';
 
-    submitButton.addEventListener('click', function() {
+    submitButton.addEventListener('click', function () {
         //Define as opções que foram selecionadas
         const selectedOptions = Array.from(select.selectedOptions).map(option => option.value);
         //Chama a função de handling e passa como argumento as opções selecionadas
@@ -213,7 +212,7 @@ function createDateInputWithSubmit(className, submitHandler) {
     submitButton.textContent = 'Submit';
 
     //Adiciona o event listener ao button
-    submitButton.addEventListener('click', function() {
+    submitButton.addEventListener('click', function () {
         //Valores submetidos em ambos os inputs
         const startDate = startDateInput.value;
         const endDate = endDateInput.value;
@@ -235,6 +234,12 @@ function createDateInputWithSubmit(className, submitHandler) {
     return container;
 }
 
+/**
+ * Função genérica que cria um input do tipo date e um botão para submeter a data escolhida.
+ * @param {String} className - Nome da classe do elemento
+ * @param {Function} submitHandler - Função que trata das datas escolhidas
+ * @returns {HTMLElement} - Elemento html do tipo div que contém o date input e o botão criado
+ */
 function createSingleDateInputWithSubmit(className, submitHandler) {
     // Create the container div
     const container = document.createElement('div');
@@ -260,7 +265,7 @@ function createSingleDateInputWithSubmit(className, submitHandler) {
     submitButton.textContent = 'Submit';
 
     // Add event listener to the submit button
-    submitButton.addEventListener('click', function() {
+    submitButton.addEventListener('click', function () {
         // Get the value of the date input
         const selectedDate = dateInput.value;
         // Call the submit handler function with the selected date
@@ -295,7 +300,7 @@ function createDualSelect(options, className, submitHandler) {
     }
 
     //Adiciona as opções ao select
-    options.forEach(function(option) {
+    options.forEach(function (option) {
         let optionElement = document.createElement('option');
         optionElement.value = option;
         optionElement.textContent = option;
@@ -310,7 +315,7 @@ function createDualSelect(options, className, submitHandler) {
     }
 
     //Adiciona as opções ao segundo select
-    options.forEach(function(option) {
+    options.forEach(function (option) {
         let optionElement = document.createElement('option');
         optionElement.value = option;
         optionElement.textContent = option;
@@ -323,7 +328,7 @@ function createDualSelect(options, className, submitHandler) {
     submitButton.textContent = 'Submit';
 
     //Adiciona o event listener ao botão
-    submitButton.addEventListener('click', function() {
+    submitButton.addEventListener('click', function () {
         //Obtém as opções selecionadas
         const selectedOption1 = select1.value;
         const selectedOption2 = select2.value;
@@ -349,7 +354,7 @@ function createCheckboxes(options, className, submitHandler) {
     const container = document.createElement('div');
 
     //Cria as checkboxes para cada opção
-    options.forEach(function(option, index) {
+    options.forEach(function (option, index) {
         const checkbox = document.createElement('input');
         checkbox.type = 'checkbox';
         checkbox.value = index + 1; //Associa os valores com o idex (a começar de index 1)
@@ -367,10 +372,10 @@ function createCheckboxes(options, className, submitHandler) {
     submitButton.textContent = 'Submit';
 
     //Adiciona event litener ao button criado
-    submitButton.addEventListener('click', function() {
+    submitButton.addEventListener('click', function () {
         //Obtém os valores das checkboxes selecionadas
         const selectedOptions = [];
-        options.forEach(function(option, index) {
+        options.forEach(function (option, index) {
             const checkbox = container.querySelector('input[type="checkbox"][value="' + (index + 1) + '"]');
             if (checkbox.checked) {
                 selectedOptions.push(checkbox.value);
@@ -409,7 +414,7 @@ function createSingleSelect(options, className, submitHandler) {
     }
 
     //coloca as opções dentro do select
-    options.forEach(function(option) {
+    options.forEach(function (option) {
         let optionElement = document.createElement('option');
         optionElement.value = option;
         optionElement.textContent = option;
@@ -422,7 +427,7 @@ function createSingleSelect(options, className, submitHandler) {
     const submitButton = document.createElement('button');
     submitButton.textContent = 'Submit';
 
-    submitButton.addEventListener('click', function() {
+    submitButton.addEventListener('click', function () {
         //Óbtem as opções selecionadas
         const selectedOption = select.value;
         //Chama a função de handle com as opções selecionadas
@@ -462,7 +467,7 @@ function createNumberInput(step, className, submitHandler) {
     const submitButton = document.createElement('button');
     submitButton.textContent = 'Submit';
 
-    submitButton.addEventListener('click', function() {
+    submitButton.addEventListener('click', function () {
         //Óbtem o número selecionado
         const selectedNumber = parseFloat(numberInput.value);
         //Chama a função que dá handle ao número selecionado
@@ -472,11 +477,17 @@ function createNumberInput(step, className, submitHandler) {
     });
 
     container.appendChild(submitButton);
-    
+
     return container;
 }
 
-
+/**
+ * Função genérica que cria elementos html do tipo div com uma altura específica
+ * @param {String} className - Nome da classe do elemento
+ * @param {String} id - Identificador da div
+ * @param {String} height - Por exemplo '200px' define a altura da div
+ * @returns {HTMLElement} - div creada
+ */
 function createDivWAttributes(className, id, height) {
     const div = document.createElement('div');
     if (className) {
@@ -491,4 +502,4 @@ function createDivWAttributes(className, id, height) {
     return div;
 }
 
-export { createSingleDateInputWithSubmit ,createDivWAttributes ,createNumberInput ,createSingleSelect ,createCheckboxes ,createDualSelect, addParagraphToDiv, createButton, createDiv, addHeaderToDiv, createInput, createMultiSelect, createDateInputWithSubmit };
+export { createSingleDateInputWithSubmit, createDivWAttributes, createNumberInput, createSingleSelect, createCheckboxes, createDualSelect, addParagraphToDiv, createButton, createDiv, addHeaderToDiv, createInput, createMultiSelect, createDateInputWithSubmit };
