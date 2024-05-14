@@ -1,5 +1,3 @@
-
-import { Tabulator } from 'tabulator-tables';
 import { giveSemanaAno, giveSemanaSemestre } from './calcSemanas';
 
 

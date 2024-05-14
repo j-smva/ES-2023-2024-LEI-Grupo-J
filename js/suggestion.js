@@ -1,3 +1,4 @@
+/* eslint-disable no-prototype-builtins */
 import dateCraft from 'date-craft';
 import { getArrayDatesBetween, turnToDate, giveSemanaAno, giveSemanaSemestre } from './calcSemanas';
 
@@ -115,21 +116,6 @@ function getAulaforSub(){
 }
 
 
-function extractCursos(table){
-    const uniqueValues = new Set();
-    table.getData().forEach(row => {
-        uniqueValues.add(row["Curso"]);
-    });
-    cursos = Array.from(uniqueValues);
-}
-
-function extractTurmas(table){
-    const uniqueValues = new Set();
-    table.getData().forEach(row => {
-        uniqueValues.add(row["Curso"]);
-    });
-    turmas = Array.from(uniqueValues);
-}
 
 /**
  * Função utilizada para obter o tamanho do vetor de datas
@@ -414,4 +400,4 @@ function generateSubClasses(tabledata) {
 
 
 
-export { timestampToMilliseconds ,horasInicioLength,setSalas, setSalasByType, generateTimeStamps, setAulaforSub, setWeekDays, removeSalasFromList, setDatasBasedOnSub, generateSubClasses, setSingleDay, setDatas, removeDuplicatesTimestamps, generateClassDuration, removeSelectedWeekdaysFromMap, datasLength, getAulaforSub, extractCursos, extractTurmas, setCursos, setTurmas, setAulas, setTamanhoAula, setSemestre, getNumAulas};
+export { timestampToMilliseconds ,horasInicioLength,setSalas, setSalasByType, generateTimeStamps, setAulaforSub, setWeekDays, removeSalasFromList, setDatasBasedOnSub, generateSubClasses, setSingleDay, setDatas, removeDuplicatesTimestamps, generateClassDuration, removeSelectedWeekdaysFromMap, datasLength, getAulaforSub, setCursos, setTurmas, setAulas, setTamanhoAula, setSemestre, getNumAulas};

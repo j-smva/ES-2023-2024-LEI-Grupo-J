@@ -1,3 +1,4 @@
+/* eslint-disable no-prototype-builtins */
 import anychart from 'anychart';
 import { generateClassDuration } from './suggestion';
 import { getArrayDatesBetween } from './calcSemanas';
